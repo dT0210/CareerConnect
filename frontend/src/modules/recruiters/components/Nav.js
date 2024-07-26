@@ -1,10 +1,18 @@
-import { Link } from "react-router-dom"
+import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
+import { useAuth } from "../../../hooks/useAuth";
 
 export const Nav = () => {
+  const {setIsAuthenticated} = useAuth();
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setIsAuthenticated(false);
+    toast.success("You have been signed out")
+  };
   return (
-    <div className="h-[80px] w-full bg-[#ff4545] flex justify-between items-center px-4 text-white">
-      <div className=" flex items-center justify-start gap-4 font-semibold text-lg">
-        <Link to="/dashboard">
+    <div className="h-[80px] w-full bg-[#ff4545] flex justify-between items-center px-4 text-white font-semibold text-lg">
+      <div className=" flex items-center justify-start gap-4 ">
+        <Link to="/recruiters/dashboard">
           <svg
             width="180"
             height="80"
@@ -87,17 +95,19 @@ export const Nav = () => {
             </defs>
           </svg>
         </Link>
-        <Link to="/candidates/dashboard" className="hover:border-b-2 hover:border-b-white h-full p-2">
+        <Link to="/recruiters/dashboard" className="hover:border-b-2 hover:border-b-white h-full p-2">
             Home
         </Link>
-        <Link to="/candidates/jobs" className="hover:border-b-2 hover:border-b-white h-full p-2">
+        <Link to="/recruiters/jobs" className="hover:border-b-2 hover:border-b-white h-full p-2">
             Jobs
         </Link>
-        <Link to="/candidates/profile" className="hover:border-b-2 hover:border-b-white h-full p-2">
+        <Link to="/recruiters/profile" className="hover:border-b-2 hover:border-b-white h-full p-2">
             Profile
         </Link>
       </div>
-      <div></div>
+      <div className="flex justify-end items-center">
+        <Link to="/" onClick={handleLogout} className="hover:border-b-2 hover:border-b-white h-full p-2">Log out</Link>
+      </div>
     </div>
   );
 };

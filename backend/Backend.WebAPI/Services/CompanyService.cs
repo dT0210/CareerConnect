@@ -1,8 +1,11 @@
+using System.Linq.Expressions;
 using AutoMapper;
 using Backend.Infrastructure.Models;
 using Backend.Infrastructure.Repositories;
+using Backend.Shared.Enum;
 using Backend.WebAPI.Models;
-using Microsoft.AspNetCore.Identity;
+using Backend.WebAPI.Models.Responses;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend.WebAPI.Services;
 
@@ -19,15 +22,61 @@ public class CompanyService : ICompanyService
     }
 
 
-    public async Task<IEnumerable<CompanyResponseModel>> GetAllCompanysAsync()
+    public async Task<PagedResponse<CompanyResponseModel>> GetAllCompanysAsync(int? pageIndex, int? pageSize, CompanyStatusType? status, string? search, string? orderBy, bool? isDescending)
     {
-        var companys = await _companyRepository.GetAllAsync();
-        return companys.Select(_mapper.Map<CompanyResponseModel>);
+        var query = _companyRepository.GetAllQueryable().Include(c => c.Recruiter).AsNoTracking();
+        string searchPhraseLower = search?.ToLower() ?? string.Empty;
+
+        query = query.Where(x => (status == null || x.Status == status)
+                                    && (string.IsNullOrWhiteSpace(searchPhraseLower) || x.Name.Contains(searchPhraseLower))
+        );
+
+        var totalRecords = query.Count();
+
+        if (!string.IsNullOrEmpty(orderBy))
+        {
+            var columnsSelector = new Dictionary<string, Expression<Func<Company, object>>>
+                {
+                    { "name", x => x.Name},
+                    { "status",  x => x.Status },
+                    { "size", x => x.Size},
+                    { "website", x => x.Website },
+                    { "requestedAt", x => x.RequestedAt}
+                };
+            var selectedColumn = columnsSelector[orderBy];
+            query = isDescending.HasValue && isDescending.Value
+                ? query.OrderByDescending(selectedColumn)
+                : query.OrderBy(selectedColumn);
+        }
+        //else default sort by the requested date
+        else
+        {
+            query = query.OrderBy(x => x.RequestedAt);
+        }
+        pageIndex ??= 1;
+        pageSize ??= 10;
+        var companies = await query
+                .Skip((int)((pageIndex - 1) * pageSize))
+                .Take((int)pageSize)
+                .ToListAsync();
+
+        var response = new PagedResponse<CompanyResponseModel> {
+            PageIndex = (int)pageIndex,
+            PageSize = (int)pageSize,
+            TotalPages = (int)(totalRecords / (double)pageSize),
+            TotalRecords = totalRecords,
+            Data = companies.Select(_mapper.Map<CompanyResponseModel>).ToList()
+        };
+        return response;
     }
 
     public async Task<CompanyResponseModel?> GetCompanyByIdAsync(Guid id)
     {
-        var company = await _companyRepository.GetByIdAsync(id);
+        var company = await _companyRepository.GetAllQueryable()
+                            .Include(c => c.Recruiter)
+                            .Where(c => c.Id == id)
+                            .FirstOrDefaultAsync();
+
         return _mapper.Map<CompanyResponseModel>(company);
     }
 
@@ -42,6 +91,8 @@ public class CompanyService : ICompanyService
         await _companyRepository.InsertAsync(newCompany);
         await _companyRepository.SaveAsync();
         recruiter.CompanyId = newCompany.Id;
+        _recruiterRepository.Update(recruiter);
+        await _recruiterRepository.SaveAsync();
         return _mapper.Map<CompanyResponseModel>(newCompany);
     }
 
@@ -53,6 +104,9 @@ public class CompanyService : ICompanyService
             throw new KeyNotFoundException("Company not found");
         }
         _mapper.Map(company, existingCompany);
+        existingCompany.ModifiedAt = DateTime.Now;
+        existingCompany.Status = CompanyStatusType.Waiting;
+        existingCompany.RequestedAt = DateTime.Now;
         _companyRepository.Update(existingCompany);
         await _companyRepository.SaveAsync();
     }
@@ -70,8 +124,23 @@ public class CompanyService : ICompanyService
         {
             throw new KeyNotFoundException("Company not found");
         }
-        company.Approved = true;
+        company.Status = CompanyStatusType.Approved;
         company.ApproverId = adminId;
+        company.ModifiedAt = DateTime.Now;
+        _companyRepository.Update(company);
+        await _companyRepository.SaveAsync();
+    }
+
+    public async Task RejectCompanyAsync(Guid companyId, Guid adminId)
+    {
+        var company = await _companyRepository.GetByIdAsync(companyId);
+        if (company == null)
+        {
+            throw new KeyNotFoundException("Company not found");
+        }
+        company.Status = CompanyStatusType.Rejected;
+        company.ApproverId = adminId;
+        company.ModifiedAt = DateTime.Now;
         _companyRepository.Update(company);
         await _companyRepository.SaveAsync();
     }

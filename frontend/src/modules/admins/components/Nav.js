@@ -95,13 +95,16 @@ export const Nav = () => {
             </defs>
           </svg>
         </Link>
-        <Link to="/dashboard" className="hover:border-b-2 hover:border-b-white h-full p-2">
+        <Link to="/admin/dashboard" className="hover:border-b-2 hover:border-b-white h-full p-2">
             Home
         </Link>
-        <Link to="/jobs" className="hover:border-b-2 hover:border-b-white h-full p-2">
+        <Link to="/admin/jobs" className="hover:border-b-2 hover:border-b-white h-full p-2">
             Jobs
         </Link>
-        <Link to="/profile" className="hover:border-b-2 hover:border-b-white h-full p-2">
+        <Link to="/admin/companies" className="hover:border-b-2 hover:border-b-white h-full p-2">
+            Companies
+        </Link>
+        <Link to="/admin/profile" className="hover:border-b-2 hover:border-b-white h-full p-2">
             Profile
         </Link>
       </div>

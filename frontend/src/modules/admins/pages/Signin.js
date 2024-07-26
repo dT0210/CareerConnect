@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import background from "../../../assets/images/Group 13.png";
 import InputField from "../../../components/InputField";
 import { useAuth } from "../../../hooks/useAuth";
-import { recruiterLogin } from "../../../services/recruiter";
+import { adminLogin } from "../../../services/admin";
 
 const Signin = () => {
   const [formData, setFormData] = useState({
@@ -26,14 +26,14 @@ const Signin = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    recruiterLogin(formData)
+    adminLogin(formData)
       .then((response) => {
         console.log(response);
         if (response.success) {
           localStorage.setItem("token", response.token);
           setIsAuthenticated(true);
           toast.success("Signed in.");
-          navigate("/recruiters/dashboard");
+          navigate("/admin/dashboard");
         }
       })
       .catch((err) => {
@@ -56,7 +56,7 @@ const Signin = () => {
             SIGN IN
           </div>
           <div className="p-8 mt-[74px]">
-            <div className="flex gap-10 flex-wrap sm:flex-nowrap w-full">
+            <div className="flex gap-10 flex-wrap sm:flex-nowrap justify-center">
               <div className="flex flex-col gap-4 w-[50%]">
                 <InputField
                   required={true}
@@ -78,38 +78,9 @@ const Signin = () => {
                   placeholder="Enter password"
                   onChange={handleValueChange}
                 />
-                {error && (
-                  <div className="italic text-red-600 text-sm text-right">
-                    {error}
-                  </div>
-                )}
-                <div className="">
-                  <div>
-                  Don't have an account?&nbsp;
-                  <Link
-                    to="/signup/recruiters"
-                    className="text-blue-400 underline"
-                  >
-                    Sign up
-                  </Link>
-                  </div>
-                  <div>
-                  Sign in for&nbsp;
-                  <Link
-                    to="/signin/candidates"
-                    className="text-blue-400 underline"
-                  >
-                    candidates
-                  </Link>
-                  </div>
-                </div>
-              </div>
-              <div className="text-wrap w-[50%]">
-                <div className="font-bold text-2xl">WELCOME BACK!</div>
-                <div className="text-lg italic">
-                  Create advantages for your business by finding the best
-                  candidates
-                </div>
+                {error && <div className="italic text-red-600 text-sm text-right">
+                  {error}
+                </div>}
               </div>
             </div>
             <button className="mx-auto block bg-[#FF4545] text-white mt-[32px] rounded-lg px-6 py-3">

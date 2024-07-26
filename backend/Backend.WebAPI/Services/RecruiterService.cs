@@ -1,6 +1,7 @@
 using AutoMapper;
 using Backend.Infrastructure.Models;
 using Backend.Infrastructure.Repositories;
+using Backend.WebAPI.Common.CustomException;
 using Backend.WebAPI.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -60,13 +61,18 @@ public class RecruiterService : IRecruiterService
                         .Include(r => r.Company)
                         .Where(r => r.Id == id)
                         .FirstOrDefaultAsync();
+
         return _mapper.Map<RecruiterResponseModel>(recruiter);
     }
 
     public async Task<RecruiterResponseModel> InsertRecruiterAsync(RecruiterRequestModel recruiter)
     {
+        var existingRecruiter = await _recruiterRepository.GetRecruiterByEmail(recruiter.Email);
+        if (existingRecruiter != null) throw new UniquePropertyException("Account with this email already exists");
         var newRecruiter = _mapper.Map<Recruiter>(recruiter);
         newRecruiter.PasswordHash = _passwordHasher.HashPassword(newRecruiter, recruiter.Password);
+        newRecruiter.CreatedAt = DateTime.Now;
+        newRecruiter.ModifiedAt = DateTime.Now;
         await _recruiterRepository.InsertAsync(newRecruiter);
         await _recruiterRepository.SaveAsync();
         return _mapper.Map<RecruiterResponseModel>(newRecruiter);

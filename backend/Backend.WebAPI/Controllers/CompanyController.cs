@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Backend.Shared.Enum;
 using Backend.WebAPI.Models;
 using Backend.WebAPI.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -22,11 +23,17 @@ public class CompanyController : ControllerBase
 
 
     [HttpGet]
-    public async Task<IActionResult> GetAllCompanysAsync()
-    {
+    public async Task<IActionResult> GetAllCompanysAsync(
+        [FromQuery] int? pageIndex, 
+        [FromQuery] int? pageSize, 
+        [FromQuery] CompanyStatusType? status, 
+        [FromQuery] string? search,
+        [FromQuery] string? orderBy,
+        [FromQuery] bool? isDescending
+    ) {
         try
         {
-            var users = await _companyService.GetAllCompanysAsync();
+            var users = await _companyService.GetAllCompanysAsync(pageIndex, pageSize, status, search, orderBy, isDescending);
             return Ok(users);
         }
         catch (Exception e)
@@ -84,7 +91,20 @@ public class CompanyController : ControllerBase
         }
     }
 
-    
+    [HttpPatch]
+    [Route("reject/{id}")]
+    public async Task<IActionResult> RejectCompanyAsync(Guid id, Guid adminId)
+    {
+        try
+        {
+            await _companyService.RejectCompanyAsync(id, adminId);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, e.Message);
+        }
+    }
 
     [HttpPost]
     public async Task<IActionResult> CreateCompanyAsync(CompanyRequestModel model)

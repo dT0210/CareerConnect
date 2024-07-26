@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import background from "../../../assets/images/Group 13.png";
 import InputField from "../../../components/InputField";
-import { candidateRegister } from "../../../services/candidate";
-import { toast } from "react-toastify";
+import { recruiterRegister } from "../../../services/recruiter";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -27,10 +27,10 @@ const Signup = () => {
   const handleFormSubmit = (event) => {
     event.preventDefault();
 
-    candidateRegister(formData)
+    recruiterRegister(formData)
       .then((response) => {
         toast.success("Sign up successfully!");
-        navigate("/signin/candidates");
+        navigate("/signin/recruiters");
       })
       .catch((error) => {
         console.error(error);

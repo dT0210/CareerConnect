@@ -11,3 +11,11 @@ export const recruiterRegister = (body) => {
 export const createCompany = (body) => {
   return httpClient.post("/companies", body);
 }
+
+export const getRecruiter = (id) => {
+  return httpClient.get(`/recruiters/${id}`);
+}
+
+export const getCompanyProfileByRecruiterId = (id) => {
+  return httpClient.get(`/companies/recruiter/${id}`);
+}

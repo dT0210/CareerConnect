@@ -1,10 +1,14 @@
+
 using Backend.Infrastructure.Models;
+using Backend.Shared.Enum;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Infrastructure;
 
 public class CareerConnectContext : DbContext
 {
+    private readonly PasswordHasher<Admin> _passwordHasher = new PasswordHasher<Admin>();
     public DbSet<Candidate> Candidates { get; set; }
     public DbSet<Company> Companies { get; set; }
     public DbSet<Recruiter> Recruiters { get; set; }
@@ -74,5 +78,24 @@ public class CareerConnectContext : DbContext
 
         modelBuilder.Entity<JobSkill>()
             .HasKey(js => new { js.JobId, js.SkillId });
+
+        SeedData(modelBuilder);
+    }
+
+    private void SeedData(ModelBuilder modelBuilder) {
+        var admin = new Admin
+        {
+            Id = Guid.NewGuid(),
+            Name = "First admin",
+            Email = "admin@gmail.com",
+            Role = AdminRoleType.Super,
+        };
+        admin.PasswordHash = _passwordHasher.HashPassword(admin, "adminpassword");
+        admin.CreatedAt = DateTime.Now;
+        admin.ModifiedAt = DateTime.Now;
+        admin.CreatedBy = admin.Id;
+        admin.ModifiedBy = admin.Id;
+
+        modelBuilder.Entity<Admin>().HasData(admin);
     }
 }

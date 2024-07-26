@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import background from "../../../assets/images/Group 13.png";
 import InputField from "../../../components/InputField";
+import { useAuth } from "../../../hooks/useAuth";
 import { candidateLogin } from "../../../services/candidate";
-import { toast } from "react-toastify";
 
 const Signin = () => {
   const [formData, setFormData] = useState({
@@ -21,6 +22,7 @@ const Signin = () => {
   };
 
   const navigate = useNavigate();
+  const {setIsAuthenticated} = useAuth();
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -28,6 +30,8 @@ const Signin = () => {
       .then((response) => {
         console.log(response);
         if (response.success) {
+          localStorage.setItem("token", response.token);
+          setIsAuthenticated(true);
           toast.success("Signed in.");
           navigate("/dashboard");
         }
@@ -45,7 +49,7 @@ const Signin = () => {
       </div>
       <div className="w-full h-full z-10 flex justify-center items-center">
         <form
-          className="bg-white w-full sm:w-[50%] min-h-[60%] h-fit rounded-2xl relative"
+          className="bg-white w-full md:w-[50%] min-h-[60%] h-fit rounded-2xl relative"
           onSubmit={handleSubmit}
         >
           <div className="absolute rounded-t-2xl bg-[#FF4545] w-full h-[74px] flex justify-center items-center text-white font-extrabold text-3xl">

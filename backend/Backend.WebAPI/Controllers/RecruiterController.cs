@@ -1,3 +1,4 @@
+using Backend.WebAPI.Common.CustomException;
 using Backend.WebAPI.Models;
 using Backend.WebAPI.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -18,7 +19,7 @@ public class RecruiterController : ControllerBase
     }
 
     [HttpPost]
-    [Route("/register")]
+    [Route("register")]
     public async Task<IActionResult> RegisterAsync(RecruiterRequestModel model)
     {
         if (!ModelState.IsValid)
@@ -29,6 +30,9 @@ public class RecruiterController : ControllerBase
         {
             var newUser = await _recruiterService.InsertRecruiterAsync(model);
             return Ok(newUser);
+        }
+        catch (UniquePropertyException e) {
+            return Conflict(e.Message);
         }
         catch (Exception e)
         {

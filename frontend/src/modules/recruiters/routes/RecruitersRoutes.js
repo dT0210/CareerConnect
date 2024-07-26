@@ -2,6 +2,7 @@ import { Navigate } from "react-router-dom";
 import DashBoard from "../pages/DashBoard";
 import { CreateJob } from "../pages/Jobs/CreateJob";
 import Layout from "../pages/Layout";
+import { Profile } from "../pages/Profile";
 import { CreateCompanyProfile } from "../pages/Profile/CreateCompanyProfile";
 import Signin from "../pages/Signin";
 import Signup from "../pages/Signup";
@@ -36,6 +37,13 @@ export const RecruitersRoute = [
     element: 
       <Layout>
         <CreateCompanyProfile/>
+      </Layout>
+  },
+  {
+    path: "/recruiters/profile",
+    element:
+      <Layout>
+        <Profile/>
       </Layout>
   }
 ];

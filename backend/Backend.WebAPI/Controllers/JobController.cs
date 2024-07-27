@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Backend.Shared.Enum;
 using Backend.WebAPI.Models;
 using Backend.WebAPI.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -22,11 +23,11 @@ public class JobController : ControllerBase
 
 
     [HttpGet]
-    public async Task<IActionResult> GetAllJobsAsync()
+    public async Task<IActionResult> GetAllJobsAsync(int? pageIndex, int? pageSize, JobType? type, string? search, string? orderBy, bool? isDescending)
     {
         try
         {
-            var users = await _jobService.GetAllJobsAsync();
+            var users = await _jobService.GetAllJobsAsync(pageIndex, pageSize, type, search, orderBy, isDescending);
             return Ok(users);
         }
         catch (Exception e)

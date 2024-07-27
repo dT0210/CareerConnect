@@ -1,12 +1,13 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Button } from "../../../../components/Button";
 import InputField from "../../../../components/InputField";
 import { useAuth } from "../../../../hooks/useAuth";
-import { createCompany } from "../../../../services/recruiter";
+import { editCompany, getCompanyProfile } from "../../../../services/recruiter";
 
-export const CreateCompanyProfile = () => {
+export const EditCompanyProfile = () => {
+    const {companyId} = useParams();
   const { user } = useAuth();
   const [formData, setFormData] = useState({
     name: "",
@@ -20,9 +21,9 @@ export const CreateCompanyProfile = () => {
   const handleFormSubmit = (event) => {
     console.log(user);
     event.preventDefault();
-    createCompany({ ...formData, recruiterId: user.id })
+    editCompany(companyId, { ...formData, recruiterId: user.id })
       .then(() => {
-        toast.success("Company profile created.");
+        toast.success("Company profile updated.");
         navigate("/recruiters/profile");
       })
       .catch((error) => {
@@ -37,6 +38,20 @@ export const CreateCompanyProfile = () => {
       [name]: value,
     }));
   };
+
+  useEffect(()=>{
+    getCompanyProfile(companyId).then((response)=>{
+        setFormData({
+            name: response.name,
+            description: response.description,
+            size: response.size,
+            website: response.website
+        });
+    }).catch((error)=>{
+        console.log(error);
+        toast.error("Error fetching company. Check the console for details.");
+    })
+  }, [companyId])
 
   return (
     <div className="flex items-center justify-center">
@@ -53,6 +68,7 @@ export const CreateCompanyProfile = () => {
           id="company-name"
           name="name"
           onChange={handleValueChange}
+          value={formData.name}
         />
         <InputField
           label="Size"
@@ -60,6 +76,7 @@ export const CreateCompanyProfile = () => {
           id="company-size"
           name="size"
           onChange={handleValueChange}
+          value={formData.size}
         />
         <InputField
           label="Website"
@@ -67,6 +84,7 @@ export const CreateCompanyProfile = () => {
           id="company-website"
           name="website"
           onChange={handleValueChange}
+          value={formData.website}
         />
         <InputField
           label="Description"
@@ -74,8 +92,9 @@ export const CreateCompanyProfile = () => {
           id="company-description"
           name="description"
           onChange={handleValueChange}
+          value={formData.description}
         />
-        <Button>Create</Button>
+        <Button>Update</Button>
       </form>
     </div>
   );

@@ -1,19 +1,22 @@
-const InputField = (props) => {
+const InputField = ({value, label, className, placeholder, onChange, required, type, name, id}) => {
+  const props = {value, placeholder, onChange, required, type, name, id}
+  let inputFieldStyle = `focus:outline-none bg-transparent w-full focus:bg-black focus:bg-opacity-10 focus:p-2 transition-all `;
+  let inputWrapperStyle = `${className} bg-slate-200 p-2 ${className?.includes('w-[') ? '' : 'w-full'}`;
   return (
-    <div className="bg-slate-200 p-2 w-full">
-      {props.label && (
-        <label htmlFor={props.id || ""} className="block text-sm">
-          {props.label}
+    <div className={inputWrapperStyle}>
+      {label && (
+        <label htmlFor={id || ""} className="block text-sm">
+          {label}
         </label>
       )}
-      {props.type === "textarea" ? (
+      {type === "textarea" ? (
         <textarea
-          className="focus:outline-none bg-transparent w-full focus:bg-black focus:bg-opacity-10 focus:p-2 transition-all"
+          className={inputFieldStyle}
           {...props}
         ></textarea>
       ) : (
         <input
-          className="focus:outline-none bg-transparent w-full focus:bg-black focus:bg-opacity-10 focus:p-2 transition-all"
+          className={inputFieldStyle}
           {...props}
         />
       )}

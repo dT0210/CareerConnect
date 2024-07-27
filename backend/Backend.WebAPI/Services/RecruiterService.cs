@@ -61,6 +61,7 @@ public class RecruiterService : IRecruiterService
                         .Include(r => r.Company)
                         .Where(r => r.Id == id)
                         .FirstOrDefaultAsync();
+        if (recruiter == null) throw new KeyNotFoundException("Recruiter not found");
 
         return _mapper.Map<RecruiterResponseModel>(recruiter);
     }

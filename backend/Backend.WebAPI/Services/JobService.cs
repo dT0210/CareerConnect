@@ -1,7 +1,10 @@
+using System.Linq.Expressions;
 using AutoMapper;
 using Backend.Infrastructure.Models;
 using Backend.Infrastructure.Repositories;
+using Backend.Shared.Enum;
 using Backend.WebAPI.Models;
+using Backend.WebAPI.Models.Responses;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -27,15 +30,59 @@ public class JobService : IJobService
     }
 
 
-    public async Task<IEnumerable<JobResponseModel>> GetAllJobsAsync()
+    public async Task<PagedResponse<JobResponseModel>> GetAllJobsAsync(
+        int? pageIndex, int? pageSize, JobType? type, 
+        string? search, string? orderBy, bool? isDescending)
     {
-        var jobs = await _jobRepository.GetAllQueryable()
+        string searchPhraseLower = search?.ToLower() ?? string.Empty;
+        var query = _jobRepository.GetAllQueryable()
                     .Include(j => j.JobSkills)
                     .ThenInclude(js => js.Skill)
                     .Include(j => j.Recruiter)
-                    .ThenInclude(r => r.Company)
-                    .ToListAsync();
-        return jobs.Select(_mapper.Map<JobResponseModel>);
+                    .ThenInclude(r => r.Company).AsNoTracking();
+
+        query = query.Where(x => (type == null || x.Type == type)
+                                    && (string.IsNullOrWhiteSpace(searchPhraseLower) 
+                                        || x.Title.Contains(searchPhraseLower) 
+                                        || x.Description.Contains(searchPhraseLower)));
+
+        var totalRecords = query.Count();
+        if (!string.IsNullOrEmpty(orderBy))
+        {
+            var columnsSelector = new Dictionary<string, Expression<Func<Job, object>>>
+                {
+                    { "title", x => x.Title},
+                    { "type",  x => x.Type },
+                    { "deadline", x => x.Deadline},
+                    { "field", x => x.Field },
+                    { "createdAt", x => x.CreatedAt},
+                    { "modifiedAt", x => x.ModifiedAt}
+                };
+            var selectedColumn = columnsSelector[orderBy];
+            query = isDescending.HasValue && isDescending.Value
+                ? query.OrderByDescending(selectedColumn)
+                : query.OrderBy(selectedColumn);
+        }
+        //else default sort by the created date
+        else
+        {
+            query = query.OrderBy(x => x.CreatedAt);
+        }
+        pageIndex ??= 1;
+        pageSize ??= 10;
+        var jobs = await query
+                .Skip((int)((pageIndex - 1) * pageSize))
+                .Take((int)pageSize)
+                .ToListAsync();
+
+        var response = new PagedResponse<JobResponseModel> {
+            PageIndex = (int)pageIndex,
+            PageSize = (int)pageSize,
+            TotalPages = (int)(totalRecords / (double)pageSize),
+            TotalRecords = totalRecords,
+            Data = jobs.Select(_mapper.Map<JobResponseModel>).ToList()
+        };
+        return response;
     }
 
     public async Task<JobResponseModel?> GetJobByIdAsync(Guid id)

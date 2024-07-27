@@ -22,8 +22,10 @@ public class CompanyService : ICompanyService
     }
 
 
-    public async Task<PagedResponse<CompanyResponseModel>> GetAllCompanysAsync(int? pageIndex, int? pageSize, CompanyStatusType? status, string? search, string? orderBy, bool? isDescending)
-    {
+    public async Task<PagedResponse<CompanyResponseModel>> GetAllCompanysAsync(
+        int? pageIndex, int? pageSize, CompanyStatusType? status, 
+        string? search, string? orderBy, bool? isDescending
+    ) {
         var query = _companyRepository.GetAllQueryable().Include(c => c.Recruiter).AsNoTracking();
         string searchPhraseLower = search?.ToLower() ?? string.Empty;
 

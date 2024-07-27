@@ -53,7 +53,10 @@ export const Profile = () => {
           <div className="text-2xl font-bold">Company Profile</div>
           {recruiter?.company && (
             <div className="ml-2">
-              <a href="profile/company/edit" className="text-blue-600 underline">
+              <a
+                href={`profile/company/edit/${recruiter.company.id}`}
+                className="text-blue-600 underline"
+              >
                 Edit
               </a>
             </div>
@@ -77,7 +80,12 @@ export const Profile = () => {
                     <td>Website</td>
                     <td>
                       <a
-                        href={recruiter?.company.website}
+                        href={
+                          recruiter?.company.website.startsWith("http://") ||
+                          recruiter?.company.website.startsWith("https://")
+                            ? recruiter?.company.website
+                            : `https://${recruiter?.company.website}`
+                        }
                         className="text-blue-600 underline"
                       >
                         {recruiter?.company.website}

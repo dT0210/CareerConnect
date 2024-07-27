@@ -4,6 +4,7 @@ export const Button = ({
   onClick,
   className,
   children,
+  type
 }) => {
   let btnStyle = "font-bold py-2 px-4 rounded transition-all ";
   if (disabled) {
@@ -20,12 +21,12 @@ export const Button = ({
         btnStyle = btnStyle.concat("bg-black hover:opacity-70 text-white ");
         break;
       default:
-        btnStyle = btnStyle.concat("text-black bg-white hover:text-white hover:bg-black");
+        btnStyle = btnStyle.concat("text-black bg-white hover:text-white hover:bg-black ");
         break;
     }
   }
   btnStyle = btnStyle.concat(className || "");
-  const props = { disabled, onClick, children };
+  const props = { disabled, onClick, children, type };
 
   return <button className={btnStyle} {...props}></button>;
 };

@@ -19,14 +19,14 @@ export const CreateJob = () => {
     experience: "",
     deadline: "",
     type: 5,
-    skills: []
+    skills: [],
   });
   const [skills, setSkills] = useState([]);
   const navigate = useNavigate();
 
   const inputFields = [
     { label: "Job Title", placeholder: "Enter job title", name: "title" },
-    
+
     { label: "Location", placeholder: "Enter location", name: "location" },
     { label: "Field", placeholder: "Enter field", name: "field" },
     { label: "Salary", placeholder: "Enter salary", name: "salary" },
@@ -42,28 +42,35 @@ export const CreateJob = () => {
       type: "date",
     },
     {
-        label: "Description",
-        placeholder: "Enter job description",
-        name: "description",
-        type: "textarea"
-      },
+      label: "Description",
+      placeholder: "Enter job description",
+      name: "description",
+      type: "textarea",
+    },
   ];
 
-  useEffect(()=>{
-    getSkills().then((response)=>{
-        setSkills(response);
-    }).catch((err)=>{
+  useEffect(() => {
+    getSkills()
+      .then((response) => {
+        setSkills(
+          response.map((skill) => ({
+            value: skill.id,
+            label: skill.name,
+          }))
+        );
+      })
+      .catch((err) => {
         toast.error("Error fetching skills. Check console for more details");
-        console.log(err)
-    })
-  }, [])
+        console.log(err);
+      });
+  }, []);
 
   const handleFormSubmit = (event) => {
     event.preventDefault();
     createJob({ ...formData, recruiterId: user.id })
       .then(() => {
         toast.success("Company profile created.");
-        navigate("/recruiters/profile");
+        navigate("/recruiters/jobs");
       })
       .catch((error) => {
         console.log(error);
@@ -74,10 +81,9 @@ export const CreateJob = () => {
     const { name, value, localName } = e.target;
     setFormData((prevState) => ({
       ...prevState,
-      [name]: localName === "select" ? parseInt(value): value,
+      [name]: localName === "select" ? parseInt(value) : value,
     }));
   };
-
 
   return (
     <div className="flex items-center justify-center">
@@ -89,10 +95,10 @@ export const CreateJob = () => {
           Create new job
         </div>
         <div className="flex w-full flex-wrap gap-2">
-          {inputFields.map((field) => (
+          {inputFields.map((field, index) => (
             <InputField
-                required={true}
-              key={field.name}
+              required={true}
+              key={index}
               label={field.label}
               placeholder={field.placeholder}
               id={field.name}
@@ -119,10 +125,18 @@ export const CreateJob = () => {
           <MultipleChoiceInputField
             label="Skills"
             options={skills}
+            onChange={(selectedSkills) => {
+              setFormData((prev) => ({
+                ...prev,
+                skills: selectedSkills.map((skill) => skill.value),
+              }));
+            }}
           />
         </div>
         <div className="flex justify-center">
-          <Button onClick={handleFormSubmit}>Create</Button>
+          <Button onClick={handleFormSubmit} variant={"red"}>
+            Create
+          </Button>
         </div>
       </form>
     </div>

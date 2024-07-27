@@ -218,7 +218,8 @@ export const CompanyProfiles = () => {
                     <Button
                       variant={"green"}
                       className="mr-2"
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.stopPropagation();
                         setOpenApprove(true);
                         setCompanyId(profile.id);
                       }}
@@ -228,7 +229,8 @@ export const CompanyProfiles = () => {
                     </Button>
                     <Button
                       variant={"red"}
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.stopPropagation();
                         setOpenReject(true);
                         setCompanyId(profile.id);
                       }}

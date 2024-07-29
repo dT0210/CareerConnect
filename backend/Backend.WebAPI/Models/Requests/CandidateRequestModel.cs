@@ -1,4 +1,4 @@
-namespace Backend.WebAPI.Models;
+namespace Backend.WebAPI.Models.Requests;
 using System.ComponentModel.DataAnnotations;
 
 public class CandidateRequestModel

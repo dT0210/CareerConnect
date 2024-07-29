@@ -1,6 +1,4 @@
-using Backend.Infrastructure.Models;
-
-namespace Backend.Infrastructure.Repositories;
+namespace Backend.Infrastructure.Repositories.Interfaces;
 
 public interface IGenericRepository<T> where T : class {
     IQueryable<T> GetAllQueryable();

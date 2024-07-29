@@ -1,5 +1,6 @@
-namespace Backend.WebAPI.Models;
 using System.ComponentModel.DataAnnotations;
+
+namespace Backend.WebAPI.Models.Requests;
 
 public class RecruiterRequestModel
 {

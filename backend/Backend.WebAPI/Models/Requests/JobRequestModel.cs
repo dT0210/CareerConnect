@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Backend.Shared.Enum;
 
-namespace Backend.WebAPI.Models;
+namespace Backend.WebAPI.Models.Requests;
 
 
 public class JobRequestModel

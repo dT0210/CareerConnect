@@ -1,7 +1,7 @@
 using System.Text;
 using Backend.Infrastructure;
-using Backend.Infrastructure.Models;
 using Backend.Infrastructure.Repositories;
+using Backend.Infrastructure.Repositories.Interfaces;
 using Backend.WebAPI.Common.AutoMapper;
 using Backend.WebAPI.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

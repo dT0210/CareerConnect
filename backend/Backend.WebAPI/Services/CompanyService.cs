@@ -1,9 +1,9 @@
 using System.Linq.Expressions;
 using AutoMapper;
 using Backend.Infrastructure.Models;
-using Backend.Infrastructure.Repositories;
+using Backend.Infrastructure.Repositories.Interfaces;
 using Backend.Shared.Enum;
-using Backend.WebAPI.Models;
+using Backend.WebAPI.Models.Requests;
 using Backend.WebAPI.Models.Responses;
 using Microsoft.EntityFrameworkCore;
 

@@ -1,5 +1,5 @@
 using Backend.Shared.Enum;
-using Backend.WebAPI.Models;
+using Backend.WebAPI.Models.Requests;
 using Backend.WebAPI.Models.Responses;
 
 namespace Backend.WebAPI.Services;

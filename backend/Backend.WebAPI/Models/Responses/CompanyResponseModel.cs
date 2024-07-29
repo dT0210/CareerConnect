@@ -1,6 +1,6 @@
 using Backend.Shared.Enum;
 
-namespace Backend.WebAPI.Models;
+namespace Backend.WebAPI.Models.Responses;
 
 public class CompanyResponseModel
 {

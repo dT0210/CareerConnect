@@ -1,4 +1,5 @@
 using Backend.Infrastructure.Models;
+using Backend.Infrastructure.Repositories.Interfaces;
 
 namespace Backend.Infrastructure.Repositories;
 

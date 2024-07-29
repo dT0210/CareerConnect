@@ -1,8 +1,8 @@
 using AutoMapper;
 using Backend.Infrastructure.Models;
-using Backend.Infrastructure.Repositories;
-using Backend.WebAPI.Models;
-using Microsoft.AspNetCore.Identity;
+using Backend.Infrastructure.Repositories.Interfaces;
+using Backend.WebAPI.Models.Requests;
+using Backend.WebAPI.Models.Responses;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.WebAPI.Services;

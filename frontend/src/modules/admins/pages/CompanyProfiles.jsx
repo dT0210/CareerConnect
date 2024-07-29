@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { FaSearch } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { COMPANY_STATUS } from "../../../common/constant";
 import { Button } from "../../../components/Button";
@@ -25,7 +24,7 @@ export const CompanyProfiles = () => {
   });
   const [searchQuery, setSearchQuery] = useState("");
   const [sortConfig, setSortConfig] = useState({ key: "", direction: "" });
-  const navigate = useNavigate();
+  
   const { user } = useAuth();
   const [openApprove, setOpenApprove] = useState(false);
   const [openReject, setOpenReject] = useState(false);
@@ -65,7 +64,6 @@ export const CompanyProfiles = () => {
       });
     }
   };
-  console.log(profileDetails);
 
   useEffect(() => {
     fetchCompanyProfiles();

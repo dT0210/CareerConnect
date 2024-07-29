@@ -1,4 +1,4 @@
-namespace Backend.WebAPI.Models;
+namespace Backend.WebAPI.Models.Responses;
 
 public class RecruiterResponseModel
 {

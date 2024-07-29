@@ -1,8 +1,9 @@
 using AutoMapper;
 using Backend.Infrastructure.Models;
-using Backend.Infrastructure.Repositories;
+using Backend.Infrastructure.Repositories.Interfaces;
 using Backend.WebAPI.Common.CustomException;
-using Backend.WebAPI.Models;
+using Backend.WebAPI.Models.Requests;
+using Backend.WebAPI.Models.Responses;
 using Microsoft.AspNetCore.Identity;
 
 namespace Backend.WebAPI.Services;

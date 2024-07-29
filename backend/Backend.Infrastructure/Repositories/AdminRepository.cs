@@ -1,4 +1,5 @@
 using Backend.Infrastructure.Models;
+using Backend.Infrastructure.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Infrastructure.Repositories;

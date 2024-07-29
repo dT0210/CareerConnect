@@ -1,4 +1,4 @@
-namespace Backend.WebAPI.Models;
+namespace Backend.WebAPI.Models.Requests;
 
 public class SkillRequestModel
 {

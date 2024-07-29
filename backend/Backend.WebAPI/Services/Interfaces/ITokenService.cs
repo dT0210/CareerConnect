@@ -1,4 +1,3 @@
-using System.IdentityModel.Tokens.Jwt;
 using Backend.Infrastructure.Models;
 
 namespace Backend.WebAPI.Services;

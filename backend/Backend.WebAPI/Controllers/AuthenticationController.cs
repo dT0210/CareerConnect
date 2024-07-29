@@ -2,6 +2,8 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Backend.WebAPI.Models;
+using Backend.WebAPI.Models.Requests;
+using Backend.WebAPI.Models.Responses;
 using Backend.WebAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;

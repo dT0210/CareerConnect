@@ -75,6 +75,13 @@ export const CreateCompanyProfile = () => {
           name="description"
           onChange={handleValueChange}
         />
+        <InputField
+          label="Image"
+          id="company-image"
+          name="image"
+          type="file"
+          onChange={handleValueChange}
+        />
         <Button>Create</Button>
       </form>
     </div>

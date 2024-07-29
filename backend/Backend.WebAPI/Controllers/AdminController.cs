@@ -1,4 +1,4 @@
-using Backend.WebAPI.Models;
+using Backend.WebAPI.Models.Requests;
 using Backend.WebAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

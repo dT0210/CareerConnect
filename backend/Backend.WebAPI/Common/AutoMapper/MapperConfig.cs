@@ -1,6 +1,7 @@
 using AutoMapper;
 using Backend.Infrastructure.Models;
-using Backend.WebAPI.Models;
+using Backend.WebAPI.Models.Requests;
+using Backend.WebAPI.Models.Responses;
 
 namespace Backend.WebAPI.Common.AutoMapper;
 

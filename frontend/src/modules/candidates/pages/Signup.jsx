@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import background from "../../../assets/images/Group 13.png";
 import InputField from "../../../components/InputField";
+import { useLoading } from "../../../hooks/useLoading";
 import { candidateRegister } from "../../../services/candidate";
-import { toast } from "react-toastify";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -14,6 +15,7 @@ const Signup = () => {
     password: "",
     confirmPassword: "",
   });
+  const {isLoading, setIsLoading} = useLoading();
 
   const handleValueChange = (event) => {
     const { name, value } = event.target;
@@ -27,7 +29,7 @@ const Signup = () => {
 
   const handleFormSubmit = (event) => {
     event.preventDefault();
-
+    setIsLoading(true);
     candidateRegister(formData)
       .then((response) => {
         toast.success("Sign up successfully!");
@@ -35,8 +37,12 @@ const Signup = () => {
       })
       .catch((error) => {
         console.error(error);
+      }).finally(() => {
+        setIsLoading(false);
       });
   };
+
+  if (isLoading) return (<LoadingSpinner/>);
 
   return (
     <div className="bg-gradient-to-b from-[#DBE2DA] to-[#E4EBE3] relative w-[100vw] h-[100vh] -z-0">
@@ -52,8 +58,8 @@ const Signup = () => {
             SIGN UP
           </div>
           <div className="p-8 mt-[74px]">
-            <div className="flex gap-10 flex-wrap">
-              <div className="flex flex-col gap-4 w-[45%]">
+            <div className="flex gap-4 flex-wrap justify-between">
+              <div className="flex flex-col gap-4 w-full lg:w-[45%]">
                 <InputField
                   required={true}
                   type="name"
@@ -93,7 +99,7 @@ const Signup = () => {
                   onChange={handleValueChange}
                 />
               </div>
-              <div className="flex flex-col gap-4 w-[45%]">
+              <div className="flex flex-col gap-4 w-full lg:w-[45%]">
                 <InputField
                   required={true}
                   type="password"

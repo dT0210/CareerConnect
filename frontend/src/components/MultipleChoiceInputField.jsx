@@ -16,18 +16,20 @@ export const MultipleChoiceInputField = ({
     setShowOptions(false);
   });
 
-  useEffect(()=>{
+  useEffect(() => {
     setFilteredOptions(options);
   }, [options]);
 
-  useEffect(()=>{
+  useEffect(() => {
     onChange(selectedOptions);
-  }, [selectedOptions])
+  }, [selectedOptions]);
 
   const handleOptionClick = (option) => {
     setSelectedOptions((prevSelected) => {
       if (prevSelected.includes(option)) {
-        return prevSelected.filter((selectedOption) => selectedOption.value !== option.value);
+        return prevSelected.filter(
+          (selectedOption) => selectedOption.value !== option.value
+        );
       } else {
         return [...prevSelected, option];
       }
@@ -41,15 +43,41 @@ export const MultipleChoiceInputField = ({
         <input
           type="text"
           onChange={(e) => {
-            setFilteredOptions(options.filter(option=>option.label.toLowerCase().includes(e.target.value)))
+            setFilteredOptions(
+              options.filter((option) =>
+                option.label.toLowerCase().includes(e.target.value)
+              )
+            );
             if (e.target.value !== "") setShowOptions(true);
           }}
           onClick={() => setShowOptions(true)}
           className="focus:outline-none px-2 py-1 w-full"
           placeholder="Search"
         />
+        <div className="flex mt-2 gap-2 flex-wrap">
+          {selectedOptions.map((option) => (
+            <div className="px-2 py-1 bg-white">
+              {option.label}{" "}
+              <span
+                className="hover:cursor-pointer text-sm"
+                onClick={() => {
+                  setSelectedOptions(
+                    selectedOptions.filter(
+                      (selectedOptions) =>
+                        selectedOptions.value !== option.value
+                    )
+                  );
+                }}
+              >
+                &#10005;
+              </span>
+            </div>
+          ))}
+        </div>
         <div
-          className={`absolute ${!showOptions && "hidden"} bg-slate-200 w-full max-h-[200p] bottom-full left-0`}
+          className={`absolute ${
+            !showOptions && "hidden"
+          } bg-slate-200 w-full max-h-[200p] bottom-full left-0`}
         >
           {filteredOptions.map((option, index) => (
             <div

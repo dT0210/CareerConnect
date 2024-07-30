@@ -3,31 +3,54 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Button } from "../../../../components/Button";
 import InputField from "../../../../components/InputField";
+import { LoadingSpinner } from "../../../../components/LoadingSpinner";
 import { useAuth } from "../../../../hooks/useAuth";
+import { useLoading } from "../../../../hooks/useLoading";
+import { uploadImage } from "../../../../services/image";
 import { editCompany, getCompanyProfile } from "../../../../services/recruiter";
 
 export const EditCompanyProfile = () => {
-    const {companyId} = useParams();
+  const { companyId } = useParams();
   const { user } = useAuth();
   const [formData, setFormData] = useState({
     name: "",
     description: "",
     size: "",
     website: "",
+    imageUrl: ""
   });
-
+  const { isLoading, setIsLoading } = useLoading();
   const navigate = useNavigate();
+  const [file, setFile] = useState();
 
-  const handleFormSubmit = (event) => {
-    console.log(user);
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+  };
+
+  const handleFormSubmit = async (event) => {
     event.preventDefault();
-    editCompany(companyId, { ...formData, recruiterId: user.id })
+    setIsLoading(true);
+    let imageUrl = formData.imageUrl;
+    if (file) {
+      await uploadImage(file).then((response)=>{
+        console.log(response);
+        imageUrl = response.filePath;
+      }).catch((err)=>{
+        console.log(err);
+        toast.error("Error uploading image file.")
+      });
+    }
+    console.log(imageUrl);
+    editCompany(companyId, { ...formData, recruiterId: user.id, imageUrl })
       .then(() => {
         toast.success("Company profile updated.");
         navigate("/recruiters/profile");
       })
       .catch((error) => {
         console.log(error);
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   };
 
@@ -39,19 +62,28 @@ export const EditCompanyProfile = () => {
     }));
   };
 
-  useEffect(()=>{
-    getCompanyProfile(companyId).then((response)=>{
+  useEffect(() => {
+    setIsLoading(true);
+    getCompanyProfile(companyId)
+      .then((response) => {
         setFormData({
-            name: response.name,
-            description: response.description,
-            size: response.size,
-            website: response.website
+          name: response.name,
+          description: response.description,
+          size: response.size,
+          website: response.website,
+          imageUrl: response.imageUrl
         });
-    }).catch((error)=>{
+      })
+      .catch((error) => {
         console.log(error);
         toast.error("Error fetching company. Check the console for details.");
-    })
-  }, [companyId])
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }, [companyId]);
+
+  if (isLoading) return <LoadingSpinner />;
 
   return (
     <div className="flex items-center justify-center">
@@ -93,6 +125,13 @@ export const EditCompanyProfile = () => {
           name="description"
           onChange={handleValueChange}
           value={formData.description}
+        />
+        <InputField
+          label="Image"
+          id="company-image"
+          name="image"
+          type="file"
+          onChange={handleFileChange}
         />
         <Button>Update</Button>
       </form>

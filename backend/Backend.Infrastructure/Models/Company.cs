@@ -11,6 +11,7 @@ public class Company : BaseModel
     public string Description { get; set; }
     public int Size { get; set; }
     public string Website { get; set; }
+    public string? ImageUrl {get; set;}
     public CompanyStatusType Status {get; set;} = CompanyStatusType.Waiting;
     public DateTime RequestedAt {get; set;} = DateTime.Now;
     public Guid RecruiterId {get; set;}

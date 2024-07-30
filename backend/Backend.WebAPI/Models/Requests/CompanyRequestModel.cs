@@ -7,4 +7,5 @@ public class CompanyRequestModel
     public string Description { get; set; }
     public int Size { get; set; }
     public string Website { get; set; }
+    public string? ImageUrl {get; set;}
 }

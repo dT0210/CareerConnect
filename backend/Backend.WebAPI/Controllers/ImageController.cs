@@ -18,7 +18,7 @@ public class ImagesController : ControllerBase
 
     [HttpPost]
     [Route("upload")]
-    public async Task<IActionResult> UploadImageAsync([FromForm] ImageUploadRequestModel request)
+    public async Task<IActionResult> UploadImageAsync(ImageUploadRequestModel request)
     {
         ValidateFileUpload(request);
 

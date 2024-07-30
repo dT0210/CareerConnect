@@ -24,4 +24,8 @@
     <ProjectReference Include="..\Backend.Infrastructure\Backend.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Images\" />
+  </ItemGroup>
+
 </Project>

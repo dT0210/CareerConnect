@@ -18,6 +18,7 @@ public static class ServiceCollectionExtension
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
         services.AddControllers();
+        services.AddHttpContextAccessor();
 
         services.AddScoped<ICandidateRepository, CandidateRepository>();
         services.AddScoped<IRecruiterRepository, RecruiterRepository>();
@@ -26,6 +27,7 @@ public static class ServiceCollectionExtension
         services.AddScoped<ICompanyRepository, CompanyRepository>();
         services.AddScoped<ISkillRepository, SkillRepository>();
         services.AddScoped<IApplicationRepository, ApplicationRepository>();
+        services.AddScoped<ILocalImageRepository, LocalImageRepository>();
 
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<ICandidateService, CandidateService>();

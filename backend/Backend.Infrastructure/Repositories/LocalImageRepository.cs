@@ -23,7 +23,7 @@ public class LocalImageRepository : ILocalImageRepository
         public async Task<Image> Upload(Image image)
         {
             var localFilePath = Path.Combine(webHostEnvironment.ContentRootPath, "Images",
-                $"{image.FileName}{image.FileExtension}");
+                $"{image.FileName}");
             //string otherPath = "D:\\DEV\\Udemy\\Project\\NZWalks\\WebApplication1\\";
             //var localFilePath = Path.Combine(otherPath, "Images",
             //    $"{image.FileName}{image.FileExtension}");
@@ -33,7 +33,7 @@ public class LocalImageRepository : ILocalImageRepository
             await image.File.CopyToAsync(stream);
 
             // https://localhost:1234/images/image.jpg
-            var urlFilePath = $"{httpContextAccessor.HttpContext.Request.Scheme}://{httpContextAccessor.HttpContext.Request.Host}{httpContextAccessor.HttpContext.Request.PathBase}/Images/{image.FileName}{image.FileExtension}";
+            var urlFilePath = $"{httpContextAccessor.HttpContext.Request.Scheme}://{httpContextAccessor.HttpContext.Request.Host}{httpContextAccessor.HttpContext.Request.PathBase}/Images/{image.FileName}";
             //var urlFilePath = $"http://localhost:5000/Images/{image.FileName}{image.FileExtension}";
 
             image.FilePath = urlFilePath;

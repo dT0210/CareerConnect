@@ -23,11 +23,11 @@ public class JobController : ControllerBase
 
 
     [HttpGet]
-    public async Task<IActionResult> GetAllJobsAsync(int? pageIndex, int? pageSize, JobType? type, string? search, string? orderBy, bool? isDescending)
+    public async Task<IActionResult> GetAllJobsAsync(int? pageIndex, int? pageSize, Guid recruiterId, JobType? type, string? search, string? orderBy, bool? isDescending)
     {
         try
         {
-            var users = await _jobService.GetAllJobsAsync(pageIndex, pageSize, type, search, orderBy, isDescending);
+            var users = await _jobService.GetAllJobsAsync(pageIndex, pageSize, recruiterId, type, search, orderBy, isDescending);
             return Ok(users);
         }
         catch (Exception e)

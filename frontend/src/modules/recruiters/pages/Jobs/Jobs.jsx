@@ -3,7 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { JOB_TYPE } from "../../../../common/constant";
 import { Button } from "../../../../components/Button";
+import { LoadingSpinner } from "../../../../components/LoadingSpinner";
 import { Pagination } from "../../../../components/Pagination";
+import { useAuth } from "../../../../hooks";
+import { useLoading } from "../../../../hooks/useLoading";
 import { FormatDateTime } from "../../../../lib";
 import { getPagedJobs } from "../../../../services/job";
 
@@ -20,11 +23,17 @@ export const Jobs = () => {
   const [jobDetails, setJobDetails] = useState();
   const [openDetails, setOpenDetails] = useState(false);
   const navigate = useNavigate();
+  const {isLoading, setIsLoading} = useLoading();
+  const {user} = useAuth();
+  console.log(user);
 
   const fetchJobs = () => {
+    setIsLoading(true);
+    // if (user.id === "") return;
     getPagedJobs({
       PageIndex: pagination.pageIndex,
       PageSize: pagination.pageSize,
+      recruiterId: user.id,
       search: searchQuery,
       orderBy: sortConfig.key,
       isDescending: sortConfig.direction === "descending",
@@ -40,12 +49,14 @@ export const Jobs = () => {
       .catch((err) => {
         toast.error("Error fetching jobs. Check console for details.");
         console.log(err);
+      }).finally(() => {
+        setIsLoading(false);
       });
   };
 
   useEffect(() => {
     fetchJobs();
-  }, [pagination.pageIndex, pagination.pageSize, searchQuery, sortConfig]);
+  }, [pagination.pageIndex, pagination.pageSize, searchQuery, sortConfig, user]);
 
   const handleSort = (key) => {
     let direction = "ascending";
@@ -59,6 +70,8 @@ export const Jobs = () => {
     setSearchQuery(e.target.value);
     setPagination({ ...pagination, pageIndex: 1 });
   };
+  
+  if (isLoading) return (<LoadingSpinner/>)
 
   return (
     <div className="p-8">

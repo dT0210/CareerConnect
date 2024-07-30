@@ -3,6 +3,7 @@ using AutoMapper;
 using Backend.Infrastructure.Models;
 using Backend.Infrastructure.Repositories.Interfaces;
 using Backend.Shared.Enum;
+using Backend.WebAPI.Common.CustomException;
 using Backend.WebAPI.Models.Requests;
 using Backend.WebAPI.Models.Responses;
 using Microsoft.EntityFrameworkCore;
@@ -30,7 +31,7 @@ public class JobService : IJobService
 
 
     public async Task<PagedResponse<JobResponseModel>> GetAllJobsAsync(
-        int? pageIndex, int? pageSize, JobType? type, 
+        int? pageIndex, int? pageSize, Guid? recruiterId, JobType? type,
         string? search, string? orderBy, bool? isDescending)
     {
         string searchPhraseLower = search?.ToLower() ?? string.Empty;
@@ -40,10 +41,11 @@ public class JobService : IJobService
                     .Include(j => j.Recruiter)
                     .ThenInclude(r => r.Company).AsNoTracking();
 
-        query = query.Where(x => (type == null || x.Type == type)
-                                    && (string.IsNullOrWhiteSpace(searchPhraseLower) 
-                                        || x.Title.Contains(searchPhraseLower) 
-                                        || x.Description.Contains(searchPhraseLower)));
+        query = query.Where(x => (recruiterId == null || x.RecruiterId == recruiterId)
+                                && (type == null || x.Type == type)
+                                && (string.IsNullOrWhiteSpace(searchPhraseLower)
+                                    || x.Title.Contains(searchPhraseLower)
+                                    || x.Description.Contains(searchPhraseLower)));
 
         var totalRecords = query.Count();
         if (!string.IsNullOrEmpty(orderBy))
@@ -74,7 +76,8 @@ public class JobService : IJobService
                 .Take((int)pageSize)
                 .ToListAsync();
 
-        var response = new PagedResponse<JobResponseModel> {
+        var response = new PagedResponse<JobResponseModel>
+        {
             PageIndex = (int)pageIndex,
             PageSize = (int)pageSize,
             TotalPages = (int)(totalRecords / (double)pageSize),
@@ -98,7 +101,13 @@ public class JobService : IJobService
 
     public async Task<JobResponseModel> InsertJobAsync(JobRequestModel job)
     {
-        var recruiter = await _recruiterRepository.GetByIdAsync(job.RecruiterId) ?? throw new KeyNotFoundException("Recruiter not found");
+        var recruiter = await _recruiterRepository.GetAllQueryable()
+                        .Include(r => r.Company)
+                        .Where(r => r.Id == job.RecruiterId)
+                        .FirstOrDefaultAsync() 
+                        ?? throw new KeyNotFoundException("Recruiter not found");
+        if (recruiter.Company.Status != CompanyStatusType.Approved) throw new ActionNotAllowedException("Company profile has to be approved to post job.");
+
         var newJob = _mapper.Map<Job>(job);
         newJob.JobSkills = new List<JobSkill>();
 

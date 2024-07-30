@@ -4,6 +4,7 @@ using Backend.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.Infrastructure.Migrations
 {
     [DbContext(typeof(CareerConnectContext))]
-    partial class CareerConnectContextModelSnapshot : ModelSnapshot
+    [Migration("20240730070650_AddImageTable")]
+    partial class AddImageTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -64,6 +67,20 @@ namespace Backend.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Admins");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("341a96f6-9024-4cf9-810c-bf403cbfeed6"),
+                            CreatedAt = new DateTime(2024, 7, 30, 14, 6, 48, 418, DateTimeKind.Local).AddTicks(5485),
+                            CreatedBy = new Guid("341a96f6-9024-4cf9-810c-bf403cbfeed6"),
+                            Email = "admin@gmail.com",
+                            ModifiedAt = new DateTime(2024, 7, 30, 14, 6, 48, 418, DateTimeKind.Local).AddTicks(5509),
+                            ModifiedBy = new Guid("341a96f6-9024-4cf9-810c-bf403cbfeed6"),
+                            Name = "First admin",
+                            PasswordHash = "AQAAAAIAAYagAAAAEKkv/1Q+YY5HXJ8iOhC/IqdxxnfKU+55yFxixGJPjrzBctxjE3q/GgUbvKs9sFn48g==",
+                            Role = 1
+                        });
                 });
 
             modelBuilder.Entity("Backend.Infrastructure.Models.Application", b =>
@@ -181,9 +198,6 @@ namespace Backend.Infrastructure.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ImageUrl")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("ModifiedAt")

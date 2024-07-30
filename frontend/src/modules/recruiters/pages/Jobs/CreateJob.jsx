@@ -4,8 +4,10 @@ import { toast } from "react-toastify";
 import { JOB_TYPE } from "../../../../common/constant";
 import { Button } from "../../../../components/Button";
 import InputField from "../../../../components/InputField";
+import { LoadingSpinner } from "../../../../components/LoadingSpinner";
 import { MultipleChoiceInputField } from "../../../../components/MultipleChoiceInputField";
 import { useAuth } from "../../../../hooks";
+import { useLoading } from "../../../../hooks/useLoading";
 import { createJob, getSkills } from "../../../../services/job";
 
 export const CreateJob = () => {
@@ -23,6 +25,7 @@ export const CreateJob = () => {
   });
   const [skills, setSkills] = useState([]);
   const navigate = useNavigate();
+  const {isLoading, setIsLoading} = useLoading();
 
   const inputFields = [
     { label: "Job Title", placeholder: "Enter job title", name: "title" },
@@ -50,6 +53,7 @@ export const CreateJob = () => {
   ];
 
   useEffect(() => {
+    setIsLoading(true);
     getSkills()
       .then((response) => {
         setSkills(
@@ -62,18 +66,24 @@ export const CreateJob = () => {
       .catch((err) => {
         toast.error("Error fetching skills. Check console for more details");
         console.log(err);
+      }).finally(() => {
+        setIsLoading(false);
       });
   }, []);
 
   const handleFormSubmit = (event) => {
     event.preventDefault();
+    setIsLoading(true);
     createJob({ ...formData, recruiterId: user.id })
       .then(() => {
         toast.success("Company profile created.");
         navigate("/recruiters/jobs");
       })
       .catch((error) => {
+        toast.error(error.response.data);
         console.log(error);
+      }).finally(() => {
+        setIsLoading(false);
       });
   };
 
@@ -85,6 +95,8 @@ export const CreateJob = () => {
     }));
   };
 
+  if (isLoading) return (<LoadingSpinner/>)
+
   return (
     <div className="flex items-center justify-center">
       <form
@@ -94,7 +106,7 @@ export const CreateJob = () => {
         <div className="text-2xl font-bold text-[#ff4545] mb-4">
           Create new job
         </div>
-        <div className="flex w-full flex-wrap gap-2">
+        <div className="flex w-full flex-wrap gap-2 justify-between">
           {inputFields.map((field, index) => (
             <InputField
               required={true}
@@ -106,13 +118,13 @@ export const CreateJob = () => {
               value={formData[field.name]}
               onChange={handleValueChange}
               type={field.type}
-              className="w-[48%]"
+              className="w-full md:w-[48%]"
             />
           ))}
           <select
             name="type"
             id="type"
-            className="bg-slate-200 p-2 w-[48%] focus:outline-none h-fit"
+            className="bg-slate-200 p-2 w-full md:w-[48%] focus:outline-none h-fit"
             onChange={handleValueChange}
           >
             <option value="" disabled>

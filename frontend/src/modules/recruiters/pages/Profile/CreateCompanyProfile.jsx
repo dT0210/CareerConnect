@@ -3,7 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Button } from "../../../../components/Button";
 import InputField from "../../../../components/InputField";
+import { LoadingSpinner } from "../../../../components/LoadingSpinner";
 import { useAuth } from "../../../../hooks/useAuth";
+import { useLoading } from "../../../../hooks/useLoading";
+import { uploadImage } from "../../../../services/image";
 import { createCompany } from "../../../../services/recruiter";
 
 export const CreateCompanyProfile = () => {
@@ -14,20 +17,38 @@ export const CreateCompanyProfile = () => {
     size: "",
     website: "",
   });
-
+  const [file, setFile] = useState();
+  const { isLoading, setIsLoading } = useLoading();
   const navigate = useNavigate();
 
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+  };
+
   const handleFormSubmit = (event) => {
-    console.log(user);
     event.preventDefault();
-    createCompany({ ...formData, recruiterId: user.id })
-      .then(() => {
-        toast.success("Company profile created.");
-        navigate("/recruiters/profile");
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    setIsLoading(true);
+    if (file) {
+      uploadImage(file)
+        .then((response) => {
+          const imageUrl = response.filePath;
+          createCompany({ ...formData, recruiterId: user.id, imageUrl })
+            .then(() => {
+              toast.success("Company profile created.");
+              navigate("/recruiters/profile");
+            })
+            .catch((error) => {
+              toast.error("Error creating company profile.");
+              console.log(error);
+            });
+        })
+        .catch((err) => {
+          toast.error("Error uploading image file.");
+          console.log(err);
+        }).finally(()=>{
+          setIsLoading(false);
+        });
+    }
   };
 
   const handleValueChange = (e) => {
@@ -37,6 +58,8 @@ export const CreateCompanyProfile = () => {
       [name]: value,
     }));
   };
+
+  if (isLoading) return <LoadingSpinner />;
 
   return (
     <div className="flex items-center justify-center">
@@ -80,7 +103,7 @@ export const CreateCompanyProfile = () => {
           id="company-image"
           name="image"
           type="file"
-          onChange={handleValueChange}
+          onChange={handleFileChange}
         />
         <Button>Create</Button>
       </form>

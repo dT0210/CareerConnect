@@ -80,7 +80,7 @@ public class CareerConnectContext : DbContext
         modelBuilder.Entity<JobSkill>()
             .HasKey(js => new { js.JobId, js.SkillId });
 
-        SeedData(modelBuilder);
+        // SeedData(modelBuilder);
     }
 
     private void SeedData(ModelBuilder modelBuilder) {

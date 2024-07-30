@@ -3,7 +3,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import background from "../../../assets/images/Group 13.png";
 import InputField from "../../../components/InputField";
+import { LoadingSpinner } from "../../../components/LoadingSpinner";
 import { useAuth } from "../../../hooks/useAuth";
+import { useLoading } from "../../../hooks/useLoading";
 import { recruiterLogin } from "../../../services/recruiter";
 
 const Signin = () => {
@@ -12,6 +14,7 @@ const Signin = () => {
     password: "",
   });
   const [error, setError] = useState();
+  const {isLoading, setIsLoading} = useLoading();
 
   const handleValueChange = (event) => {
     const { name, value } = event.target;
@@ -26,6 +29,7 @@ const Signin = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    setIsLoading(true);
     recruiterLogin(formData)
       .then((response) => {
         console.log(response);
@@ -39,8 +43,12 @@ const Signin = () => {
       .catch((err) => {
         console.log(err.response);
         setError(err.response.data.message);
+      }).finally(() => {
+        setIsLoading(false);
       });
   };
+
+  if (isLoading) return (<LoadingSpinner/>)
 
   return (
     <div className="bg-gradient-to-b from-[#DBE2DA] to-[#E4EBE3] relative w-[100vw] h-[100vh] -z-0">

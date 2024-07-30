@@ -1,13 +1,16 @@
 import { ToastContainer } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
+import { LoadingProvider } from "./contexts/LoadingContext";
 import AppRoutes from "./routes/AppRoutes";
 
 function App() {
   return (
     <>
-      <ToastContainer />
-      <AppRoutes />
+      <LoadingProvider>
+        <ToastContainer />
+        <AppRoutes />
+      </LoadingProvider>
     </>
   );
 }

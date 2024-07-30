@@ -2,15 +2,19 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { COMPANY_STATUS } from "../../../../common/constant";
 import { Button } from "../../../../components/Button";
+import { LoadingSpinner } from "../../../../components/LoadingSpinner";
 import { useAuth } from "../../../../hooks";
+import { useLoading } from "../../../../hooks/useLoading";
 import { getRecruiter } from "../../../../services/recruiter";
 
 export const Profile = () => {
   const { user } = useAuth();
   const [recruiter, setRecruiter] = useState(null);
   const navigate = useNavigate();
+  const {isLoading, setIsLoading} = useLoading();
 
   const fetchRecruiter = () => {
+    setIsLoading(true);
     getRecruiter(user.id)
       .then((response) => {
         console.log(response);
@@ -18,12 +22,16 @@ export const Profile = () => {
       })
       .catch((err) => {
         console.log(err);
+      }).finally(()=>{
+        setIsLoading(false);
       });
   };
 
   useEffect(() => {
     if (user.id) fetchRecruiter();
   }, [user]);
+
+  if (isLoading) return (<LoadingSpinner/>)
 
   return (
     <div className="p-8">
@@ -104,6 +112,9 @@ export const Profile = () => {
                   </tr>
                 </tbody>
               </table>
+              <div>
+                <img src={recruiter?.company.imageUrl} alt="alo" />
+              </div>
             </div>
           ) : (
             <div>

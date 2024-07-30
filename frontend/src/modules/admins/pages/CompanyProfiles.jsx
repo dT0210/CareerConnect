@@ -4,8 +4,10 @@ import { toast } from "react-toastify";
 import { COMPANY_STATUS } from "../../../common/constant";
 import { Button } from "../../../components/Button";
 import { Dialog } from "../../../components/Dialog";
+import { LoadingSpinner } from "../../../components/LoadingSpinner";
 import { Pagination } from "../../../components/Pagination";
 import { useAuth } from "../../../hooks/useAuth";
+import { useLoading } from "../../../hooks/useLoading";
 import { FormatDateTime } from "../../../lib";
 import {
   approveCompanyProfile,
@@ -24,15 +26,17 @@ export const CompanyProfiles = () => {
   });
   const [searchQuery, setSearchQuery] = useState("");
   const [sortConfig, setSortConfig] = useState({ key: "", direction: "" });
-  
+
   const { user } = useAuth();
   const [openApprove, setOpenApprove] = useState(false);
   const [openReject, setOpenReject] = useState(false);
   const [companyId, setCompanyId] = useState();
   const [profileDetails, setProfileDetails] = useState();
   const [openDetails, setOpenDetails] = useState(false);
+  const { isLoading, setIsLoading } = useLoading();
 
   const fetchCompanyProfiles = () => {
+    setIsLoading(true);
     getPagedCompanyProfiles({
       PageIndex: pagination.pageIndex,
       PageSize: pagination.pageSize,
@@ -50,17 +54,23 @@ export const CompanyProfiles = () => {
       })
       .catch((err) => {
         console.log(err);
+      }).finally(() => {
+        setIsLoading(false);
       });
   };
 
   const fetchRecruiter = () => {
     if (profileDetails?.recruiterId) {
-      console.log(234);
+      setIsLoading(true);
       getRecruiter(profileDetails.recruiterId).then((response) => {
         setProfileDetails((prev) => ({
           ...prev,
           recruiter: response,
         }));
+      }).catch((err)=>{
+        console.log(err);
+      }).finally(() => {
+        setIsLoading(false);
       });
     }
   };
@@ -71,7 +81,7 @@ export const CompanyProfiles = () => {
 
   useEffect(() => {
     fetchRecruiter();
-  }, [profileDetails?.id])
+  }, [profileDetails?.id]);
 
   const handleSort = (key) => {
     let direction = "ascending";
@@ -87,6 +97,7 @@ export const CompanyProfiles = () => {
   };
 
   const handleApprove = () => {
+    setIsLoading(true);
     approveCompanyProfile({
       companyId,
       adminId: user.id,
@@ -98,10 +109,13 @@ export const CompanyProfiles = () => {
       .catch((err) => {
         toast.error("Error approving profile. Please check console.");
         console.log(err);
+      }).finally(() => {
+        setIsLoading(false);
       });
   };
 
   const handleReject = () => {
+    setIsLoading(true);
     rejectCompanyProfile({
       companyId,
       adminId: user.id,
@@ -113,8 +127,12 @@ export const CompanyProfiles = () => {
       .catch((err) => {
         toast.error("Error approving profile. Please check console.");
         console.log(err);
+      }).finally(() => {
+        setIsLoading(false);
       });
   };
+
+  if (isLoading) return (<LoadingSpinner/>)
 
   return (
     <div className="container mx-auto px-4 py-8">

@@ -37,7 +37,7 @@ export const MultipleChoiceDropDown = ({
   };
 
   return (
-    <div className="bg-slate-200 p-2 relative w-full">
+    <div className="bg-slate-200 p-2 relative w-full rounded-md">
       <div>{label}</div>
       <div ref={optionsListRef}>
         <input
@@ -51,7 +51,7 @@ export const MultipleChoiceDropDown = ({
             if (e.target.value !== "") setShowOptions(true);
           }}
           onClick={() => setShowOptions(true)}
-          className="focus:outline-none px-2 py-1 w-full"
+          className="focus:outline-none px-2 py-1 w-full rounded-md"
           placeholder="Search"
         />
         <div className="flex mt-2 gap-2 flex-wrap">
@@ -77,10 +77,11 @@ export const MultipleChoiceDropDown = ({
         <div
           className={`absolute ${
             !showOptions && "hidden"
-          } bg-slate-200 w-full max-h-[200p] bottom-full left-0 border border-gray-500`}
+          } bg-slate-200 w-full max-h-[200p] bottom-full left-0 shadow-[rgba(0,0,0,0.1)_0px_0px_4px_3px]`}
         >
           {filteredOptions.map((option, index) => (
             <div
+              key={index}
               className="hover:cursor-pointer transition-all hover:bg-slate-400 p-2 flex items-center gap-2"
               onClick={() => handleOptionClick(option)}
             >
@@ -88,10 +89,10 @@ export const MultipleChoiceDropDown = ({
                 type="checkbox"
                 name={`option-${index}`}
                 id={`option-${index}`}
-                key={index}
                 value={option.value}
                 checked={selectedOptions.includes(option)}
                 onClick={() => handleOptionClick(option)}
+                onChange={()=>{}}
               />
               <label
                 htmlFor={`option-${index}`}

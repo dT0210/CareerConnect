@@ -32,7 +32,6 @@ const Signin = () => {
     setIsLoading(true);
     await recruiterLogin(formData)
       .then((response) => {
-        console.log(response);
         if (response.success) {
           localStorage.setItem("token", response.token);
           setIsAuthenticated(true);

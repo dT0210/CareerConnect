@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { JOB_TYPE } from "../../../../common/constant";
+import { JOB_TYPES } from "../../../../common/constant";
 import { Button } from "../../../../components/Button";
 import InputField from "../../../../components/InputField";
 import { LoadingSpinner } from "../../../../components/LoadingSpinner";
@@ -91,9 +91,9 @@ export const CreateJob = () => {
     });
   }
 
-  useEffect(() => {
+  useEffect(() => {fetchFields();
     fetchSkills();
-    fetchFields();
+    
   }, []);
 
   const handleFormSubmit = async (event) => {
@@ -137,29 +137,25 @@ export const CreateJob = () => {
             options={fields}
             search={true}
             label={"Field"}
-            name={"fieldId"}
-            id={"fieldId"}
-            onChange={(e)=>{
+            onChange={(option)=>{
               setFormData((prevState) => ({
                 ...prevState,
-                fieldId: e.target.value,
+                fieldId: option.value,
               }))
             }}
             className={"w-full md:w-[48%]"}
           />
-          <select
-            name="type"
-            id="type"
-            className="bg-slate-200 p-2 w-full md:w-[48%] focus:outline-none h-fit"
-            onChange={handleValueChange}
-          >
-            <option value={-1} >
-              Type
-            </option>
-            {JOB_TYPE.map((type) => (
-              <option value={type.value}>{type.label}</option>
-            ))}
-          </select>
+          <Select
+            options={JOB_TYPES}
+            label={"Type"}
+            onChange={(option)=>{
+              setFormData((prevState) => ({
+                ...prevState,
+                type: option.value,
+              }))
+            }}
+            className={"w-full md:w-[48%]"}
+          />
           {inputFields.map((field, index) => (
             <InputField
               required={true}

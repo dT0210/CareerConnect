@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { JOB_TYPE } from "../../../../common/constant";
+import { JOB_TYPES } from "../../../../common/constant";
 import { Button } from "../../../../components/Button";
 import { LoadingSpinner } from "../../../../components/LoadingSpinner";
 import { Pagination } from "../../../../components/Pagination";
@@ -159,7 +159,7 @@ export const Jobs = () => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     {
-                      JOB_TYPE.find(
+                      JOB_TYPES.find(
                         (type) => job.type === type.value
                       )?.label
                     }

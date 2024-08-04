@@ -10,8 +10,8 @@ const InputField = ({
   id,
 }) => {
   const props = { value, placeholder, onChange, required, type, name, id };
-  let inputFieldStyle = `focus:outline-none bg-transparent w-full focus:bg-black focus:bg-opacity-10 focus:p-2 transition-all `;
-  let inputWrapperStyle = `${className} bg-slate-200 p-2 h-fit ${
+  let inputFieldStyle = `focus:outline-none rounded-md bg-transparent w-full focus:bg-white focus:p-2 transition-all `;
+  let inputWrapperStyle = `${className} bg-slate-200 p-2 h-fit rounded-md ${
     className?.includes("w-[") ? "" : "w-full"
   }`;
   return (

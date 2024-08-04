@@ -4,7 +4,7 @@ export const COMPANY_STATUS = [
     { label: "Rejected", value: 2}
 ]
 
-export const JOB_TYPE = [
+export const JOB_TYPES = [
     { label: "Internship", value: 0}, 
     { label: "Full-time", value: 1},
     { label: "Part-time", value: 2},

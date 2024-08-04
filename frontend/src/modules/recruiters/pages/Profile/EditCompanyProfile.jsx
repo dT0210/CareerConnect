@@ -17,7 +17,7 @@ export const EditCompanyProfile = () => {
     description: "",
     size: "",
     website: "",
-    imageUrl: ""
+    imageUrl: "",
   });
   const { isLoading, setIsLoading } = useLoading();
   const navigate = useNavigate();
@@ -32,16 +32,22 @@ export const EditCompanyProfile = () => {
     setIsLoading(true);
     let imageUrl = formData.imageUrl;
     if (file) {
-      await uploadImage(file).then((response)=>{
-        console.log(response);
-        imageUrl = response.filePath;
-      }).catch((err)=>{
-        console.log(err);
-        toast.error("Error uploading image file.")
-      });
+      await uploadImage(file)
+        .then((response) => {
+          console.log(response);
+          imageUrl = response.filePath;
+        })
+        .catch((err) => {
+          console.log(err);
+          toast.error("Error uploading image file.");
+        });
     }
-    console.log(imageUrl);
-    editCompany(companyId, { ...formData, recruiterId: user.id, imageUrl })
+
+    await editCompany(companyId, {
+      ...formData,
+      recruiterId: user.id,
+      imageUrl,
+    })
       .then(() => {
         toast.success("Company profile updated.");
         navigate("/recruiters/profile");
@@ -62,16 +68,16 @@ export const EditCompanyProfile = () => {
     }));
   };
 
-  useEffect(() => {
+  const fetchCompanyProfile = async () => {
     setIsLoading(true);
-    getCompanyProfile(companyId)
+    await getCompanyProfile(companyId)
       .then((response) => {
         setFormData({
           name: response.name,
           description: response.description,
           size: response.size,
           website: response.website,
-          imageUrl: response.imageUrl
+          imageUrl: response.imageUrl,
         });
       })
       .catch((error) => {
@@ -81,6 +87,10 @@ export const EditCompanyProfile = () => {
       .finally(() => {
         setIsLoading(false);
       });
+  };
+
+  useEffect(() => {
+    fetchCompanyProfile();
   }, [companyId]);
 
   if (isLoading) return <LoadingSpinner />;

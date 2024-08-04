@@ -101,6 +101,9 @@ export const Nav = () => {
         <Link to="/admin/jobs" className="hover:border-b-2 hover:border-b-white h-full p-2">
             Jobs
         </Link>
+        <Link to="/admin/skills" className="hover:border-b-2 hover:border-b-white h-full p-2">
+            Skills
+        </Link>
         <Link to="/admin/companies" className="hover:border-b-2 hover:border-b-white h-full p-2">
             Companies
         </Link>

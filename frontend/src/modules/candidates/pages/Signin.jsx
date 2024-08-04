@@ -27,10 +27,10 @@ const Signin = () => {
   const navigate = useNavigate();
   const {setIsAuthenticated} = useAuth();
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     setIsLoading(true);
-    candidateLogin(formData)
+    await candidateLogin(formData)
       .then((response) => {
         console.log(response);
         if (response.success) {

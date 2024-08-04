@@ -27,10 +27,10 @@ const Signup = () => {
 
   const navigate = useNavigate();
 
-  const handleFormSubmit = (event) => {
+  const handleFormSubmit = async (event) => {
     event.preventDefault();
     setIsLoading(true);
-    recruiterRegister(formData)
+    await recruiterRegister(formData)
       .then((response) => {
         toast.success("Sign up successfully!");
         navigate("/signin/recruiters");

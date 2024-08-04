@@ -25,14 +25,14 @@ export const CreateCompanyProfile = () => {
     setFile(e.target.files[0]);
   };
 
-  const handleFormSubmit = (event) => {
+  const handleFormSubmit = async (event) => {
     event.preventDefault();
     setIsLoading(true);
     if (file) {
-      uploadImage(file)
-        .then((response) => {
+      await uploadImage(file)
+        .then(async (response) => {
           const imageUrl = response.filePath;
-          createCompany({ ...formData, recruiterId: user.id, imageUrl })
+          await createCompany({ ...formData, recruiterId: user.id, imageUrl })
             .then(() => {
               toast.success("Company profile created.");
               navigate("/recruiters/profile");

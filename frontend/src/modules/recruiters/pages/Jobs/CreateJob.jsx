@@ -5,10 +5,11 @@ import { JOB_TYPE } from "../../../../common/constant";
 import { Button } from "../../../../components/Button";
 import InputField from "../../../../components/InputField";
 import { LoadingSpinner } from "../../../../components/LoadingSpinner";
-import { MultipleChoiceInputField } from "../../../../components/MultipleChoiceInputField";
+import { MultipleChoiceDropDown } from "../../../../components/MultipleChoiceDropDown";
+import { Select } from "../../../../components/Select";
 import { useAuth } from "../../../../hooks";
 import { useLoading } from "../../../../hooks/useLoading";
-import { createJob, getSkills } from "../../../../services/job";
+import { createJob, getFields, getSkills } from "../../../../services/job";
 
 export const CreateJob = () => {
   const { user } = useAuth();
@@ -16,7 +17,7 @@ export const CreateJob = () => {
     title: "",
     description: "",
     location: "",
-    field: "",
+    fieldId: "",
     salary: "",
     experience: "",
     deadline: "",
@@ -24,6 +25,7 @@ export const CreateJob = () => {
     skills: [],
   });
   const [skills, setSkills] = useState([]);
+  const [fields, setFields] = useState([]);
   const navigate = useNavigate();
   const {isLoading, setIsLoading} = useLoading();
 
@@ -31,7 +33,6 @@ export const CreateJob = () => {
     { label: "Job Title", placeholder: "Enter job title", name: "title" },
 
     { label: "Location", placeholder: "Enter location", name: "location" },
-    { label: "Field", placeholder: "Enter field", name: "field" },
     { label: "Salary", placeholder: "Enter salary", name: "salary" },
     {
       label: "Experience",
@@ -52,9 +53,9 @@ export const CreateJob = () => {
     },
   ];
 
-  useEffect(() => {
+  const fetchSkills = async () => {
     setIsLoading(true);
-    getSkills()
+    await getSkills()
       .then((response) => {
         setSkills(
           response.map((skill) => ({
@@ -69,12 +70,36 @@ export const CreateJob = () => {
       }).finally(() => {
         setIsLoading(false);
       });
+  }
+
+  const fetchFields = async () => {
+    setIsLoading(true);
+    await getFields()
+    .then((response) => {
+      setFields(
+        response.map((skill) => ({
+          value: skill.id,
+          label: skill.name,
+        }))
+      );
+    })
+    .catch((err) => {
+      toast.error("Error fetching skills. Check console for more details");
+      console.log(err);
+    }).finally(() => {
+      setIsLoading(false);
+    });
+  }
+
+  useEffect(() => {
+    fetchSkills();
+    fetchFields();
   }, []);
 
-  const handleFormSubmit = (event) => {
+  const handleFormSubmit = async (event) => {
     event.preventDefault();
     setIsLoading(true);
-    createJob({ ...formData, recruiterId: user.id })
+    await createJob({ ...formData, recruiterId: user.id })
       .then(() => {
         toast.success("Company profile created.");
         navigate("/recruiters/jobs");
@@ -107,6 +132,34 @@ export const CreateJob = () => {
           Create new job
         </div>
         <div className="flex w-full flex-wrap gap-2 justify-between">
+          
+          <Select
+            options={fields}
+            search={true}
+            label={"Field"}
+            name={"fieldId"}
+            id={"fieldId"}
+            onChange={(e)=>{
+              setFormData((prevState) => ({
+                ...prevState,
+                fieldId: e.target.value,
+              }))
+            }}
+            className={"w-full md:w-[48%]"}
+          />
+          <select
+            name="type"
+            id="type"
+            className="bg-slate-200 p-2 w-full md:w-[48%] focus:outline-none h-fit"
+            onChange={handleValueChange}
+          >
+            <option value={-1} >
+              Type
+            </option>
+            {JOB_TYPE.map((type) => (
+              <option value={type.value}>{type.label}</option>
+            ))}
+          </select>
           {inputFields.map((field, index) => (
             <InputField
               required={true}
@@ -121,20 +174,7 @@ export const CreateJob = () => {
               className="w-full md:w-[48%]"
             />
           ))}
-          <select
-            name="type"
-            id="type"
-            className="bg-slate-200 p-2 w-full md:w-[48%] focus:outline-none h-fit"
-            onChange={handleValueChange}
-          >
-            <option value="" disabled>
-              Type
-            </option>
-            {JOB_TYPE.map((type) => (
-              <option value={type.value}>{type.label}</option>
-            ))}
-          </select>
-          <MultipleChoiceInputField
+          <MultipleChoiceDropDown
             label="Skills"
             options={skills}
             onChange={(selectedSkills) => {

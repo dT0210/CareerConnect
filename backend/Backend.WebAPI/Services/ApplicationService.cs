@@ -1,6 +1,8 @@
+using System.Linq.Expressions;
 using AutoMapper;
 using Backend.Infrastructure.Models;
 using Backend.Infrastructure.Repositories.Interfaces;
+using Backend.Shared.Enum;
 using Backend.WebAPI.Models.Requests;
 using Backend.WebAPI.Models.Responses;
 using Microsoft.EntityFrameworkCore;
@@ -21,16 +23,61 @@ public class ApplicationService : IApplicationService
         _mapper = mapper;
     }
 
-    public async Task<IEnumerable<ApplicationResponseModel>> GetApplicationsAsync(Guid? jobId, Guid? candidateId)
+    public async Task<PagedResponse<ApplicationResponseModel>> GetApplicationsAsync(Guid? jobId, Guid? candidateId, int? pageIndex, int? pageSize, JobType? type, string? search, string? orderBy, bool? isDescending)
     {
-        var applications = await _applicationRepository.GetAllQueryable()
-                        .Where(a =>
-                            (jobId == null || a.JobId == jobId)
-                        && (candidateId == null || a.CandidateId == candidateId))
-                        .Include(a => a.Job)
-                        .Include(a => a.Candidate)
-                        .ToListAsync();
-        return _mapper.Map<IEnumerable<ApplicationResponseModel>>(applications);
+        string searchPhraseLower = search?.ToLower() ?? string.Empty;
+
+        var query = _applicationRepository.GetAllQueryable()
+                    .Include(a => a.Candidate)
+                    .Include(a => a.Job)
+                        .ThenInclude(j => j.JobSkills)
+                            .ThenInclude(js => js.Skill)
+                    .Include(a => a.Job.Recruiter.Company)
+                    .AsNoTracking();
+
+        query = query.Where(x => (candidateId == null || x.CandidateId == candidateId)
+                                && (type == null || x.Job.Type == type)
+                                && (string.IsNullOrWhiteSpace(searchPhraseLower)
+                                    || x.Job.Title.Contains(searchPhraseLower)
+                                    || x.Job.Description.Contains(searchPhraseLower)));
+
+        var totalRecords = query.Count();
+        if (!string.IsNullOrEmpty(orderBy))
+        {
+            var columnsSelector = new Dictionary<string, Expression<Func<Application, object>>>
+                {
+                    { "title", x => x.Job.Title},
+                    { "type",  x => x.Job.Type },
+                    { "deadline", x => x.Job.Deadline},
+                    { "field", x => x.Job.Field },
+                    { "appliedAt", x => x.CreatedAt}
+                };
+            var selectedColumn = columnsSelector[orderBy];
+            query = isDescending.HasValue && isDescending.Value
+                ? query.OrderByDescending(selectedColumn)
+                : query.OrderBy(selectedColumn);
+        }
+        //else default sort by the applied date
+        else
+        {
+            query = query.OrderBy(x => x.CreatedAt);
+        }
+        pageIndex ??= 1;
+        pageSize ??= 10;
+        var apps = await query
+                .Skip((int)((pageIndex - 1) * pageSize))
+                .Take((int)pageSize)
+                .ToListAsync();
+
+        var response = new PagedResponse<ApplicationResponseModel>
+        {
+            PageIndex = (int)pageIndex,
+            PageSize = (int)pageSize,
+            TotalPages = (int)(totalRecords / (double)pageSize),
+            TotalRecords = totalRecords,
+            Data = apps.Select(_mapper.Map<ApplicationResponseModel>).ToList()
+        };
+        return response;
     }
 
     public async Task<ApplicationResponseModel?> GetApplicationByIdAsync(Guid id)

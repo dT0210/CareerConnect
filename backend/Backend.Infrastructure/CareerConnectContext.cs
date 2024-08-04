@@ -15,9 +15,10 @@ public class CareerConnectContext : DbContext
     public DbSet<Job> Jobs { get; set; }
     public DbSet<Application> Applications { get; set; }
     public DbSet<Admin> Admins { get; set; }
+    public DbSet<Field> Fields { get; set; }
     public DbSet<Skill> Skills { get; set; }
     public DbSet<JobSkill> JobSkills { get; set; }
-    public DbSet<Image> Images {get; set;}
+    public DbSet<Image> Images { get; set; }
 
     public CareerConnectContext(DbContextOptions<CareerConnectContext> options) : base(options) { }
 
@@ -83,7 +84,8 @@ public class CareerConnectContext : DbContext
         // SeedData(modelBuilder);
     }
 
-    private void SeedData(ModelBuilder modelBuilder) {
+    private void SeedData(ModelBuilder modelBuilder)
+    {
         var admin = new Admin
         {
             Id = Guid.NewGuid(),

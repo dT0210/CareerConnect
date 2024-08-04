@@ -1,3 +1,4 @@
+using Backend.Shared.Enum;
 using Backend.WebAPI.Common.CustomException;
 using Backend.WebAPI.Models.Requests;
 using Backend.WebAPI.Services;
@@ -12,11 +13,13 @@ public class CandidateController : ControllerBase
 {
     private readonly ILogger<CandidateController> _logger;
     private readonly ICandidateService _candidateService;
+    private readonly IApplicationService _applicationService;
 
-    public CandidateController(ILogger<CandidateController> logger, ICandidateService candidateService)
+    public CandidateController(ILogger<CandidateController> logger, ICandidateService candidateService, IApplicationService applicationService)
     {
         _logger = logger;
         _candidateService = candidateService;
+        _applicationService = applicationService;
     }
 
     [HttpPost]
@@ -98,6 +101,24 @@ public class CandidateController : ControllerBase
         {
             await _candidateService.DeleteCandidateAsync(id);
             return Ok();
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, e.Message);
+        }
+    }
+
+    [HttpGet]
+    [Route("{id}/applied-jobs")]
+    public async Task<IActionResult> GetAppliedJobs(Guid id, int? pageIndex, int? pageSize, Guid? recruiterId, JobType? type, string? search, string? orderBy, bool? isDescending) {
+        try 
+        {
+            var jobs = await _applicationService.GetApplicationsAsync(null, id, pageIndex, pageSize, type, search, orderBy, isDescending);
+            return Ok(jobs);
+        }
+        catch (KeyNotFoundException e)
+        {
+            return NotFound(e.Message);
         }
         catch (Exception e)
         {

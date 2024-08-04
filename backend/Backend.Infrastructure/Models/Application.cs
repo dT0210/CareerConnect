@@ -10,7 +10,7 @@ public class Application : BaseModel
     public Guid JobId { get; set; }
     [Required]
     public Guid CandidateId { get; set; }
-    public DateTime AppliedAt { get; set; }
+    public string CoverLetter {get;set;}
 
     public Job Job { get; set; }
     public Candidate Candidate { get; set; }

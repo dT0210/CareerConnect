@@ -35,9 +35,9 @@ export const CompanyProfiles = () => {
   const [openDetails, setOpenDetails] = useState(false);
   const { isLoading, setIsLoading } = useLoading();
 
-  const fetchCompanyProfiles = () => {
+  const fetchCompanyProfiles = async () => {
     setIsLoading(true);
-    getPagedCompanyProfiles({
+    await getPagedCompanyProfiles({
       PageIndex: pagination.pageIndex,
       PageSize: pagination.pageSize,
       search: searchQuery,
@@ -54,24 +54,28 @@ export const CompanyProfiles = () => {
       })
       .catch((err) => {
         console.log(err);
-      }).finally(() => {
+      })
+      .finally(() => {
         setIsLoading(false);
       });
   };
 
-  const fetchRecruiter = () => {
+  const fetchRecruiter = async () => {
     if (profileDetails?.recruiterId) {
       setIsLoading(true);
-      getRecruiter(profileDetails.recruiterId).then((response) => {
-        setProfileDetails((prev) => ({
-          ...prev,
-          recruiter: response,
-        }));
-      }).catch((err)=>{
-        console.log(err);
-      }).finally(() => {
-        setIsLoading(false);
-      });
+      await getRecruiter(profileDetails.recruiterId)
+        .then((response) => {
+          setProfileDetails((prev) => ({
+            ...prev,
+            recruiter: response,
+          }));
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
     }
   };
 
@@ -96,9 +100,9 @@ export const CompanyProfiles = () => {
     setPagination({ ...pagination, pageIndex: 1 });
   };
 
-  const handleApprove = () => {
+  const handleApprove = async () => {
     setIsLoading(true);
-    approveCompanyProfile({
+    await approveCompanyProfile({
       companyId,
       adminId: user.id,
     })
@@ -109,14 +113,15 @@ export const CompanyProfiles = () => {
       .catch((err) => {
         toast.error("Error approving profile. Please check console.");
         console.log(err);
-      }).finally(() => {
+      })
+      .finally(() => {
         setIsLoading(false);
       });
   };
 
-  const handleReject = () => {
+  const handleReject = async () => {
     setIsLoading(true);
-    rejectCompanyProfile({
+    await rejectCompanyProfile({
       companyId,
       adminId: user.id,
     })
@@ -127,12 +132,13 @@ export const CompanyProfiles = () => {
       .catch((err) => {
         toast.error("Error approving profile. Please check console.");
         console.log(err);
-      }).finally(() => {
+      })
+      .finally(() => {
         setIsLoading(false);
       });
   };
 
-  if (isLoading) return (<LoadingSpinner/>)
+  if (isLoading) return <LoadingSpinner />;
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -295,18 +301,24 @@ export const CompanyProfiles = () => {
           <table className="w-[400px]">
             <tbody>
               <tr>
-                <td className="w-[150px]">Name</td>
+                <td className="w-[150px] font-medium">Name</td>
                 <td>{profileDetails?.name}</td>
               </tr>
               <tr>
-                <td>Size</td>
+                <td className="font-medium">Size</td>
                 <td>{profileDetails?.size}</td>
               </tr>
               <tr>
-                <td>Website</td>
+                <td className="font-medium">Website</td>
                 <td>
                   <a
-                    href={profileDetails?.website}
+                    href={
+                      profileDetails?.website.startsWith("http://") ||
+                      profileDetails?.website.startsWith("https://")
+                        ? profileDetails?.website
+                        : `https://${profileDetails?.website}`
+                    }
+                    target="_blank"
                     className="text-blue-600 underline"
                   >
                     {profileDetails?.website}
@@ -314,7 +326,7 @@ export const CompanyProfiles = () => {
                 </td>
               </tr>
               <tr>
-                <td>Status</td>
+                <td className="font-medium">Status</td>
                 <td>
                   {
                     COMPANY_STATUS.find(
@@ -324,24 +336,30 @@ export const CompanyProfiles = () => {
                 </td>
               </tr>
               <tr>
-                <td>Requested at</td>
+                <td className="font-medium">Requested at</td>
                 <td>{profileDetails?.requestedAt}</td>
+              </tr>
+              <tr>
+                <td className="font-medium">Image</td>
+                <td>
+                  <img src={profileDetails?.imageUrl} alt="No image" className="h-20 object-fill"/>
+                </td>
               </tr>
             </tbody>
           </table>
-          <div>Requested by</div>
+          <div className="my-2 font-bold">Requested by</div>
           <table className="w-[400px]">
             <tbody>
               <tr>
-                <td className="w-[150px]">Name</td>
+                <td className="w-[150px] font-medium">Name</td>
                 <td>{profileDetails?.recruiter?.name}</td>
               </tr>
               <tr>
-                <td>Email</td>
+                <td className="font-medium">Email</td>
                 <td>{profileDetails?.recruiter?.email}</td>
               </tr>
               <tr>
-                <td>Phone number</td>
+                <td className="font-medium">Phone number</td>
                 <td>{profileDetails?.recruiter?.phoneNumber}</td>
               </tr>
             </tbody>

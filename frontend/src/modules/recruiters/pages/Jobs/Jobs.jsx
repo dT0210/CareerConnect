@@ -25,12 +25,11 @@ export const Jobs = () => {
   const navigate = useNavigate();
   const {isLoading, setIsLoading} = useLoading();
   const {user} = useAuth();
-  console.log(user);
 
-  const fetchJobs = () => {
+  const fetchJobs = async () => {
     setIsLoading(true);
     // if (user.id === "") return;
-    getPagedJobs({
+    await getPagedJobs({
       PageIndex: pagination.pageIndex,
       PageSize: pagination.pageSize,
       recruiterId: user.id,
@@ -148,16 +147,12 @@ export const Jobs = () => {
                   className={`${
                     index % 2 === 0 ? "bg-gray-50" : "bg-white"
                   } hover:cursor-pointer`}
-                  onClick={() => {
-                    setOpenDetails(true);
-                    setJobDetails(job);
-                  }}
                 >
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-ellipsis overflow-hidden max-w-[400px]">
                     {job.title}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {job.field}
+                    {job.field.name}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     {job.location}

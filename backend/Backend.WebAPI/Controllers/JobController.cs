@@ -23,7 +23,7 @@ public class JobController : ControllerBase
 
 
     [HttpGet]
-    public async Task<IActionResult> GetAllJobsAsync(int? pageIndex, int? pageSize, Guid recruiterId, JobType? type, string? search, string? orderBy, bool? isDescending)
+    public async Task<IActionResult> GetAllJobsAsync(int? pageIndex, int? pageSize, Guid? recruiterId, JobType? type, string? search, string? orderBy, bool? isDescending)
     {
         try
         {

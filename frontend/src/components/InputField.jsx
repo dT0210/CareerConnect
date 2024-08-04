@@ -11,7 +11,7 @@ const InputField = ({
 }) => {
   const props = { value, placeholder, onChange, required, type, name, id };
   let inputFieldStyle = `focus:outline-none bg-transparent w-full focus:bg-black focus:bg-opacity-10 focus:p-2 transition-all `;
-  let inputWrapperStyle = `${className} bg-slate-200 p-2 ${
+  let inputWrapperStyle = `${className} bg-slate-200 p-2 h-fit ${
     className?.includes("w-[") ? "" : "w-full"
   }`;
   return (
@@ -22,7 +22,7 @@ const InputField = ({
         </label>
       )}
       {type === "textarea" ? (
-        <textarea className={inputFieldStyle} {...props}></textarea>
+        <textarea className={inputFieldStyle} rows={4} {...props}></textarea>
       ) : (
         <input className={inputFieldStyle} {...props} />
       )}

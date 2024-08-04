@@ -37,8 +37,15 @@ public class MapperProfile : Profile
 
         CreateMap<SkillRequestModel, Skill>();
 
-        CreateMap<Application, ApplicationResponseModel>();
+        CreateMap<Application, ApplicationResponseModel>().ForMember(
+            dest => dest.AppliedAt,
+            opt => opt.MapFrom(src => src.CreatedAt)
+        );
 
         CreateMap<ApplicationRequestModel, Application>();
+
+        CreateMap<FieldRequestModel, Field>();
+
+        CreateMap<Field, FieldResponseModel>();
     }
 }

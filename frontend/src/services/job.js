@@ -12,3 +12,11 @@ export const createJob = (body) => {
 export const getSkills = () => {
     return httpClient.get("/skills");
 }
+
+export const getFields = () => {
+    return httpClient.get("/fields");
+}
+
+export const applyJob = (body) => {
+    return httpClient.post("/applications", body);
+}

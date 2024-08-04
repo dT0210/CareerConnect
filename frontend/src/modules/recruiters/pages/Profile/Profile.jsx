@@ -13,9 +13,9 @@ export const Profile = () => {
   const navigate = useNavigate();
   const {isLoading, setIsLoading} = useLoading();
 
-  const fetchRecruiter = () => {
+  const fetchRecruiter = async () => {
     setIsLoading(true);
-    getRecruiter(user.id)
+    await getRecruiter(user.id)
       .then((response) => {
         console.log(response);
         setRecruiter(response);
@@ -94,6 +94,7 @@ export const Profile = () => {
                             ? recruiter?.company.website
                             : `https://${recruiter?.company.website}`
                         }
+                        target="_blank"
                         className="text-blue-600 underline"
                       >
                         {recruiter?.company.website}
@@ -113,7 +114,7 @@ export const Profile = () => {
                 </tbody>
               </table>
               <div>
-                <img src={recruiter?.company.imageUrl} alt="alo" />
+                <img src={recruiter?.company.imageUrl} alt="No image" className="h-24"/>
               </div>
             </div>
           ) : (

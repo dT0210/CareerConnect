@@ -28,4 +28,10 @@ export const AdminsRoute = [
       </Layout>
     ),
   },
+  {
+    path: "/admin/skills",
+    element: {
+      
+    }
+  }
 ];

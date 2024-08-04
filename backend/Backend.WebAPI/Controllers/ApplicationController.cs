@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Backend.Shared.Enum;
 using Backend.WebAPI.Models.Requests;
 using Backend.WebAPI.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -21,11 +22,11 @@ public class ApplicationController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetApplicationsAsync(Guid? jobId, Guid? candidateId)
+    public async Task<IActionResult> GetApplicationsAsync(Guid? jobId, Guid? candidateId, int? pageIndex, int? pageSize, JobType? type, string? search, string? orderBy, bool? isDescending)
     {
         try
         {
-            var users = await _applicationService.GetApplicationsAsync(jobId, candidateId);
+            var users = await _applicationService.GetApplicationsAsync(jobId, candidateId, pageIndex, pageSize, type, search, orderBy, isDescending);
             return Ok(users);
         }
         catch (Exception e)

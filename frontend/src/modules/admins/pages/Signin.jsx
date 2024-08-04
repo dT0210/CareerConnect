@@ -27,10 +27,10 @@ const Signin = () => {
   const navigate = useNavigate();
   const {setIsAuthenticated} = useAuth();
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     setIsLoading(true);
-    adminLogin(formData)
+    await adminLogin(formData)
       .then((response) => {
         if (response.success) {
           localStorage.setItem("token", response.token);

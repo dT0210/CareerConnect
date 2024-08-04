@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import useClickOutside from "../hooks/useClickOutside";
 
-export const MultipleChoiceInputField = ({
+export const MultipleChoiceDropDown = ({
   label,
   onChange,
   options,
@@ -77,7 +77,7 @@ export const MultipleChoiceInputField = ({
         <div
           className={`absolute ${
             !showOptions && "hidden"
-          } bg-slate-200 w-full max-h-[200p] bottom-full left-0`}
+          } bg-slate-200 w-full max-h-[200p] bottom-full left-0 border border-gray-500`}
         >
           {filteredOptions.map((option, index) => (
             <div

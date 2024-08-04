@@ -28,6 +28,7 @@ public static class ServiceCollectionExtension
         services.AddScoped<ISkillRepository, SkillRepository>();
         services.AddScoped<IApplicationRepository, ApplicationRepository>();
         services.AddScoped<ILocalImageRepository, LocalImageRepository>();
+        services.AddScoped<IFieldRepository, FieldRepository>();
 
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<ICandidateService, CandidateService>();
@@ -37,6 +38,7 @@ public static class ServiceCollectionExtension
         services.AddScoped<IJobService, JobService>();
         services.AddScoped<ISkillService, SkillService>();
         services.AddScoped<IApplicationService, ApplicationService>();
+        services.AddScoped<IFieldService, FieldService>();
 
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
         {

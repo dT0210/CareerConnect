@@ -72,11 +72,12 @@ namespace Backend.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("AppliedAt")
-                        .HasColumnType("datetime2");
-
                     b.Property<Guid>("CandidateId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CoverLetter")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -219,6 +220,39 @@ namespace Backend.Infrastructure.Migrations
                     b.ToTable("Companies");
                 });
 
+            modelBuilder.Entity("Backend.Infrastructure.Models.Field", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Fields");
+                });
+
             modelBuilder.Entity("Backend.Infrastructure.Models.Image", b =>
                 {
                     b.Property<Guid>("Id")
@@ -277,9 +311,8 @@ namespace Backend.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Field")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid?>("FieldId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Location")
                         .IsRequired()
@@ -306,6 +339,8 @@ namespace Backend.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("FieldId");
 
                     b.HasIndex("RecruiterId");
 
@@ -442,11 +477,17 @@ namespace Backend.Infrastructure.Migrations
 
             modelBuilder.Entity("Backend.Infrastructure.Models.Job", b =>
                 {
+                    b.HasOne("Backend.Infrastructure.Models.Field", "Field")
+                        .WithMany("Jobs")
+                        .HasForeignKey("FieldId");
+
                     b.HasOne("Backend.Infrastructure.Models.Recruiter", "Recruiter")
                         .WithMany("JobsPosted")
                         .HasForeignKey("RecruiterId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Field");
 
                     b.Navigation("Recruiter");
                 });
@@ -493,6 +534,11 @@ namespace Backend.Infrastructure.Migrations
                 {
                     b.Navigation("Recruiter")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Backend.Infrastructure.Models.Field", b =>
+                {
+                    b.Navigation("Jobs");
                 });
 
             modelBuilder.Entity("Backend.Infrastructure.Models.Job", b =>

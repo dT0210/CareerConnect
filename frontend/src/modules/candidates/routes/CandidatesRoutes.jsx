@@ -1,5 +1,6 @@
 import { Navigate } from "react-router-dom";
 import DashBoard from "../pages/DashBoard";
+import { JobDetails } from "../pages/Jobs/JobDetails";
 import Layout from "../pages/Layout";
 import Signin from "../pages/Signin";
 import Signup from "../pages/Signup";
@@ -25,4 +26,8 @@ export const CandidatesRoute = [
     path: "/signup/candidates",
     element: <Signup />,
   },
+  {
+    path: "/jobs/:jobId",
+    element: <Layout><JobDetails/></Layout>
+  }
 ];

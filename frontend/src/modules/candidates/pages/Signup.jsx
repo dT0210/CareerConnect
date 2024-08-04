@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import background from "../../../assets/images/Group 13.png";
 import InputField from "../../../components/InputField";
+import { LoadingSpinner } from "../../../components/LoadingSpinner";
 import { useLoading } from "../../../hooks/useLoading";
 import { candidateRegister } from "../../../services/candidate";
 
@@ -27,10 +28,10 @@ const Signup = () => {
 
   const navigate = useNavigate();
 
-  const handleFormSubmit = (event) => {
+  const handleFormSubmit = async (event) => {
     event.preventDefault();
     setIsLoading(true);
-    candidateRegister(formData)
+    await candidateRegister(formData)
       .then((response) => {
         toast.success("Sign up successfully!");
         navigate("/signin/candidates");

@@ -1,3 +1,4 @@
+using Backend.Infrastructure.Models;
 using Backend.Shared.Enum;
 
 namespace Backend.WebAPI.Models.Responses;
@@ -11,7 +12,7 @@ public class JobResponseModel
     public string Description { get; set; }
     public string Location { get; set; }
     public DateTime CreatedAt { get; set; }
-    public string Field { get; set; }
+    public FieldResponseModel Field { get; set; }
     public DateTime Deadline { get; set; }
     public JobType Type { get; set; }
     public string Salary { get; set; }

@@ -5,6 +5,10 @@ export const getPagedJobs = (request) => {
     return httpClient.get(`/jobs?${queryParams}`);
 }
 
+export const getJobById = (id) => {
+    return httpClient.get(`/jobs/${id}`);
+}
+
 export const createJob = (body) => {
     return httpClient.post("/jobs", body);
 }

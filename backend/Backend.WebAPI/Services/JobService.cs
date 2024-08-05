@@ -150,6 +150,7 @@ public class JobService : IJobService
     {
         var job = await _jobRepository.GetAllQueryable()
                     .Where(j => j.Id == id)
+                    .Include(j => j.Field)
                     .Include(j => j.JobSkills)
                     .ThenInclude(js => js.Skill)
                     .Include(j => j.Recruiter)

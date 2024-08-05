@@ -30,7 +30,7 @@ export const Dialog = ({ open, setOpen, onConfirm, description, children }) => {
         </button>
         {!children ? (
           <>
-            <div className="text-2xl font-bold text-[#ff4545]">
+            <div className="text-2xl font-bold text-red-500">
               Are you sure
             </div>
             <div className="text-center font-medium opacity-60">
@@ -38,7 +38,7 @@ export const Dialog = ({ open, setOpen, onConfirm, description, children }) => {
             </div>
             <div className="flex gap-3 text-white font-medium">
               <button
-                className="bg-[#ff4545] py-2 px-4 rounded-md hover:bg-opacity-70 transition-all"
+                className="bg-red-500 py-2 px-4 rounded-md hover:bg-opacity-70 transition-all"
                 onClick={handleConfirm}
               >
                 Yes

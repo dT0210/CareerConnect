@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { JOB_TYPES } from "../../../../common/constant";
@@ -27,7 +28,19 @@ export const CreateJob = () => {
   const [skills, setSkills] = useState([]);
   const [fields, setFields] = useState([]);
   const navigate = useNavigate();
-  const {isLoading, setIsLoading} = useLoading();
+  const { isLoading, setIsLoading } = useLoading();
+
+  const {} = useForm({
+    title: "",
+    description: "",
+    location: "",
+    fieldId: "",
+    salary: "",
+    experience: "",
+    deadline: "",
+    type: 5,
+    skills: [],
+  });
 
   const inputFields = [
     { label: "Job Title", placeholder: "Enter job title", name: "title" },
@@ -45,12 +58,6 @@ export const CreateJob = () => {
       name: "deadline",
       type: "date",
     },
-    {
-      label: "Description",
-      placeholder: "Enter job description",
-      name: "description",
-      type: "textarea",
-    },
   ];
 
   const fetchSkills = async () => {
@@ -67,33 +74,35 @@ export const CreateJob = () => {
       .catch((err) => {
         toast.error("Error fetching skills. Check console for more details");
         console.log(err);
-      }).finally(() => {
+      })
+      .finally(() => {
         setIsLoading(false);
       });
-  }
+  };
 
   const fetchFields = async () => {
     setIsLoading(true);
     await getFields()
-    .then((response) => {
-      setFields(
-        response.map((skill) => ({
-          value: skill.id,
-          label: skill.name,
-        }))
-      );
-    })
-    .catch((err) => {
-      toast.error("Error fetching skills. Check console for more details");
-      console.log(err);
-    }).finally(() => {
-      setIsLoading(false);
-    });
-  }
+      .then((response) => {
+        setFields(
+          response.map((skill) => ({
+            value: skill.id,
+            label: skill.name,
+          }))
+        );
+      })
+      .catch((err) => {
+        toast.error("Error fetching skills. Check console for more details");
+        console.log(err);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  };
 
-  useEffect(() => {fetchFields();
+  useEffect(() => {
+    fetchFields();
     fetchSkills();
-    
   }, []);
 
   const handleFormSubmit = async (event) => {
@@ -107,7 +116,8 @@ export const CreateJob = () => {
       .catch((error) => {
         toast.error(error.response.data);
         console.log(error);
-      }).finally(() => {
+      })
+      .finally(() => {
         setIsLoading(false);
       });
   };
@@ -120,7 +130,7 @@ export const CreateJob = () => {
     }));
   };
 
-  if (isLoading) return (<LoadingSpinner/>)
+  if (isLoading) return <LoadingSpinner />;
 
   return (
     <div className="flex items-center justify-center">
@@ -128,31 +138,30 @@ export const CreateJob = () => {
         className="w-2/3 mt-16 p-4 shadow-lg flex flex-col gap-2"
         onSubmit={handleFormSubmit}
       >
-        <div className="text-2xl font-bold text-[#ff4545] mb-4">
+        <div className="text-2xl font-bold text-red-500 mb-4">
           Create new job
         </div>
         <div className="flex w-full flex-wrap gap-2 justify-between">
-          
           <Select
             options={fields}
             search={true}
             label={"Field"}
-            onChange={(option)=>{
+            onChange={(option) => {
               setFormData((prevState) => ({
                 ...prevState,
                 fieldId: option.value,
-              }))
+              }));
             }}
             className={"w-full md:w-[48%]"}
           />
           <Select
             options={JOB_TYPES}
             label={"Type"}
-            onChange={(option)=>{
+            onChange={(option) => {
               setFormData((prevState) => ({
                 ...prevState,
                 type: option.value,
-              }))
+              }));
             }}
             className={"w-full md:w-[48%]"}
           />
@@ -179,7 +188,19 @@ export const CreateJob = () => {
                 skills: selectedSkills.map((skill) => skill.value),
               }));
             }}
+            className={"w-full md:w-[48%]"}
           />
+          <InputField
+              required={true}
+              label={"Description"}
+              placeholder={"Enter job decription"}
+              id={"description"}
+              name={"description"}
+              value={formData["description"]}
+              onChange={handleValueChange}
+              type={"textarea"}
+              className="w-full"
+            />
         </div>
         <div className="flex justify-center">
           <Button onClick={handleFormSubmit} variant={"red"}>

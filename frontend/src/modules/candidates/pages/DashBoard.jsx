@@ -4,13 +4,12 @@ import { Dialog } from "../../../components/Dialog";
 import { LoadingSpinner } from "../../../components/LoadingSpinner";
 import { useAuth } from "../../../hooks";
 import { useLoading } from "../../../hooks/useLoading";
-import { getAppliedJobs } from "../../../services/candidate";
 import { getPagedJobs } from "../../../services/job";
 import { ApplyJob, JobCard } from "../components/Jobs";
+import { useAppliedJobs } from "../hooks/useAppliedJobs";
 
 const DashBoard = () => {
   const [jobs, setJobs] = useState([]);
-  const [appliedJobs, setAppliedJobs] = useState([]);
   const [pagination, setPagination] = useState({
     pageIndex: 1,
     pageCount: 0,
@@ -23,6 +22,7 @@ const DashBoard = () => {
   const { user } = useAuth();
   const [jobId, setJobId] = useState();
   const [openApplyJob, setOpenApplyJob] = useState(false);
+  const {appliedJobs, fetchAppliedJobs} = useAppliedJobs(user.id, 1000000);
 
   const fetchJobs = async () => {
     setIsLoading(true);
@@ -50,28 +50,13 @@ const DashBoard = () => {
       });
   };
 
-  const fetchAppliedJobs = async () => {
-    if (user.id === "") return;
-    setIsLoading(true);
-    await getAppliedJobs(user.id, {pageSize:1000000}).then(response => {
-      setAppliedJobs(response.data.map((app)=>(app.job)));
-    }).catch(err=>{
-      toast.error("Trouble fetching applied jobs");
-      console.log(err);
-    }).finally(()=>{
-      setIsLoading(false);
-    })
-  }
-
   useEffect(() => {
     fetchJobs();
   }, [pagination.pageIndex, pagination.pageSize, searchQuery, sortConfig]);
 
-  useEffect(() => {
-    fetchAppliedJobs();
-  }, [user]);
-
   if (isLoading) return <LoadingSpinner />;
+  console.log(appliedJobs);
+  
 
   return (
     <div className="p-8">

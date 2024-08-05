@@ -15,6 +15,7 @@ export const EditCompanyProfile = () => {
   const [formData, setFormData] = useState({
     name: "",
     description: "",
+    address: "",
     size: "",
     website: "",
     imageUrl: "",
@@ -78,6 +79,7 @@ export const EditCompanyProfile = () => {
           size: response.size,
           website: response.website,
           imageUrl: response.imageUrl,
+          address: response.address
         });
       })
       .catch((error) => {
@@ -101,7 +103,7 @@ export const EditCompanyProfile = () => {
         className="w-1/3 mt-16 p-4 shadow-lg flex flex-col gap-2"
         onSubmit={handleFormSubmit}
       >
-        <div className="text-2xl font-bold text-[#ff4545] mb-4">
+        <div className="text-2xl font-bold text-red-500 mb-4">
           Create company profile
         </div>
         <InputField
@@ -127,6 +129,14 @@ export const EditCompanyProfile = () => {
           name="website"
           onChange={handleValueChange}
           value={formData.website}
+        />
+        <InputField
+          label="Address"
+          placeholder="Enter company address"
+          id="company-address"
+          name="address"
+          onChange={handleValueChange}
+          value={formData.address}
         />
         <InputField
           label="Description"

@@ -60,7 +60,7 @@ const Signin = () => {
           className="bg-white w-full md:w-[50%] min-h-[60%] h-fit rounded-2xl relative"
           onSubmit={handleSubmit}
         >
-          <div className="absolute rounded-t-2xl bg-[#FF4545] w-full h-[74px] flex justify-center items-center text-white font-extrabold text-3xl">
+          <div className="absolute rounded-t-2xl bg-red-500 w-full h-[74px] flex justify-center items-center text-white font-extrabold text-3xl">
             SIGN IN
           </div>
           <div className="p-8 mt-[74px]">
@@ -119,7 +119,7 @@ const Signin = () => {
                 </div>
               </div>
             </div>
-            <button className="mx-auto block bg-[#FF4545] text-white mt-[32px] rounded-lg px-6 py-3">
+            <button className="mx-auto block bg-red-500 text-white mt-[32px] rounded-lg px-6 py-3">
               Sign in
             </button>
           </div>

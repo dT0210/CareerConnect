@@ -10,7 +10,7 @@ export const Nav = () => {
     toast.success("You have been signed out")
   };
   return (
-    <div className="h-[80px] w-full bg-[#ff4545] flex justify-between items-center px-4 text-white font-semibold text-lg">
+    <div className="h-[80px] w-full bg-red-500 flex justify-between items-center px-4 text-white font-semibold text-lg">
       <div className=" flex items-center justify-start gap-4 ">
         <Link to="/recruiters/dashboard">
           <svg

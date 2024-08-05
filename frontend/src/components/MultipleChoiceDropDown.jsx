@@ -36,8 +36,12 @@ export const MultipleChoiceDropDown = ({
     });
   };
 
+  let wrapperStyle = `${className} bg-slate-200 p-2 relative rounded-md ${
+    className?.includes("w-[") ? "" : "w-full"
+  }`;
+
   return (
-    <div className="bg-slate-200 p-2 relative w-full rounded-md">
+    <div className={wrapperStyle}>
       <div>{label}</div>
       <div ref={optionsListRef}>
         <input

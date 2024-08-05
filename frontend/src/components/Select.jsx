@@ -15,7 +15,6 @@ export const Select = ({
     className?.includes("w-[") ? "" : "w-full"
   }`;
   const [filteredOptions, setFilteredOptions] = useState(options);
-  const [searchQuery, setSearchQuery] = useState("");
   const [selectedOption, setSelectedOption] = useState(options.filter(option => option.value === defaultValue));
   const [openOptions, setOpenOptions] = useState(false);
   const selectRef = useRef();
@@ -24,12 +23,8 @@ export const Select = ({
   });
 
   useEffect(()=>{
-    setFilteredOptions(
-      options.filter((option) =>
-        option.label.toLowerCase().includes(searchQuery)
-      )
-    );
-  }, [searchQuery]);
+    setFilteredOptions(options);
+  }, [options]);
 
   return (
     <div className={selectWrapperStyle} ref={selectRef}>
@@ -51,7 +46,13 @@ export const Select = ({
               type="text"
               placeholder="Search"
               className="bg-white w-full px-2 py-1 rounded-md focus:outline-none"
-              onChange={(e)=>setSearchQuery(e.target.value)}
+              onChange={(e) => {
+                setFilteredOptions(
+                  options.filter((option) =>
+                    option.label.toLowerCase().includes(e.target.value)
+                  )
+                );
+              }}
             />
           </div>
         )}

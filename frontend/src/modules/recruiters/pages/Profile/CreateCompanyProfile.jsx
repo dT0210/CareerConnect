@@ -14,6 +14,7 @@ export const CreateCompanyProfile = () => {
   const [formData, setFormData] = useState({
     name: "",
     description: "",
+    address: "",
     size: "",
     website: "",
   });
@@ -67,7 +68,7 @@ export const CreateCompanyProfile = () => {
         className="w-1/3 mt-16 p-4 shadow-lg flex flex-col gap-2"
         onSubmit={handleFormSubmit}
       >
-        <div className="text-2xl font-bold text-[#ff4545] mb-4">
+        <div className="text-2xl font-bold text-red-500 mb-4">
           Create company profile
         </div>
         <InputField
@@ -89,6 +90,13 @@ export const CreateCompanyProfile = () => {
           placeholder="Enter company website"
           id="company-website"
           name="website"
+          onChange={handleValueChange}
+        />
+        <InputField
+          label="Address"
+          placeholder="Enter company address"
+          id="company-address"
+          name="address"
           onChange={handleValueChange}
         />
         <InputField

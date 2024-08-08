@@ -2,13 +2,13 @@ import { useEffect, useState } from "react";
 import { FaSearch } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { COMPANY_STATUS } from "../../../common/constant";
+import { FormatDateTime } from "../../../common/helpers";
 import { Button } from "../../../components/Button";
 import { Dialog } from "../../../components/Dialog";
 import { LoadingSpinner } from "../../../components/LoadingSpinner";
 import { Pagination } from "../../../components/Pagination";
 import { useAuth } from "../../../hooks/useAuth";
 import { useLoading } from "../../../hooks/useLoading";
-import { FormatDateTime } from "../../../lib";
 import {
   approveCompanyProfile,
   getPagedCompanyProfiles,

@@ -1,7 +1,10 @@
+import { twMerge } from "tailwind-merge";
+
 const InputField = ({
   value,
   label,
   className,
+  inputClassName,
   placeholder,
   onChange,
   required,
@@ -10,21 +13,23 @@ const InputField = ({
   id,
 }) => {
   const props = { value, placeholder, onChange, required, type, name, id };
-  let inputFieldStyle = `focus:outline-none rounded-md bg-transparent w-full focus:bg-white focus:p-2 transition-all `;
-  let inputWrapperStyle = `${className} bg-slate-200 p-2 h-fit rounded-md ${
-    className?.includes("w-[") ? "" : "w-full"
-  }`;
+  const inputFieldClass = twMerge(`focus:outline-none rounded-md bg-transparent w-full focus:bg-white focus:p-2 transition-all`, inputClassName);
+  const inputWrapperClass = twMerge(
+    'bg-slate-200 p-2 h-fit rounded-md w-full',
+    className
+  );
+  
   return (
-    <div className={inputWrapperStyle}>
+    <div className={inputWrapperClass}>
       {label && (
         <label htmlFor={id || ""} className="block text-sm">
           {label}
         </label>
       )}
       {type === "textarea" ? (
-        <textarea className={inputFieldStyle} rows={4} {...props}></textarea>
+        <textarea className={inputFieldClass} rows={4} {...props}></textarea>
       ) : (
-        <input className={inputFieldStyle} {...props} />
+        <input className={inputFieldClass} {...props} />
       )}
     </div>
   );

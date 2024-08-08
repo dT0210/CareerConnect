@@ -15,16 +15,22 @@ export const Select = ({
     className?.includes("w-[") ? "" : "w-full"
   }`;
   const [filteredOptions, setFilteredOptions] = useState(options);
-  const [selectedOption, setSelectedOption] = useState(options.filter(option => option.value === defaultValue));
+  const [selectedOption, setSelectedOption] = useState(
+    options.filter((option) => option.value === defaultValue)
+  );
   const [openOptions, setOpenOptions] = useState(false);
   const selectRef = useRef();
   useClickOutside(selectRef, () => {
     setOpenOptions(false);
   });
 
-  useEffect(()=>{
+  useEffect(() => {
     setFilteredOptions(options);
   }, [options]);
+
+  useEffect(() => {
+    onChange(selectedOption);
+  }, [selectedOption]);
 
   return (
     <div className={selectWrapperStyle} ref={selectRef}>
@@ -36,7 +42,7 @@ export const Select = ({
         <FaAngleDown />
       </div>
       <div
-        className={`absolute top-[110%] w-full overflow-auto shadow-md bg-slate-200 rounded-md ${
+        className={`absolute top-[110%] z-20 w-full overflow-auto shadow-md bg-slate-200 rounded-md ${
           !openOptions && "hidden "
         }`}
       >
@@ -62,8 +68,9 @@ export const Select = ({
               key={index}
               className="hover:cursor-pointer hover:bg-slate-300 transition-all px-2 py-1 flex justify-between items-center"
               onClick={() => {
-                setSelectedOption(option);
-                onChange(option);
+                if (selectedOption && selectedOption.value === option.value) {
+                  setSelectedOption(null);
+                } else setSelectedOption(option);
               }}
             >
               {option.label}

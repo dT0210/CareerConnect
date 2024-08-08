@@ -28,6 +28,7 @@ public static class ServiceCollectionExtension
         services.AddScoped<ISkillRepository, SkillRepository>();
         services.AddScoped<IApplicationRepository, ApplicationRepository>();
         services.AddScoped<ILocalImageRepository, LocalImageRepository>();
+        services.AddScoped<ILocalPdfRepository, LocalPdfRepository>();
         services.AddScoped<IFieldRepository, FieldRepository>();
 
         services.AddScoped<ITokenService, TokenService>();

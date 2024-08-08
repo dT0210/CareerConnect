@@ -6,7 +6,7 @@ import InputField from "../../../../components/InputField";
 import { LoadingSpinner } from "../../../../components/LoadingSpinner";
 import { useAuth } from "../../../../hooks/useAuth";
 import { useLoading } from "../../../../hooks/useLoading";
-import { uploadImage } from "../../../../services/image";
+import { uploadImage } from "../../../../services/file";
 import { createCompany } from "../../../../services/recruiter";
 
 export const CreateCompanyProfile = () => {
@@ -39,13 +39,13 @@ export const CreateCompanyProfile = () => {
               navigate("/recruiters/profile");
             })
             .catch((error) => {
-              toast.error("Error creating company profile.");
+              toast.error(error.response || "Trouble creating company profile.");
               console.log(error);
             });
         })
-        .catch((err) => {
-          toast.error("Error uploading image file.");
-          console.log(err);
+        .catch((error) => {
+          toast.error(error.response || "Trouble uploading image file.");
+          console.log(error);
         }).finally(()=>{
           setIsLoading(false);
         });
@@ -65,7 +65,7 @@ export const CreateCompanyProfile = () => {
   return (
     <div className="flex items-center justify-center">
       <form
-        className="w-1/3 mt-16 p-4 shadow-lg flex flex-col gap-2"
+        className="w-full sm:w-2/3 lg:w-1/3 mt-16 p-4 shadow-lg flex flex-col gap-2"
         onSubmit={handleFormSubmit}
       >
         <div className="text-2xl font-bold text-red-500 mb-4">
@@ -104,6 +104,7 @@ export const CreateCompanyProfile = () => {
           placeholder="Enter company description"
           id="company-description"
           name="description"
+          type={"textarea"}
           onChange={handleValueChange}
         />
         <InputField

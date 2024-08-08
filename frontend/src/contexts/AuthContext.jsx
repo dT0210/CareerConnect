@@ -11,6 +11,7 @@ export const AuthContext = createContext({
   },
   setUser: () => {},
   loading: true,
+  fetchUserFromToken: ()=>{}
 });
 
 export const AuthProvider = ({ children }) => {
@@ -50,6 +51,8 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     fetchUserFromToken();
+    console.log(user);
+    
   }, [token, isAuthenticated]);
 
   const authContextValue = useMemo(
@@ -60,6 +63,7 @@ export const AuthProvider = ({ children }) => {
       user,
       setUser,
       loading,
+      fetchUserFromToken
     }),
     [token, user, isAuthenticated, loading]
   );

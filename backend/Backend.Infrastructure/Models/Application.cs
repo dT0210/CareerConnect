@@ -11,6 +11,7 @@ public class Application : BaseModel
     [Required]
     public Guid CandidateId { get; set; }
     public string CoverLetter {get;set;}
+    public string? CvUrl {get;set;}
 
     public Job Job { get; set; }
     public Candidate Candidate { get; set; }

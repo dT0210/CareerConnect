@@ -6,7 +6,7 @@ import InputField from "../../../../components/InputField";
 import { LoadingSpinner } from "../../../../components/LoadingSpinner";
 import { useAuth } from "../../../../hooks/useAuth";
 import { useLoading } from "../../../../hooks/useLoading";
-import { uploadImage } from "../../../../services/image";
+import { uploadImage } from "../../../../services/file";
 import { editCompany, getCompanyProfile } from "../../../../services/recruiter";
 
 export const EditCompanyProfile = () => {

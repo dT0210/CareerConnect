@@ -19,6 +19,7 @@ public class CareerConnectContext : DbContext
     public DbSet<Skill> Skills { get; set; }
     public DbSet<JobSkill> JobSkills { get; set; }
     public DbSet<Image> Images { get; set; }
+    public DbSet<CandidateCV> CandidateCVs { get; set;}
 
     public CareerConnectContext(DbContextOptions<CareerConnectContext> options) : base(options) { }
 

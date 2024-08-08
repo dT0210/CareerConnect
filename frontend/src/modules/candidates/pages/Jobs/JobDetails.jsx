@@ -42,11 +42,11 @@ export const JobDetails = () => {
   if (isLoading) return <LoadingSpinner />;
 
   return (
-    <div className="flex px-16 py-8 bg-slate-200 h-full justify-between">
-      <div className="w-3/5 flex flex-col gap-4">
+    <div className="flex px-16 py-8 bg-slate-200 flex-grow justify-between flex-wrap gap-4 md:gap-0">
+      <div className="w-full md:w-3/5 flex flex-col gap-4">
         <div className="p-4 bg-white rounded-lg w-full flex flex-col gap-4">
           <div className="text-3xl font-bold">{job?.title}</div>
-          <div className="flex justify-between">
+          <div className="flex justify-between flex-wrap">
             <div className="flex items-center gap-3">
               <div>
                 <GiPayMoney size={32} />
@@ -80,7 +80,7 @@ export const JobDetails = () => {
               </div>
               <div>
                 <div>Type</div>
-                <div className="font-semibold">{JOB_TYPES.find(type=>type.value === job?.type).label }</div>
+                <div className="font-semibold">{JOB_TYPES.find(type=>type.value === job?.type)?.label }</div>
               </div>
             </div>
           </div>
@@ -100,7 +100,7 @@ export const JobDetails = () => {
           <div>{job?.description}</div>
         </div>
       </div>
-      <div className="w-[38%]">
+      <div className="w-full md:w-[38%]">
         <div className="bg-white rounded-lg p-4">
           <div className="flex gap-4">
             <div className="h-24 w-24">

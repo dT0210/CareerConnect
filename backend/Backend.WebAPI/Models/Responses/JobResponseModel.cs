@@ -18,4 +18,5 @@ public class JobResponseModel
     public string Salary { get; set; }
     public string Experience { get; set; }
     public ICollection<SkillResponseModel> Skills { get; set; }
+    public int Applications {get; set;}
 }

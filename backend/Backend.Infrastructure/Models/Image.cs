@@ -3,10 +3,8 @@ using Microsoft.AspNetCore.Http;
 
 namespace Backend.Infrastructure.Models;
 
-public class Image
+public class Image : BaseModel
 {
-    public Guid Id { get; set; }
-
     [NotMapped]
     public IFormFile File { get; set; }
 

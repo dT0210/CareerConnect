@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { JOB_TYPES } from "../../../../common/constant";
+import { FormatDateTime } from "../../../../common/helpers";
 import { Button } from "../../../../components/Button";
 import { LoadingSpinner } from "../../../../components/LoadingSpinner";
 import { Pagination } from "../../../../components/Pagination";
 import { useAuth } from "../../../../hooks";
 import { useLoading } from "../../../../hooks/useLoading";
-import { FormatDateTime } from "../../../../lib";
 import { getPagedJobs } from "../../../../services/job";
 
 export const Jobs = () => {
@@ -23,8 +23,8 @@ export const Jobs = () => {
   const [jobDetails, setJobDetails] = useState();
   const [openDetails, setOpenDetails] = useState(false);
   const navigate = useNavigate();
-  const {isLoading, setIsLoading} = useLoading();
-  const {user} = useAuth();
+  const { isLoading, setIsLoading } = useLoading();
+  const { user } = useAuth();
 
   const fetchJobs = async () => {
     setIsLoading(true);
@@ -48,14 +48,21 @@ export const Jobs = () => {
       .catch((err) => {
         toast.error("Error fetching jobs. Check console for details.");
         console.log(err);
-      }).finally(() => {
+      })
+      .finally(() => {
         setIsLoading(false);
       });
   };
 
   useEffect(() => {
     fetchJobs();
-  }, [pagination.pageIndex, pagination.pageSize, searchQuery, sortConfig, user]);
+  }, [
+    pagination.pageIndex,
+    pagination.pageSize,
+    searchQuery,
+    sortConfig,
+    user,
+  ]);
 
   const handleSort = (key) => {
     let direction = "ascending";
@@ -69,11 +76,11 @@ export const Jobs = () => {
     setSearchQuery(e.target.value);
     setPagination({ ...pagination, pageIndex: 1 });
   };
-  
-  if (isLoading) return (<LoadingSpinner/>)
+
+  if (isLoading) return <LoadingSpinner />;
 
   return (
-    <div className="p-8">
+    <div className="p-8 w-full overflow-auto">
       <div>
         <Button
           variant={"red"}
@@ -82,8 +89,8 @@ export const Jobs = () => {
           Create a new Job
         </Button>
       </div>
-      <div>
-      <table className="min-w-full divide-y divide-gray-200">
+      <div className="w-full overflow-auto">
+        <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
               <th
@@ -134,6 +141,9 @@ export const Jobs = () => {
                 {sortConfig.key === "deadline" &&
                   (sortConfig.direction === "ascending" ? "▲" : "▼")}
               </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer">
+                Applications
+              </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Action
               </th>
@@ -158,11 +168,7 @@ export const Jobs = () => {
                     {job.location}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {
-                      JOB_TYPES.find(
-                        (type) => job.type === type.value
-                      )?.label
-                    }
+                    {JOB_TYPES.find((type) => job.type === type.value)?.label}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     {FormatDateTime(job.createdAt, "mm-dd-yyyy hh:mm:ss")}
@@ -170,13 +176,13 @@ export const Jobs = () => {
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     {FormatDateTime(job.deadline, "mm-dd-yyyy hh:mm:ss")}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <Button
-                      variant={"red"}
-                      
-                    >
-                      Delete
-                    </Button>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {job.applications}
+                  </td>
+                  <td className="px-2 py-4 whitespace-nowrap text-sm font-medium flex gap-2">
+                    <Link to={job.id} target="_blank"><Button variant={"blue"}>Details</Button></Link>
+                    <Button variant={"green"}>Edit</Button>
+                    <Button variant={"red"}>Delete</Button>
                   </td>
                 </tr>
               ))

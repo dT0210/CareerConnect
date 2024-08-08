@@ -17,6 +17,9 @@ export const Button = ({
       case "green":
         btnStyle = btnStyle.concat("bg-green-500 hover:bg-green-700 text-white ");
         break;
+        case "blue":
+          btnStyle = btnStyle.concat("bg-blue-500 hover:bg-blue-700 text-white ");
+          break;
       case "black":
         btnStyle = btnStyle.concat("bg-black hover:opacity-70 text-white ");
         break;

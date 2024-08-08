@@ -2,19 +2,16 @@ using Backend.Infrastructure.Models;
 using Backend.Infrastructure.Repositories.Interfaces;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.IO;
-using System.Threading.Tasks;
 
 namespace Backend.Infrastructure.Repositories
 {
-    public class LocalImageRepository : ILocalImageRepository
+    public class LocalPdfRepository : ILocalPdfRepository
     {
         private readonly IHostingEnvironment webHostEnvironment;
         private readonly IHttpContextAccessor httpContextAccessor;
         private readonly CareerConnectContext dbContext;
 
-        public LocalImageRepository(IHostingEnvironment webHostEnvironment,
+        public LocalPdfRepository(IHostingEnvironment webHostEnvironment,
             IHttpContextAccessor httpContextAccessor,
             CareerConnectContext dbContext)
         {
@@ -23,27 +20,27 @@ namespace Backend.Infrastructure.Repositories
             this.dbContext = dbContext;
         }
 
-        public async Task<Image> Upload(Image image)
+        public async Task<CandidateCV> Upload(CandidateCV pdfCV)
         {
-            var uniqueFileName = $"{image.Id}_{image.FileName}";
-            var localFilePath = Path.Combine(webHostEnvironment.ContentRootPath, "Images", uniqueFileName);
+            var uniqueFileName = $"{pdfCV.Id}_{pdfCV.FileName}";
+            var localFilePath = Path.Combine(webHostEnvironment.ContentRootPath, "CVs", uniqueFileName);
 
-            // Upload Image to Local Path
+            // Upload PDF to Local Path
             using (var stream = new FileStream(localFilePath, FileMode.Create))
             {
-                await image.File.CopyToAsync(stream);
+                await pdfCV.File.CopyToAsync(stream);
             }
 
             // Generate the URL for the uploaded file
-            var urlFilePath = $"{httpContextAccessor.HttpContext.Request.Scheme}://{httpContextAccessor.HttpContext.Request.Host}{httpContextAccessor.HttpContext.Request.PathBase}/Images/{uniqueFileName}";
+            var urlFilePath = $"{httpContextAccessor.HttpContext.Request.Scheme}://{httpContextAccessor.HttpContext.Request.Host}{httpContextAccessor.HttpContext.Request.PathBase}/CVs/{uniqueFileName}";
 
-            image.FilePath = urlFilePath;
+            pdfCV.FilePath = urlFilePath;
 
-            // Add image to Images table
-            await dbContext.Images.AddAsync(image);
+            // Add CV to CandidateCVs table
+            await dbContext.CandidateCVs.AddAsync(pdfCV);
             await dbContext.SaveChangesAsync();
 
-            return image;
+            return pdfCV;
         }
     }
 }

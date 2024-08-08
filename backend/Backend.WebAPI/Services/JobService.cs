@@ -33,7 +33,7 @@ public class JobService : IJobService
 
 
     public async Task<PagedResponse<JobResponseModel>> GetAllJobsAsync(
-        int? pageIndex, int? pageSize, Guid? recruiterId, JobType? type,
+        int? pageIndex, int? pageSize, Guid? recruiterId, JobType? type, Guid? fieldId,
         string? search, string? orderBy, bool? isDescending)
     {
         string searchPhraseLower = search?.ToLower() ?? string.Empty;
@@ -42,10 +42,12 @@ public class JobService : IJobService
                     .Include(j => j.JobSkills)
                     .ThenInclude(js => js.Skill)
                     .Include(j => j.Recruiter)
-                    .ThenInclude(r => r.Company).AsNoTracking();
+                    .ThenInclude(r => r.Company)
+                    .Include(j => j.Applications).AsNoTracking();
 
         query = query.Where(x => (recruiterId == null || x.RecruiterId == recruiterId)
                                 && (type == null || x.Type == type)
+                                && (fieldId == null || x.FieldId == fieldId)
                                 && (string.IsNullOrWhiteSpace(searchPhraseLower)
                                     || x.Title.Contains(searchPhraseLower)
                                     || x.Description.Contains(searchPhraseLower)));
@@ -90,62 +92,6 @@ public class JobService : IJobService
         return response;
     }
 
-    public async Task<PagedResponse<JobResponseModel>> GetAppliedJobs(Guid candidateId, int? pageIndex, int? pageSize, JobType? type, string? search, string? orderBy, bool? isDescending)
-    {
-        string searchPhraseLower = search?.ToLower() ?? string.Empty;
-
-        var query = _applicationRepository.GetAllQueryable()
-                    .Include(a => a.Job)
-                        .ThenInclude(j => j.JobSkills)
-                            .ThenInclude(js => js.Skill)
-                    .Include(a => a.Job.Field)
-                    .Include(a => a.Job.Recruiter.Company)
-                    .AsNoTracking();
-
-        query = query.Where(x => (type == null || x.Job.Type == type)
-                                && (string.IsNullOrWhiteSpace(searchPhraseLower)
-                                    || x.Job.Title.Contains(searchPhraseLower)
-                                    || x.Job.Description.Contains(searchPhraseLower)));
-
-        var totalRecords = query.Count();
-        if (!string.IsNullOrEmpty(orderBy))
-        {
-            var columnsSelector = new Dictionary<string, Expression<Func<Application, object>>>
-                {
-                    { "title", x => x.Job.Title},
-                    { "type",  x => x.Job.Type },
-                    { "deadline", x => x.Job.Deadline},
-                    { "field", x => x.Job.Field },
-                    { "appliedAt", x => x.CreatedAt}
-                };
-            var selectedColumn = columnsSelector[orderBy];
-            query = isDescending.HasValue && isDescending.Value
-                ? query.OrderByDescending(selectedColumn)
-                : query.OrderBy(selectedColumn);
-        }
-        //else default sort by the applied date
-        else
-        {
-            query = query.OrderBy(x => x.CreatedAt);
-        }
-        pageIndex ??= 1;
-        pageSize ??= 10;
-        var jobs = await query
-                .Skip((int)((pageIndex - 1) * pageSize))
-                .Take((int)pageSize)
-                .ToListAsync();
-
-        var response = new PagedResponse<JobResponseModel>
-        {
-            PageIndex = (int)pageIndex,
-            PageSize = (int)pageSize,
-            TotalPages = (int)(totalRecords / (double)pageSize),
-            TotalRecords = totalRecords,
-            Data = jobs.Select(_mapper.Map<JobResponseModel>).ToList()
-        };
-        return response;
-    }
-
     public async Task<JobResponseModel?> GetJobByIdAsync(Guid id)
     {
         var job = await _jobRepository.GetAllQueryable()
@@ -155,6 +101,7 @@ public class JobService : IJobService
                     .ThenInclude(js => js.Skill)
                     .Include(j => j.Recruiter)
                     .ThenInclude(r => r.Company)
+                    .Include(j => j.Applications)
                     .FirstOrDefaultAsync();
         return _mapper.Map<JobResponseModel>(job);
     }
@@ -172,20 +119,23 @@ public class JobService : IJobService
         newJob.JobSkills = new List<JobSkill>();
 
         // Fetch each skill by its ID and create a JobSkill entity
-        foreach (var skillId in job.Skills)
+        if (job.Skills != null)
         {
-            var skill = await _skillRepository.GetByIdAsync(skillId)
-                        ?? throw new KeyNotFoundException($"Skill with ID {skillId} not found");
-
-            var jobSkill = new JobSkill
+            foreach (var skillId in job.Skills)
             {
-                JobId = newJob.Id,
-                SkillId = skillId,
-                Job = newJob,
-                Skill = skill
-            };
+                var skill = await _skillRepository.GetByIdAsync(skillId)
+                            ?? throw new KeyNotFoundException($"Skill with ID {skillId} not found");
 
-            newJob.JobSkills.Add(jobSkill);
+                var jobSkill = new JobSkill
+                {
+                    JobId = newJob.Id,
+                    SkillId = skillId,
+                    Job = newJob,
+                    Skill = skill
+                };
+
+                newJob.JobSkills.Add(jobSkill);
+            }
         }
         await _jobRepository.InsertAsync(newJob);
         await _jobRepository.SaveAsync();
@@ -201,20 +151,23 @@ public class JobService : IJobService
         }
         _mapper.Map(job, existingJob);
         existingJob.JobSkills = new List<JobSkill>();
-        foreach (var skillId in job.Skills)
+        if (job.Skills != null)
         {
-            var skill = await _skillRepository.GetByIdAsync(skillId)
-                        ?? throw new KeyNotFoundException($"Skill with ID {skillId} not found");
-
-            var jobSkill = new JobSkill
+            foreach (var skillId in job.Skills)
             {
-                JobId = existingJob.Id,
-                SkillId = skillId,
-                Job = existingJob,
-                Skill = skill
-            };
+                var skill = await _skillRepository.GetByIdAsync(skillId)
+                            ?? throw new KeyNotFoundException($"Skill with ID {skillId} not found");
 
-            existingJob.JobSkills.Add(jobSkill);
+                var jobSkill = new JobSkill
+                {
+                    JobId = existingJob.Id,
+                    SkillId = skillId,
+                    Job = existingJob,
+                    Skill = skill
+                };
+
+                existingJob.JobSkills.Add(jobSkill);
+            }
         }
         _jobRepository.Update(existingJob);
         await _jobRepository.SaveAsync();

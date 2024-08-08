@@ -29,6 +29,10 @@ public class MapperProfile : Profile
             .ForMember(
                 dest => dest.Skills,
                 opt => opt.MapFrom(src => src.JobSkills.Select(js => js.Skill))
+            )
+            .ForMember(
+                dest => dest.Applications,
+                opt => opt.MapFrom(src => src.Applications.Count())
             );
 
         CreateMap<JobRequestModel, Job>();

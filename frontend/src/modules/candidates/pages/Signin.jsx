@@ -25,7 +25,7 @@ const Signin = () => {
   };
 
   const navigate = useNavigate();
-  const {setIsAuthenticated} = useAuth();
+  const {setIsAuthenticated, fetchUserFromToken} = useAuth();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -36,6 +36,7 @@ const Signin = () => {
         if (response.success) {
           localStorage.setItem("token", response.token);
           setIsAuthenticated(true);
+          fetchUserFromToken();
           toast.success("Signed in.");
           navigate("/dashboard");
         }

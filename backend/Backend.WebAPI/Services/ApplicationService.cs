@@ -15,7 +15,7 @@ public class ApplicationService : IApplicationService
     private readonly IJobRepository _jobRepository;
     private readonly ICandidateRepository _candidateRepository;
     private readonly IMapper _mapper;
-    public ApplicationService(IApplicationRepository applicationRepository, IJobRepository jobRepository, ICandidateRepository candidateRepository, ITokenService tokenService, IMapper mapper)
+    public ApplicationService(IApplicationRepository applicationRepository, IJobRepository jobRepository, ICandidateRepository candidateRepository, IMapper mapper)
     {
         _applicationRepository = applicationRepository;
         _jobRepository = jobRepository;
@@ -23,7 +23,7 @@ public class ApplicationService : IApplicationService
         _mapper = mapper;
     }
 
-    public async Task<PagedResponse<ApplicationResponseModel>> GetApplicationsAsync(Guid? jobId, Guid? candidateId, int? pageIndex, int? pageSize, JobType? type, string? search, string? orderBy, bool? isDescending)
+    public async Task<PagedResponse<ApplicationResponseModel>> GetApplicationsAsync(Guid? jobId, Guid? candidateId, int? pageIndex, int? pageSize, JobType? type, Guid? fieldId, string? search, string? orderBy, bool? isDescending)
     {
         string searchPhraseLower = search?.ToLower() ?? string.Empty;
 
@@ -32,10 +32,12 @@ public class ApplicationService : IApplicationService
                     .Include(a => a.Job)
                         .ThenInclude(j => j.JobSkills)
                             .ThenInclude(js => js.Skill)
+                    .Include(a => a.Job.Field)
                     .Include(a => a.Job.Recruiter.Company)
                     .AsNoTracking();
 
         query = query.Where(x => (candidateId == null || x.CandidateId == candidateId)
+                                && (fieldId == null || x.Job.FieldId == fieldId)
                                 && (type == null || x.Job.Type == type)
                                 && (string.IsNullOrWhiteSpace(searchPhraseLower)
                                     || x.Job.Title.Contains(searchPhraseLower)

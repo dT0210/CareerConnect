@@ -15,5 +15,5 @@ public class JobRequestModel
     public JobType Type { get; set; }
     public string Salary { get; set; }
     public string Experience { get; set; }
-    public ICollection<Guid> Skills { get; set; }
+    public ICollection<Guid>? Skills { get; set; }
 }

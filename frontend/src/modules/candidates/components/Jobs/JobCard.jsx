@@ -1,10 +1,11 @@
+import { FormatDateTime } from "../../../../common/helpers";
 import { Button } from "../../../../components/Button";
 
 export const JobCard = ({ job, onApplyClick, applyDisabled }) => {
   const handleApply = () => {
     if (onApplyClick !== null) onApplyClick();
-  }
-  
+  };
+
   return (
     <div className="flex shadow-md p-4 rounded gap-2 w-full md:w-[49%]">
       <div className="w-24 h-24 flex-shrink-0">
@@ -32,19 +33,33 @@ export const JobCard = ({ job, onApplyClick, applyDisabled }) => {
             {job.salary}
           </div>
         </div>
-        <div className="mt-1 flex justify-between">
-          <div className="flex overflow-hidden gap-2">
-          <a className="px-2 py-1 bg-slate-200 flex items-center">{job.location}</a>
-          <a className="px-2 py-1 bg-slate-200 flex items-center">{job.field.name}</a>
-            {job.skills.map((skill) => (
-              <a className="px-2 py-1 bg-slate-200 flex items-center">{skill.name}</a>
+        <div className="mt-1 flex justify-between flex-wrap gap-2">
+          <div className="flex overflow-hidden gap-2 h-fit">
+            <a className="px-2 py-1 bg-slate-200 flex items-center h-fit">
+              {job.location}
+            </a>
+            <a className="px-2 py-1 bg-slate-200 flex items-center h-fit">
+              {job.field?.name}
+            </a>
+            {job.skills?.map((skill) => (
+              <a className="px-2 py-1 bg-slate-200 flex items-center h-fit">
+                {skill.name}
+              </a>
             ))}
           </div>
-          <div className="flex-shrink-0 flex">
-            <button>{/*heart shaped react icon*/}</button>
-            <Button onClick={handleApply} disabled={applyDisabled}>Apply</Button>
-          </div>
+            <div className="flex-shrink-0 flex items-center gap-2 justify-end">
+              <button>{/*heart shaped react icon*/}</button>
+              <Button onClick={handleApply} disabled={applyDisabled}>
+                {applyDisabled ? "Applied" : "Apply"}
+              </Button>
+            </div>
         </div>
+        {job.appliedAt && (
+              <div className="italic text-sm text-end">{`Applied at ${FormatDateTime(
+                job.appliedAt,
+                "dd/mm/yyyy hh:mm"
+              )}`}</div>
+            )}
       </div>
     </div>
   );

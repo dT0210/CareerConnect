@@ -110,10 +110,10 @@ public class CandidateController : ControllerBase
 
     [HttpGet]
     [Route("{id}/applied-jobs")]
-    public async Task<IActionResult> GetAppliedJobs(Guid id, int? pageIndex, int? pageSize, Guid? recruiterId, JobType? type, string? search, string? orderBy, bool? isDescending) {
+    public async Task<IActionResult> GetAppliedJobs(Guid id, int? pageIndex, int? pageSize, JobType? type, Guid? field, string? search, string? orderBy, bool? isDescending) {
         try 
         {
-            var jobs = await _applicationService.GetApplicationsAsync(null, id, pageIndex, pageSize, type, search, orderBy, isDescending);
+            var jobs = await _applicationService.GetApplicationsAsync(null, id, pageIndex, pageSize, type, field, search, orderBy, isDescending);
             return Ok(jobs);
         }
         catch (KeyNotFoundException e)

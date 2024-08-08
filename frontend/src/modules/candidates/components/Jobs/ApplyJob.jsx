@@ -2,18 +2,29 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { Button } from "../../../../components/Button";
 import InputField from "../../../../components/InputField";
+import { useLoading } from "../../../../hooks/useLoading";
 import { getCandidateDetails } from "../../../../services/candidate";
+import { uploadPdf } from "../../../../services/file";
 import { applyJob } from "../../../../services/job";
 
 export const ApplyJob = ({ jobId, candidateId, onSubmit }) => {
   const [candidate, setCandidate] = useState();
   const [coverLetter, setCoverLetter] = useState("");
+  const [file, setFile] = useState();
+  const { isLoading, setIsLoading } = useLoading();
+
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+  };
 
   useEffect(() => {
     const fetchCandidate = async () => {
+      if (!candidateId) return;
       await getCandidateDetails(candidateId)
         .then((response) => {
           setCandidate(response);
+          console.log(response);
+          
         })
         .catch((err) => {
           toast.error("Trouble fetching candidate details");
@@ -23,25 +34,38 @@ export const ApplyJob = ({ jobId, candidateId, onSubmit }) => {
     fetchCandidate();
   }, [candidateId]);
 
-  const handleSubmit = async () => {
-    await applyJob({
-      jobId,
-      candidateId,
-      coverLetter,
-    })
-      .then((response) => {
-        toast.success("Applied successfully");
-      })
-      .catch((err) => {
-        toast.error("Trouble applying for this job");
-      })
-      .finally(() => {
-        if (onSubmit) onSubmit();
-      });
+  console.log(candidate);
+  
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    if (file) {
+      await uploadPdf(candidateId, file)
+        .then(async (response) => {
+          await applyJob({
+            jobId,
+            candidateId,
+            coverLetter,
+            cvUrl: response.filePath,
+          })
+            .then((response) => {
+              toast.success("Applied successfully");
+            })
+            .catch((err) => {
+              toast.error("Trouble applying for this job");
+              console.log(err);
+            });
+        })
+        .finally(() => {
+          if (onSubmit) onSubmit();
+          setIsLoading(false);
+        });
+    }
   };
 
   return (
-    <div>
+    <form>
       <div>
         <div className="font-bold text-xl">Your information</div>
         <table className="w-[400px]">
@@ -69,11 +93,15 @@ export const ApplyJob = ({ jobId, candidateId, onSubmit }) => {
           }}
         />
       </div>
+      <div>
+      <div className="font-medium">Your CV</div>
+        <InputField type="file" onChange={handleFileChange} inputClassName={"rounded-none"}/>
+      </div>
       <div className="flex justify-center mt-4">
         <Button variant={"red"} onClick={handleSubmit}>
           Apply
         </Button>
       </div>
-    </div>
+    </form>
   );
 };

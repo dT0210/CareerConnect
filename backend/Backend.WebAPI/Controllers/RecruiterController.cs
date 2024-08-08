@@ -64,6 +64,9 @@ public class RecruiterController : ControllerBase
             var user = await _recruiterService.GetRecruiterByIdAsync(id);
             return Ok(user);
         }
+        catch (KeyNotFoundException e) {
+            return NotFound(e.Message);
+        }
         catch (Exception e)
         {
             return StatusCode(500, e.Message);

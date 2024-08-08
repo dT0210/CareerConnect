@@ -1,8 +1,14 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { JOB_TYPES } from "../../../common/constant";
+import { filterUndefinedAndNull } from "../../../common/helpers";
 import { Dialog } from "../../../components/Dialog";
 import { LoadingSpinner } from "../../../components/LoadingSpinner";
+import { Pagination } from "../../../components/Pagination";
+import { SearchForm } from "../../../components/SearchForm";
+import { Select } from "../../../components/Select";
 import { useAuth } from "../../../hooks";
+import { useFields } from "../../../hooks/useFields";
 import { useLoading } from "../../../hooks/useLoading";
 import { getPagedJobs } from "../../../services/job";
 import { ApplyJob, JobCard } from "../components/Jobs";
@@ -22,7 +28,12 @@ const DashBoard = () => {
   const { user } = useAuth();
   const [jobId, setJobId] = useState();
   const [openApplyJob, setOpenApplyJob] = useState(false);
-  const {appliedJobs, fetchAppliedJobs} = useAppliedJobs(user.id, 1000000);
+  const { appliedJobs, fetchAppliedJobs } = useAppliedJobs(user.id, 1000000);
+  const { fields, fetchFields } = useFields();
+  const [filter, setFilter] = useState({
+    field: null,
+    type: null,
+  });
 
   const fetchJobs = async () => {
     setIsLoading(true);
@@ -32,6 +43,7 @@ const DashBoard = () => {
       search: searchQuery,
       orderBy: sortConfig.key,
       isDescending: sortConfig.direction === "descending",
+      ...filterUndefinedAndNull(filter),
     })
       .then((response) => {
         setJobs(response.data || []);
@@ -52,26 +64,87 @@ const DashBoard = () => {
 
   useEffect(() => {
     fetchJobs();
-  }, [pagination.pageIndex, pagination.pageSize, searchQuery, sortConfig]);
+  }, [
+    pagination.pageIndex,
+    pagination.pageSize,
+    filter,
+    searchQuery,
+    sortConfig,
+  ]);
 
-  if (isLoading) return <LoadingSpinner />;
-  console.log(appliedJobs);
-  
+  console.log(user);
 
   return (
     <div className="p-8">
-      <div className="flex gap-2 flex-wrap justify-between">
-        {jobs.map((job, index) => (
-          <JobCard job={job} key={index} onApplyClick={() => {
-            setJobId(job.id);
-            setOpenApplyJob(true);
-          }} 
-            applyDisabled={appliedJobs.find(appliedJob => appliedJob.id === job.id)}
+      <div className="flex items-center gap-4">
+        <SearchForm
+          setSearch={setSearchQuery}
+          onSubmit={fetchJobs}
+        />
+        <Select
+          options={fields}
+          search={true}
+          label={"Field"}
+          onChange={(option) => {
+            setFilter((prev) => ({
+              ...prev,
+              field: option?.value,
+            }));
+          }}
+          className={"w-[30%]"}
+        />
+        <Select
+          options={JOB_TYPES}
+          label={"Type"}
+          onChange={(option) => {
+            setFilter((prev) => ({
+              ...prev,
+              type: option?.value,
+            }));
+          }}
+          className={"w-[30%]"}
+        />
+      </div>
+      <div className="mt-4">
+        {isLoading ? (
+          <LoadingSpinner />
+        ) : jobs.length > 0 ? (
+          <>
+          <div className="flex gap-2 flex-wrap justify-between">
+            {jobs.map((job, index) => (
+              <JobCard
+                job={job}
+                key={index}
+                onApplyClick={() => {
+                  setJobId(job.id);
+                  setOpenApplyJob(true);
+                }}
+                applyDisabled={appliedJobs.find(
+                  (appliedJob) => appliedJob.id === job.id
+                )}
+              />
+            ))}
+          </div>
+          <Pagination
+            {...pagination}
+            setPage={(page) => {
+              setPagination({ ...pagination, pageIndex: page });
+            }}
           />
-        ))}
+          </>
+        ) : (
+          <div className="text-center w-full text-xl">No result</div>
+        )}
       </div>
       <Dialog open={openApplyJob} setOpen={setOpenApplyJob}>
-        <ApplyJob jobId={jobId} candidateId={user.id} onSubmit={()=>{setOpenApplyJob(false); fetchAppliedJobs()}}/>
+        <ApplyJob
+          jobId={jobId}
+          candidateId={user.id}
+          onSubmit={() => {
+            setOpenApplyJob(false);
+            fetchAppliedJobs();
+          }}
+        />
       </Dialog>
     </div>
   );

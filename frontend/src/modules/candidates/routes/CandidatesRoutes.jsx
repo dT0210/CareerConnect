@@ -1,5 +1,6 @@
 import { Navigate } from "react-router-dom";
 import DashBoard from "../pages/DashBoard";
+import { AppliedJobs } from "../pages/Jobs/AppliedJobs";
 import { JobDetails } from "../pages/Jobs/JobDetails";
 import Layout from "../pages/Layout";
 import Signin from "../pages/Signin";
@@ -28,6 +29,18 @@ export const CandidatesRoute = [
   },
   {
     path: "/jobs/:jobId",
-    element: <Layout><JobDetails/></Layout>
-  }
+    element: (
+      <Layout>
+        <JobDetails />
+      </Layout>
+    ),
+  },
+  {
+    path: "/applied-jobs",
+    element: (
+      <Layout>
+        <AppliedJobs />
+      </Layout>
+    ),
+  },
 ];

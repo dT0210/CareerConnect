@@ -1,14 +1,22 @@
+import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useAuth } from "../../../hooks/useAuth";
+import useClickOutside from "../../../hooks/useClickOutside";
 
 export const Nav = () => {
-  const {setIsAuthenticated} = useAuth();
+  const { setIsAuthenticated } = useAuth();
+  const [openJobMenu, setOpenJobMenu] = useState(false);
   const handleLogout = () => {
     localStorage.removeItem("token");
     setIsAuthenticated(false);
-    toast.success("You have been signed out")
+    toast.success("You have been signed out");
   };
+  const jobMenuRef = useRef();
+  useClickOutside(jobMenuRef, ()=>{
+    setOpenJobMenu(false);
+  })
+
   return (
     <div className="h-[80px] w-full bg-red-500 flex justify-between items-center px-4 text-white font-semibold text-lg">
       <div className=" flex items-center justify-start gap-4">
@@ -95,18 +103,33 @@ export const Nav = () => {
             </defs>
           </svg>
         </Link>
-        <Link to="/dashboard" className="hover:border-b-2 hover:border-b-white h-full p-2">
-            Home
+        <Link
+          to="/dashboard"
+          className="hover:border-b-2 hover:border-b-white h-full p-2"
+        >
+          Home
         </Link>
-        <Link to="/jobs" className="hover:border-b-2 hover:border-b-white h-full p-2">
-            Jobs
-        </Link>
-        <Link to="/profile" className="hover:border-b-2 hover:border-b-white h-full p-2">
-            Profile
+        <div className=" h-full relative" ref={jobMenuRef}>
+          <div className="hover:border-b-2 hover:border-b-white p-2 hover:cursor-pointer" onClick={()=>{setOpenJobMenu(!openJobMenu)}}>Jobs</div>
+          <div className={`rounded-md p-2 shadow-md w-[160px] absolute top-[120%] text-black bg-white z-20 ${!openJobMenu && "hidden"}`}>
+            <Link to="/applied-jobs" className="rounded-md block p-2 bg-slate-200 hover:bg-slate-300 hover:text-red-500 transition-all">Applied Jobs</Link>
+          </div>
+        </div>
+        <Link
+          to="/profile"
+          className="hover:border-b-2 hover:border-b-white h-full p-2"
+        >
+          Profile
         </Link>
       </div>
-      <div className="flex justify-end items-center" >
-        <Link to="/" onClick={handleLogout} className="hover:border-b-2 hover:border-b-white h-full p-2">Log out</Link>
+      <div className="flex justify-end items-center">
+        <Link
+          to="/"
+          onClick={handleLogout}
+          className="hover:border-b-2 hover:border-b-white h-full p-2"
+        >
+          Log out
+        </Link>
       </div>
     </div>
   );

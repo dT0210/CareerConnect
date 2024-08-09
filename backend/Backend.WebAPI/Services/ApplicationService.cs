@@ -36,7 +36,8 @@ public class ApplicationService : IApplicationService
                     .Include(a => a.Job.Recruiter.Company)
                     .AsNoTracking();
 
-        query = query.Where(x => (candidateId == null || x.CandidateId == candidateId)
+        query = query.Where(x => (jobId == null || x.JobId == jobId) 
+                                && (candidateId == null || x.CandidateId == candidateId)
                                 && (fieldId == null || x.Job.FieldId == fieldId)
                                 && (type == null || x.Job.Type == type)
                                 && (string.IsNullOrWhiteSpace(searchPhraseLower)
@@ -52,7 +53,11 @@ public class ApplicationService : IApplicationService
                     { "type",  x => x.Job.Type },
                     { "deadline", x => x.Job.Deadline},
                     { "field", x => x.Job.Field },
-                    { "appliedAt", x => x.CreatedAt}
+                    { "appliedAt", x => x.CreatedAt},
+                    { "name", x => x.Candidate.Name},
+                    { "email", x=> x.Candidate.Email},
+                    { "phoneNumber", x => x.Candidate.PhoneNumber},
+                    { "address", x=>x.Candidate.Address}
                 };
             var selectedColumn = columnsSelector[orderBy];
             query = isDescending.HasValue && isDescending.Value
@@ -113,6 +118,13 @@ public class ApplicationService : IApplicationService
     public async Task DeleteApplicationAsync(Guid id)
     {
         await _applicationRepository.DeleteAsync(id);
+        await _applicationRepository.SaveAsync();
+    }
+
+    public async Task UpdateApplicationStatusAsync(Guid id, ApplicationStatusType status) {
+        var existingApplication = await _applicationRepository.GetByIdAsync(id) ?? throw new KeyNotFoundException("Application not found.");
+        existingApplication.Status = status;
+        _applicationRepository.Update(existingApplication);
         await _applicationRepository.SaveAsync();
     }
 }

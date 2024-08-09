@@ -27,4 +27,11 @@ app.UseStaticFiles(new StaticFileOptions
     // https://localhost:1234/Images
 });
 
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "CVs")),
+    RequestPath = "/CVs"
+    // https://localhost:1234/CVs
+});
+
 app.Run();

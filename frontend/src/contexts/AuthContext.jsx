@@ -51,8 +51,6 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     fetchUserFromToken();
-    console.log(user);
-    
   }, [token, isAuthenticated]);
 
   const authContextValue = useMemo(

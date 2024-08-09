@@ -72,13 +72,14 @@ const DashBoard = () => {
     sortConfig,
   ]);
 
-  console.log(user);
-
   return (
     <div className="p-8">
       <div className="flex items-center gap-4">
         <SearchForm
-          setSearch={setSearchQuery}
+          setSearch={(query) => {
+            setSearchQuery(query);
+            setPagination({ ...pagination, pageIndex: 1 });
+          }}
           onSubmit={fetchJobs}
         />
         <Select
@@ -110,27 +111,27 @@ const DashBoard = () => {
           <LoadingSpinner />
         ) : jobs.length > 0 ? (
           <>
-          <div className="flex gap-2 flex-wrap justify-between">
-            {jobs.map((job, index) => (
-              <JobCard
-                job={job}
-                key={index}
-                onApplyClick={() => {
-                  setJobId(job.id);
-                  setOpenApplyJob(true);
-                }}
-                applyDisabled={appliedJobs.find(
-                  (appliedJob) => appliedJob.id === job.id
-                )}
-              />
-            ))}
-          </div>
-          <Pagination
-            {...pagination}
-            setPage={(page) => {
-              setPagination({ ...pagination, pageIndex: page });
-            }}
-          />
+            <div className="flex gap-2 flex-wrap justify-between">
+              {jobs.map((job, index) => (
+                <JobCard
+                  job={job}
+                  key={index}
+                  onApplyClick={() => {
+                    setJobId(job.id);
+                    setOpenApplyJob(true);
+                  }}
+                  applyDisabled={appliedJobs.find(
+                    (appliedJob) => appliedJob.id === job.id
+                  )}
+                />
+              ))}
+            </div>
+            <Pagination
+              {...pagination}
+              setPage={(page) => {
+                setPagination({ ...pagination, pageIndex: page });
+              }}
+            />
           </>
         ) : (
           <div className="text-center w-full text-xl">No result</div>

@@ -16,6 +16,7 @@ const Signup = () => {
     password: "",
     confirmPassword: "",
   });
+  const [errors, setErrors] = useState();
   const {isLoading, setIsLoading} = useLoading();
 
   const handleValueChange = (event) => {
@@ -25,6 +26,11 @@ const Signup = () => {
       [name]: value,
     }));
   };
+
+  const validateForm = () => {
+    // setErrors();
+    return Object.keys(errors).length === 0;
+  }
 
   const navigate = useNavigate();
 

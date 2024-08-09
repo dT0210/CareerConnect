@@ -141,8 +141,10 @@ export const Jobs = () => {
                 {sortConfig.key === "deadline" &&
                   (sortConfig.direction === "ascending" ? "▲" : "▼")}
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer">
-                Applications
+              <th onClick={() => handleSort("applications")} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer">
+                Applications{" "}
+                {sortConfig.key === "applications" &&
+                  (sortConfig.direction === "ascending" ? "▲" : "▼")}
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Action

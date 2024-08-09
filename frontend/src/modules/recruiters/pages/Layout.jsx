@@ -3,7 +3,7 @@ import { Nav } from "../components/Nav";
 
 const Layout = ({ children }) => {
   return (
-    <div>
+    <div className="h-full flex flex-col">
       <AuthRequired>
         <Nav />
         {children}

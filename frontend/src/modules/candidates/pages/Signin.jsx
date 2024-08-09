@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import background from "../../../assets/images/Group 13.png";
+import { emailRegex } from "../../../common/validation";
 import InputField from "../../../components/InputField";
 import { LoadingSpinner } from "../../../components/LoadingSpinner";
 import { useAuth } from "../../../hooks/useAuth";
@@ -27,12 +28,29 @@ const Signin = () => {
   const navigate = useNavigate();
   const {setIsAuthenticated, fetchUserFromToken} = useAuth();
 
+  const validateForm = () => {
+    if (formData.email === "") {
+      setError("Please enter your email");
+      return false;
+    }
+    if (formData.password === "") {
+      setError("Please enter your password");
+      return false;
+    }
+    if (!emailRegex.test(formData.email)) {
+      setError("Please enter a valid email");
+      return false;
+    }
+    setError();
+    return true;
+  }
+
   const handleSubmit = async (event) => {
     event.preventDefault();
+    if (!validateForm()) return;
     setIsLoading(true);
     await candidateLogin(formData)
       .then((response) => {
-        console.log(response);
         if (response.success) {
           localStorage.setItem("token", response.token);
           setIsAuthenticated(true);
@@ -68,8 +86,6 @@ const Signin = () => {
             <div className="flex gap-10 flex-wrap sm:flex-nowrap">
               <div className="flex flex-col gap-4 w-[50%]">
                 <InputField
-                  required={true}
-                  type="email"
                   name="email"
                   id="email"
                   value={formData.email}
@@ -78,7 +94,6 @@ const Signin = () => {
                   onChange={handleValueChange}
                 />
                 <InputField
-                  required={true}
                   type="password"
                   name="password"
                   id="password"

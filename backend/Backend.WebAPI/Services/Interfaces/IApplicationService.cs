@@ -11,4 +11,5 @@ public interface IApplicationService
     Task<ApplicationResponseModel> InsertApplicationAsync(ApplicationRequestModel application);
     Task UpdateApplicationAsync(Guid id, ApplicationRequestModel application);
     Task DeleteApplicationAsync(Guid id);
+    Task UpdateApplicationStatusAsync(Guid id, ApplicationStatusType status);
 }

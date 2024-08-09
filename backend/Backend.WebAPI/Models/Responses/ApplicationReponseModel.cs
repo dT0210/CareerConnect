@@ -6,4 +6,5 @@ public class ApplicationResponseModel
     public JobResponseModel Job { get; set; }
     public DateTime AppliedAt {get; set;}
     public string CoverLetter {get; set;}
+    public string CvUrl {get; set;}
 }

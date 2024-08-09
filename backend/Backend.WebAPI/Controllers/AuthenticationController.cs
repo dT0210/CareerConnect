@@ -37,7 +37,7 @@ public class AuthenticationController : ControllerBase
                 Success = false,
                 Message = "Invalid username or password"
             };
-            return BadRequest(res);
+            return Unauthorized(res);
         }
 
         var response = await _candidateService.LoginAsync(model);

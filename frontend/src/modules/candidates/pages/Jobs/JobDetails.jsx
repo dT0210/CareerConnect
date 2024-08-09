@@ -19,6 +19,9 @@ export const JobDetails = () => {
   const { isLoading, setIsLoading } = useLoading();
   const { user } = useAuth();
   const { appliedJobs, fetchAppliedJobs } = useAppliedJobs(user.id, 1000000);
+  const applyDisabled = appliedJobs.find(
+    (appliedJob) => appliedJob.id === job?.id
+  )
 
   const fetchJob = async () => {
     setIsLoading(true);
@@ -87,17 +90,17 @@ export const JobDetails = () => {
           <div className="flex justify-end">
             <Button
               variant={"red"}
-              disabled={appliedJobs.find(
-                (appliedJob) => appliedJob.id === job.id
-              )}
+              disabled={applyDisabled}
             >
-              Apply
+              {applyDisabled ? "Applied" : "Apply"}
             </Button>
           </div>
         </div>
         <div className="p-4 bg-white rounded-lg w-full">
-          <div className="text-2xl font-bold">Job Description</div>
-          <div>{job?.description}</div>
+        <div className="text-2xl font-bold">Job Description</div>
+        <div>{job?.description || "None given"}</div>
+        <div className="text-2xl font-bold mt-4">Job Requirements</div>
+        <div>{job?.requirements || "None given"}</div>
         </div>
       </div>
       <div className="w-full md:w-[38%]">

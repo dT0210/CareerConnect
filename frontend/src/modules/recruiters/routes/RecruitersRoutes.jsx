@@ -2,6 +2,7 @@ import { Navigate } from "react-router-dom";
 import DashBoard from "../pages/DashBoard";
 import { Jobs } from "../pages/Jobs";
 import { CreateJob } from "../pages/Jobs/CreateJob";
+import { JobsApplications } from "../pages/Jobs/JobsApplications";
 import Layout from "../pages/Layout";
 import { Profile } from "../pages/Profile";
 import { CreateCompanyProfile } from "../pages/Profile/CreateCompanyProfile";
@@ -64,5 +65,12 @@ export const RecruitersRoute = [
       <Layout>
         <CreateJob/>
       </Layout>
+  },
+  {
+    path: "/recruiters/jobs/:jobId",
+    element: 
+    <Layout>
+      <JobsApplications/>
+    </Layout>
   }
 ];

@@ -23,8 +23,6 @@ export const ApplyJob = ({ jobId, candidateId, onSubmit }) => {
       await getCandidateDetails(candidateId)
         .then((response) => {
           setCandidate(response);
-          console.log(response);
-          
         })
         .catch((err) => {
           toast.error("Trouble fetching candidate details");
@@ -33,9 +31,6 @@ export const ApplyJob = ({ jobId, candidateId, onSubmit }) => {
     };
     fetchCandidate();
   }, [candidateId]);
-
-  console.log(candidate);
-  
 
   const handleSubmit = async (e) => {
     e.preventDefault();

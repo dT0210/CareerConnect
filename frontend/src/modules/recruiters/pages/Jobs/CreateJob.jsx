@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { JOB_TYPES } from "../../../../common/constant";
@@ -17,6 +16,7 @@ export const CreateJob = () => {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
+    requirements: "",
     location: "",
     fieldId: "",
     salary: "",
@@ -29,18 +29,6 @@ export const CreateJob = () => {
   const [fields, setFields] = useState([]);
   const navigate = useNavigate();
   const { isLoading, setIsLoading } = useLoading();
-
-  const {} = useForm({
-    title: "",
-    description: "",
-    location: "",
-    fieldId: "",
-    salary: "",
-    experience: "",
-    deadline: "",
-    type: 5,
-    skills: [],
-  });
 
   const inputFields = [
     { label: "Job Title", placeholder: "Enter job title", name: "title" },
@@ -193,10 +181,21 @@ export const CreateJob = () => {
           <InputField
               required={true}
               label={"Description"}
-              placeholder={"Enter job decription"}
+              placeholder={"Enter job description"}
               id={"description"}
               name={"description"}
               value={formData["description"]}
+              onChange={handleValueChange}
+              type={"textarea"}
+              className="w-full"
+            />
+            <InputField
+              required={true}
+              label={"Requirements"}
+              placeholder={"Enter job requirements"}
+              id={"requirement"}
+              name={"requirement"}
+              value={formData["requirements"]}
               onChange={handleValueChange}
               type={"textarea"}
               className="w-full"

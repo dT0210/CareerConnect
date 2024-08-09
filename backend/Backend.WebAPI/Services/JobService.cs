@@ -62,7 +62,8 @@ public class JobService : IJobService
                     { "deadline", x => x.Deadline},
                     { "field", x => x.Field },
                     { "createdAt", x => x.CreatedAt},
-                    { "modifiedAt", x => x.ModifiedAt}
+                    { "modifiedAt", x => x.ModifiedAt},
+                    { "application", x => x.Applications.Count}
                 };
             var selectedColumn = columnsSelector[orderBy];
             query = isDescending.HasValue && isDescending.Value

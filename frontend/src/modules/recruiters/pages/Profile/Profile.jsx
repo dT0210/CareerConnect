@@ -17,7 +17,6 @@ export const Profile = () => {
     setIsLoading(true);
     await getRecruiter(user.id)
       .then((response) => {
-        console.log(response);
         setRecruiter(response);
       })
       .catch((err) => {

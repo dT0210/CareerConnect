@@ -2,8 +2,6 @@ import { httpClient } from "../httpClient/httpClient";
 
 export const getPagedJobs = (request) => {
     const queryParams = new URLSearchParams(request);
-    console.log(request);
-    
     return httpClient.get(`/jobs?${queryParams}`);
 }
 
@@ -25,4 +23,9 @@ export const getFields = () => {
 
 export const applyJob = (body) => {
     return httpClient.post("/applications", body);
+}
+
+export const getApplications = (request) =>{
+    const params = new URLSearchParams(request);
+    return httpClient.get(`/applications?${params}`);
 }

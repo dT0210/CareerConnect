@@ -44,6 +44,10 @@ public class ApplicationController : ControllerBase
             var user = await _applicationService.GetApplicationByIdAsync(id);
             return Ok(user);
         }
+        catch (KeyNotFoundException e) 
+        {
+            return NotFound(e.Message);
+        }
         catch (Exception e)
         {
             return StatusCode(500, e.Message);
@@ -96,6 +100,28 @@ public class ApplicationController : ControllerBase
         {
             await _applicationService.DeleteApplicationAsync(id);
             return Ok();
+        }
+        catch (KeyNotFoundException e) 
+        {
+            return NotFound(e.Message);
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, e.Message);
+        }
+    }
+
+    [HttpPut]
+    [Route("{id}/status")]
+    public async Task<IActionResult> UpdateApplicationStatus(Guid id, ApplicationStatusType status) {
+        try
+        {
+            await _applicationService.UpdateApplicationStatusAsync(id, status);
+            return Ok();
+        }
+        catch (KeyNotFoundException e) 
+        {
+            return NotFound(e.Message);
         }
         catch (Exception e)
         {

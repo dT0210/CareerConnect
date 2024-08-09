@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import background from "../../../assets/images/Group 13.png";
+import { emailRegex } from "../../../common/validation";
 import InputField from "../../../components/InputField";
 import { LoadingSpinner } from "../../../components/LoadingSpinner";
 import { useAuth } from "../../../hooks/useAuth";
@@ -27,8 +28,26 @@ const Signin = () => {
   const navigate = useNavigate();
   const {setIsAuthenticated, fetchUserFromToken} = useAuth();
 
+  const validateForm = () => {
+    if (formData.email === "") {
+      setError("Please enter your email");
+      return false;
+    }
+    if (formData.password === "") {
+      setError("Please enter your password");
+      return false;
+    }
+    if (!emailRegex.test(formData.email)) {
+      setError("Please enter a valid email");
+      return false;
+    }
+    setError();
+    return true;
+  }
+
   const handleSubmit = async (event) => {
     event.preventDefault();
+    if (!validateForm()) return;
     setIsLoading(true);
     await adminLogin(formData)
       .then((response) => {

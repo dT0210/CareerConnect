@@ -27,7 +27,7 @@ public class SkillService : ISkillService
 
     public async Task<SkillResponseModel?> GetSkillByIdAsync(Guid id)
     {
-        var skill = await _skillRepository.GetByIdAsync(id);
+        var skill = await _skillRepository.GetByIdAsync(id) ?? throw new KeyNotFoundException("Skill not found");
         return _mapper.Map<SkillResponseModel>(skill);
     }
 

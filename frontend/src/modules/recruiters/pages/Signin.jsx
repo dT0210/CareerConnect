@@ -87,7 +87,6 @@ const Signin = () => {
               <div className="flex flex-col gap-4 w-[50%]">
                 <InputField
                   required={true}
-                  type="email"
                   name="email"
                   id="email"
                   value={formData.email}

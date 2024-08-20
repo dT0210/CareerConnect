@@ -26,8 +26,8 @@ public class ApplicationController : ControllerBase
     {
         try
         {
-            var users = await _applicationService.GetApplicationsAsync(jobId, candidateId, pageIndex, pageSize, type, field, search, orderBy, isDescending);
-            return Ok(users);
+            var applications = await _applicationService.GetApplicationsAsync(jobId, candidateId, pageIndex, pageSize, type, field, search, orderBy, isDescending);
+            return Ok(applications);
         }
         catch (Exception e)
         {
@@ -41,8 +41,8 @@ public class ApplicationController : ControllerBase
     {
         try
         {
-            var user = await _applicationService.GetApplicationByIdAsync(id);
-            return Ok(user);
+            var application = await _applicationService.GetApplicationByIdAsync(id);
+            return Ok(application);
         }
         catch (KeyNotFoundException e) 
         {
@@ -113,7 +113,7 @@ public class ApplicationController : ControllerBase
 
     [HttpPut]
     [Route("{id}/status")]
-    public async Task<IActionResult> UpdateApplicationStatus(Guid id, ApplicationStatusType status) {
+    public async Task<IActionResult> UpdateApplicationStatus(Guid id, [FromBody]ApplicationStatusType status) {
         try
         {
             await _applicationService.UpdateApplicationStatusAsync(id, status);
@@ -125,6 +125,7 @@ public class ApplicationController : ControllerBase
         }
         catch (Exception e)
         {
+            _logger.LogError(e.ToString());
             return StatusCode(500, e.Message);
         }
     }

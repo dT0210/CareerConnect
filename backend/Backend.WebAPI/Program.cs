@@ -1,4 +1,5 @@
 using Backend.WebAPI.Extensions;
+using Backend.WebAPI.Hubs;
 using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -33,5 +34,7 @@ app.UseStaticFiles(new StaticFileOptions
     RequestPath = "/CVs"
     // https://localhost:1234/CVs
 });
+
+app.MapHub<NotificationsHub>("notificationsHub");
 
 app.Run();

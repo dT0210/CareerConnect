@@ -24,8 +24,8 @@ public class SkillController : ControllerBase
     {
         try
         {
-            var users = await _skillService.GetAllSkillsAsync();
-            return Ok(users);
+            var skills = await _skillService.GetAllSkillsAsync();
+            return Ok(skills);
         }
         catch (Exception e)
         {
@@ -39,8 +39,8 @@ public class SkillController : ControllerBase
     {
         try
         {
-            var user = await _skillService.GetSkillByIdAsync(id);
-            return Ok(user);
+            var skill = await _skillService.GetSkillByIdAsync(id);
+            return Ok(skill);
         }
         catch (Exception e)
         {

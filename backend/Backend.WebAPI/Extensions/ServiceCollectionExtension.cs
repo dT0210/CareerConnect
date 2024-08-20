@@ -30,6 +30,7 @@ public static class ServiceCollectionExtension
         services.AddScoped<ILocalImageRepository, LocalImageRepository>();
         services.AddScoped<ILocalPdfRepository, LocalPdfRepository>();
         services.AddScoped<IFieldRepository, FieldRepository>();
+        services.AddScoped<INotificationRepository, NotificationRepository>();
 
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<ICandidateService, CandidateService>();
@@ -40,6 +41,7 @@ public static class ServiceCollectionExtension
         services.AddScoped<ISkillService, SkillService>();
         services.AddScoped<IApplicationService, ApplicationService>();
         services.AddScoped<IFieldService, FieldService>();
+        services.AddScoped<INotificationService, NotificationService>();
 
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
         {
@@ -96,6 +98,8 @@ public static class ServiceCollectionExtension
                 new string[] { }
             }});
         });
+
+        services.AddSignalR();
 
         return services;
     }

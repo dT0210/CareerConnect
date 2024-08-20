@@ -24,8 +24,8 @@ public class FieldController : ControllerBase
     {
         try
         {
-            var users = await _fieldService.GetAllFieldsAsync();
-            return Ok(users);
+            var fields = await _fieldService.GetAllFieldsAsync();
+            return Ok(fields);
         }
         catch (Exception e)
         {
@@ -39,8 +39,8 @@ public class FieldController : ControllerBase
     {
         try
         {
-            var user = await _fieldService.GetFieldByIdAsync(id);
-            return Ok(user);
+            var field = await _fieldService.GetFieldByIdAsync(id);
+            return Ok(field);
         }
         catch (Exception e)
         {

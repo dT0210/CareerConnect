@@ -33,8 +33,8 @@ public class CompanyController : ControllerBase
     ) {
         try
         {
-            var users = await _companyService.GetAllCompanysAsync(pageIndex, pageSize, status, search, orderBy, isDescending);
-            return Ok(users);
+            var companies = await _companyService.GetAllCompanysAsync(pageIndex, pageSize, status, search, orderBy, isDescending);
+            return Ok(companies);
         }
         catch (Exception e)
         {
@@ -48,8 +48,8 @@ public class CompanyController : ControllerBase
     {
         try
         {
-            var user = await _companyService.GetCompanyByIdAsync(id);
-            return Ok(user);
+            var company = await _companyService.GetCompanyByIdAsync(id);
+            return Ok(company);
         }
         catch (Exception e)
         {

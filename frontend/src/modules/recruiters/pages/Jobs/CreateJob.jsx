@@ -16,7 +16,6 @@ export const CreateJob = () => {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    requirements: "",
     location: "",
     fieldId: "",
     salary: "",
@@ -185,17 +184,6 @@ export const CreateJob = () => {
               id={"description"}
               name={"description"}
               value={formData["description"]}
-              onChange={handleValueChange}
-              type={"textarea"}
-              className="w-full"
-            />
-            <InputField
-              required={true}
-              label={"Requirements"}
-              placeholder={"Enter job requirements"}
-              id={"requirement"}
-              name={"requirement"}
-              value={formData["requirements"]}
               onChange={handleValueChange}
               type={"textarea"}
               className="w-full"

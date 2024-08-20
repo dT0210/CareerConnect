@@ -14,12 +14,14 @@ public class ApplicationService : IApplicationService
     private readonly IApplicationRepository _applicationRepository;
     private readonly IJobRepository _jobRepository;
     private readonly ICandidateRepository _candidateRepository;
+    private readonly INotificationRepository _notificationRepository;
     private readonly IMapper _mapper;
-    public ApplicationService(IApplicationRepository applicationRepository, IJobRepository jobRepository, ICandidateRepository candidateRepository, IMapper mapper)
+    public ApplicationService(IApplicationRepository applicationRepository, IJobRepository jobRepository, ICandidateRepository candidateRepository, INotificationRepository notificationRepository, IMapper mapper)
     {
         _applicationRepository = applicationRepository;
         _jobRepository = jobRepository;
         _candidateRepository = candidateRepository;
+        _notificationRepository = notificationRepository;
         _mapper = mapper;
     }
 
@@ -36,7 +38,7 @@ public class ApplicationService : IApplicationService
                     .Include(a => a.Job.Recruiter.Company)
                     .AsNoTracking();
 
-        query = query.Where(x => (jobId == null || x.JobId == jobId) 
+        query = query.Where(x => (jobId == null || x.JobId == jobId)
                                 && (candidateId == null || x.CandidateId == candidateId)
                                 && (fieldId == null || x.Job.FieldId == fieldId)
                                 && (type == null || x.Job.Type == type)
@@ -100,6 +102,12 @@ public class ApplicationService : IApplicationService
         var newApplication = _mapper.Map<Application>(application);
         await _applicationRepository.InsertAsync(newApplication);
         await _applicationRepository.SaveAsync();
+        var notification = new Notification
+        {
+            UserId = job.RecruiterId,
+            Message = $"{job.Title} has a new application."
+        };
+        await _notificationRepository.InsertAsync(notification);
         return _mapper.Map<ApplicationResponseModel>(newApplication);
     }
 
@@ -121,10 +129,39 @@ public class ApplicationService : IApplicationService
         await _applicationRepository.SaveAsync();
     }
 
-    public async Task UpdateApplicationStatusAsync(Guid id, ApplicationStatusType status) {
-        var existingApplication = await _applicationRepository.GetByIdAsync(id) ?? throw new KeyNotFoundException("Application not found.");
+    public async Task UpdateApplicationStatusAsync(Guid id, ApplicationStatusType status)
+    {
+        var existingApplication = await _applicationRepository.GetAllQueryable()
+                                    .Where(a => a.Id == id)
+                                    .Include(a => a.Job.Recruiter)
+                                    .ThenInclude(r => r.Company)
+                                    .FirstOrDefaultAsync()
+                                    ?? throw new KeyNotFoundException("Application not found.");
         existingApplication.Status = status;
         _applicationRepository.Update(existingApplication);
         await _applicationRepository.SaveAsync();
-    }
+        string msg = $"Mr/Ms. {existingApplication.Job.Recruiter.Name} from {existingApplication.Job.Recruiter.Company.Name}";
+        switch (status)
+        {
+            case ApplicationStatusType.Seen:
+                msg += " has seen your application.";
+                break;
+            case ApplicationStatusType.Suitable:
+                msg += " has evaluated your application as suitable.";
+                break;
+            case ApplicationStatusType.NotSuitable:
+                msg += " has evaluated your application as not suitable.";
+                break;
+            default:
+                break;
+        }
+            var notification = new Notification
+            {
+                UserId = existingApplication.CandidateId,
+                Message = msg
+            };
+            await _notificationRepository.InsertAsync(notification);
+            await _notificationRepository.SaveAsync();
+        }
+
 }

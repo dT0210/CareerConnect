@@ -13,7 +13,10 @@ import { LoadingSpinner } from "../../../../components/LoadingSpinner";
 import { Pagination } from "../../../../components/Pagination";
 import { useAuth } from "../../../../hooks";
 import { useLoading } from "../../../../hooks/useLoading";
-import { getApplications } from "../../../../services/job";
+import {
+  changeApplicationStatus,
+  getApplications,
+} from "../../../../services/job";
 
 export const JobsApplications = () => {
   const { jobId } = useParams();
@@ -30,7 +33,9 @@ export const JobsApplications = () => {
   const { isLoading, setIsLoading } = useLoading();
   const [job, setJob] = useState();
   const [openCoverLetter, setOpenCoverLetter] = useState(false);
-  const [coverLetter, setCoverLetter] = useState("This Application doesnt have a cover letter");
+  const [coverLetter, setCoverLetter] = useState(
+    "This Application doesnt have a cover letter"
+  );
 
   const handleSort = (key) => {
     let direction = "ascending";
@@ -117,8 +122,6 @@ export const JobsApplications = () => {
       <div className="p-4 bg-white rounded-lg w-full">
         <div className="text-2xl font-bold">Job Description</div>
         <div>{job?.description || "None given"}</div>
-        <div className="text-2xl font-bold mt-4">Job Requirements</div>
-        <div>{job?.requirements || "None given"}</div>
       </div>
       <div className="p-4 bg-white rounded-lg">
         <div className="text-2xl font-bold">Applications</div>
@@ -186,6 +189,17 @@ export const JobsApplications = () => {
                       className={`${
                         index % 2 === 0 ? "bg-gray-50" : "bg-white"
                       } hover:cursor-pointer`}
+                      onClick={() => {
+                        if (app.status === 0) {
+                          changeApplicationStatus(app.id, 1)
+                            .catch((error) => {
+                              console.log(error);
+                            })
+                            .finally(() => {
+                              fetchApplications();
+                            });
+                        }
+                      }}
                     >
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-ellipsis overflow-hidden max-w-[400px]">
                         {app.candidate.name}
@@ -252,7 +266,9 @@ export const JobsApplications = () => {
         </div>
       </div>
       <Dialog open={openCoverLetter} setOpen={setOpenCoverLetter}>
-        <div className="md:w-[500px] max-h-[500px] overflow-auto whitespace-pre-line">{coverLetter}</div>
+        <div className="md:w-[500px] max-h-[500px] overflow-auto whitespace-pre-line">
+          {coverLetter}
+        </div>
       </Dialog>
     </div>
   );

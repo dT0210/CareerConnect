@@ -27,8 +27,8 @@ public class JobController : ControllerBase
     {
         try
         {
-            var users = await _jobService.GetAllJobsAsync(pageIndex, pageSize, recruiterId, type, field, search, orderBy, isDescending);
-            return Ok(users);
+            var jobs = await _jobService.GetAllJobsAsync(pageIndex, pageSize, recruiterId, type, field, search, orderBy, isDescending);
+            return Ok(jobs);
         }
         catch (Exception e)
         {
@@ -42,8 +42,8 @@ public class JobController : ControllerBase
     {
         try
         {
-            var user = await _jobService.GetJobByIdAsync(id);
-            return Ok(user);
+            var job = await _jobService.GetJobByIdAsync(id);
+            return Ok(job);
         }
         catch (Exception e)
         {

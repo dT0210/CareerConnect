@@ -51,5 +51,9 @@ public class MapperProfile : Profile
         CreateMap<FieldRequestModel, Field>();
 
         CreateMap<Field, FieldResponseModel>();
+
+        CreateMap<NotificationRequestModel, Notification>();
+
+        CreateMap<Notification, NotificationResponseModel>();
     }
 }

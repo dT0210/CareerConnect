@@ -29,3 +29,7 @@ export const getApplications = (request) =>{
     const params = new URLSearchParams(request);
     return httpClient.get(`/applications?${params}`);
 }
+
+export const changeApplicationStatus = (id, status) => {
+    return httpClient.put(`/applications/${id}/status`, status);
+}

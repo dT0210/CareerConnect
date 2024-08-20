@@ -1,21 +1,72 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { IoIosNotifications } from "react-icons/io";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
+import { FormatDateTime } from "../../../common/helpers";
 import { useAuth } from "../../../hooks/useAuth";
 import useClickOutside from "../../../hooks/useClickOutside";
+import { useLoading } from "../../../hooks/useLoading";
+import { signalrConnection } from "../../../httpClient/signalRConnection";
+import { getNotifications, readNotification } from "../../../services/notification";
 
 export const Nav = () => {
-  const { setIsAuthenticated } = useAuth();
+  const { setIsAuthenticated, user } = useAuth();
+  const [notifications, setNotifications] = useState([]);
   const [openJobMenu, setOpenJobMenu] = useState(false);
+  const [openNotif, setOpenNotif] = useState(false);
+  const { setIsLoading } = useLoading();
+  const [unreadCount, setUnreadCount] = useState(0);
+
   const handleLogout = () => {
     localStorage.removeItem("token");
     setIsAuthenticated(false);
     toast.success("You have been signed out");
   };
+
   const jobMenuRef = useRef();
-  useClickOutside(jobMenuRef, ()=>{
+  useClickOutside(jobMenuRef, () => {
     setOpenJobMenu(false);
-  })
+  });
+
+  const notifRef = useRef();
+  useClickOutside(notifRef, () => {
+    setOpenNotif(false);
+  });
+
+  const fetchNotification = async () => {
+    await getNotifications(user.id)
+      .then((response) => {
+        setNotifications(response);
+        setUnreadCount(response.filter((notif) => !notif.isRead).length);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const signalrStart = async () => {
+    try {
+      await signalrConnection.start();
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    signalrStart();
+  }, [signalrConnection]);
+
+  useEffect(() => {
+    fetchNotification();
+  }, [user]);
+
+  const handleNotificationClick = async (notificationId) => {
+      readNotification(notificationId).catch((error)=>{
+        console.log(error);
+      }).finally(()=>{
+        fetchNotification();
+      });
+  }
 
   return (
     <div className="h-[80px] w-full bg-red-500 flex justify-between items-center px-4 text-white font-semibold text-lg">
@@ -110,9 +161,25 @@ export const Nav = () => {
           Home
         </Link>
         <div className=" h-full relative" ref={jobMenuRef}>
-          <div className="hover:border-b-2 hover:border-b-white p-2 hover:cursor-pointer" onClick={()=>{setOpenJobMenu(!openJobMenu)}}>Jobs</div>
-          <div className={`rounded-md p-2 shadow-md w-[160px] absolute top-[120%] text-black bg-white z-20 ${!openJobMenu && "hidden"}`}>
-            <Link to="/applied-jobs" className="rounded-md block p-2 bg-slate-200 hover:bg-slate-300 hover:text-red-500 transition-all">Applied Jobs</Link>
+          <div
+            className="hover:border-b-2 hover:border-b-white p-2 hover:cursor-pointer"
+            onClick={() => {
+              setOpenJobMenu(!openJobMenu);
+            }}
+          >
+            Jobs
+          </div>
+          <div
+            className={`rounded-md p-2 shadow-md w-[160px] absolute top-[120%] text-black bg-white z-20 ${
+              !openJobMenu && "hidden"
+            }`}
+          >
+            <Link
+              to="/applied-jobs"
+              className="rounded-md block p-2 bg-slate-200 hover:bg-slate-300 hover:text-red-500 transition-all"
+            >
+              Applied Jobs
+            </Link>
           </div>
         </div>
         <Link
@@ -122,7 +189,45 @@ export const Nav = () => {
           Profile
         </Link>
       </div>
-      <div className="flex justify-end items-center">
+      <div className="flex justify-end items-center gap-2">
+        <div className="relative" ref={notifRef}>
+          <div
+            className="relative  hover:cursor-pointer"
+            onClick={() => {
+              setOpenNotif(!openNotif);
+            }}
+          >
+            <IoIosNotifications size={24} />
+            {unreadCount > 0 && (
+              <div className="absolute -right-2 -top-2 bg-black text-white text-xs font-semibold rounded-full w-5 h-5 flex items-center justify-center">
+                {unreadCount}
+              </div>
+            )}
+          </div>
+          <div
+            className={`absolute p-2 right-0 z-20 shadow-md rounded-lg text-black bg-white min-w-[200px] ${
+              !openNotif && "hidden"
+            }`}
+          >
+            <div>
+              {notifications.length !== 0 ? (
+                <div className="text-sm font-normal flex flex-col gap-1">
+                  {notifications.map((notif, index) => (
+                    <div key={index} className="bg-slate-200 p-2 rounded-lg hover:cursor-pointer" onClick={()=>{
+                      if (notif.isRead) return;
+                      handleNotificationClick(notif.id);
+                    }}>
+                      <div>{notif.message}</div>
+                      <div className="opacity-50 text-xs">{FormatDateTime(notif.createdAt, "dd/mm/yyyy")}</div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                "No notifications"
+              )}
+            </div>
+          </div>
+        </div>
         <Link
           to="/"
           onClick={handleLogout}

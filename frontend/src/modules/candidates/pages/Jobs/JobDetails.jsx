@@ -99,8 +99,6 @@ export const JobDetails = () => {
         <div className="p-4 bg-white rounded-lg w-full">
         <div className="text-2xl font-bold">Job Description</div>
         <div>{job?.description || "None given"}</div>
-        <div className="text-2xl font-bold mt-4">Job Requirements</div>
-        <div>{job?.requirements || "None given"}</div>
         </div>
       </div>
       <div className="w-full md:w-[38%]">

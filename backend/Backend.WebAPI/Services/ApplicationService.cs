@@ -15,13 +15,14 @@ public class ApplicationService : IApplicationService
     private readonly IJobRepository _jobRepository;
     private readonly ICandidateRepository _candidateRepository;
     private readonly INotificationRepository _notificationRepository;
+    private readonly INotificationService _notificationService;
     private readonly IMapper _mapper;
-    public ApplicationService(IApplicationRepository applicationRepository, IJobRepository jobRepository, ICandidateRepository candidateRepository, INotificationRepository notificationRepository, IMapper mapper)
+    public ApplicationService(IApplicationRepository applicationRepository, IJobRepository jobRepository, ICandidateRepository candidateRepository, INotificationService notificationService, IMapper mapper)
     {
         _applicationRepository = applicationRepository;
         _jobRepository = jobRepository;
         _candidateRepository = candidateRepository;
-        _notificationRepository = notificationRepository;
+        _notificationService = notificationService;
         _mapper = mapper;
     }
 
@@ -99,15 +100,12 @@ public class ApplicationService : IApplicationService
     {
         var job = await _jobRepository.GetByIdAsync(application.JobId) ?? throw new KeyNotFoundException("Job not found");
         var candidate = await _candidateRepository.GetByIdAsync(application.CandidateId) ?? throw new KeyNotFoundException("Candidate not found");
+        
         var newApplication = _mapper.Map<Application>(application);
         await _applicationRepository.InsertAsync(newApplication);
         await _applicationRepository.SaveAsync();
-        var notification = new Notification
-        {
-            UserId = job.RecruiterId,
-            Message = $"{job.Title} has a new application."
-        };
-        await _notificationRepository.InsertAsync(notification);
+
+        await _notificationService.InsertNotificationAsync(job.RecruiterId, $"{job.Title} has a new application.");
         return _mapper.Map<ApplicationResponseModel>(newApplication);
     }
 
@@ -155,13 +153,6 @@ public class ApplicationService : IApplicationService
             default:
                 break;
         }
-            var notification = new Notification
-            {
-                UserId = existingApplication.CandidateId,
-                Message = msg
-            };
-            await _notificationRepository.InsertAsync(notification);
-            await _notificationRepository.SaveAsync();
-        }
-
+        await _notificationService.InsertNotificationAsync(existingApplication.CandidateId, msg);
+    }
 }

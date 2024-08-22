@@ -11,5 +11,4 @@ public interface IAdminService
     Task<AdminResponseModel> InsertAdminAsync(AdminRequestModel admin);
     Task UpdateAdminAsync(Guid id, AdminRequestModel admin);
     Task DeleteAdminAsync(Guid id);
-    Task ApproveCompanyAsync(Guid approverId, Guid companyId);
 }

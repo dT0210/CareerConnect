@@ -7,10 +7,4 @@ public class NotificationsHub : Hub {
 
         await base.OnConnectedAsync();
     }
-
-    public async Task SendNotification(string userId, string message)
-    {
-        // Send the notification to a specific user
-        await Clients.User(userId).SendAsync("ReceiveNotification", message);
-    }
 }

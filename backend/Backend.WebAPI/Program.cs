@@ -20,7 +20,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.MapControllers();
-app.UseCors();
+app.UseCors("MyAllowOrigins");
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Images")),
@@ -35,6 +35,6 @@ app.UseStaticFiles(new StaticFileOptions
     // https://localhost:1234/CVs
 });
 
-app.MapHub<NotificationsHub>("notificationsHub");
+app.MapHub<NotificationsHub>("/notificationsHub");
 
 app.Run();

@@ -1,14 +1,70 @@
+import { useEffect, useRef, useState } from "react";
+import { IoIosNotifications } from "react-icons/io";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
+import { FormatDateTime } from "../../../common/helpers";
 import { useAuth } from "../../../hooks/useAuth";
+import useClickOutside from "../../../hooks/useClickOutside";
+import { signalrConnection } from "../../../httpClient/signalRConnection";
+import { getNotifications, readNotification } from "../../../services/notification";
 
 export const Nav = () => {
-  const {setIsAuthenticated} = useAuth();
+  const {user, setIsAuthenticated} = useAuth();
+  const [notifications, setNotifications] = useState([]);
+  const [openNotif, setOpenNotif] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
+
   const handleLogout = () => {
     localStorage.removeItem("token");
     setIsAuthenticated(false);
-    toast.success("You have been signed out")
+    toast.success("You have been signed out");
+    signalrConnection.stop();
   };
+
+  const notifRef = useRef();
+  useClickOutside(notifRef, () => {
+    setOpenNotif(false);
+  });
+
+  const fetchNotification = async () => {
+    await getNotifications(user.id)
+      .then((response) => {
+        setNotifications(response);
+        setUnreadCount(response.filter((notif) => !notif.isRead).length);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  signalrConnection.on("ReceiveNotification", () => {
+    fetchNotification();
+  })
+
+  const signalrStart = async () => {
+    try {
+      await signalrConnection.start();
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    signalrStart();
+  }, [signalrConnection]);
+
+  useEffect(() => {
+    fetchNotification();
+  }, [user]);
+
+  const handleNotificationClick = async (notificationId) => {
+    readNotification(notificationId).catch((error)=>{
+      console.log(error);
+    }).finally(()=>{
+      fetchNotification();
+    });
+}
+
   return (
     <div className="h-[80px] w-full bg-red-500 flex justify-between items-center px-4 text-white font-semibold text-lg">
       <div className=" flex items-center justify-start gap-4 ">
@@ -105,8 +161,52 @@ export const Nav = () => {
             Profile
         </Link>
       </div>
-      <div className="flex justify-end items-center">
-        <Link to="/" onClick={handleLogout} className="hover:border-b-2 hover:border-b-white h-full p-2">Log out</Link>
+      <div className="flex justify-end items-center gap-2">
+        <div className="relative" ref={notifRef}>
+          <div
+            className="relative  hover:cursor-pointer"
+            onClick={() => {
+              setOpenNotif(!openNotif);
+            }}
+          >
+            <IoIosNotifications size={24} />
+            {unreadCount > 0 && (
+              <div className="absolute -right-2 -top-2 bg-black text-white text-xs font-semibold rounded-full w-5 h-5 flex items-center justify-center">
+                {unreadCount}
+              </div>
+            )}
+          </div>
+          <div
+            className={`absolute p-1 right-0 z-20 shadow-md rounded-lg text-black bg-white w-[200px]  ${
+              !openNotif && "hidden"
+            }`}
+          >
+            <div>
+              {notifications.length !== 0 ? (
+                <div className="text-sm font-normal flex flex-col gap-1 max-h-[300px] w-full overflow-auto">
+                  {notifications.map((notif, index) => (
+                    <div key={index} className={`${notif.isRead ? "" : "bg-slate-200"} w-full shadow-sm p-2 rounded-lg hover:cursor-pointer`} onClick={()=>{
+                      if (notif.isRead) return;
+                      handleNotificationClick(notif.id);
+                    }}>
+                      <div>{notif.message}</div>
+                      <div className="opacity-50 text-xs">{FormatDateTime(notif.createdAt, "dd/mm/yyyy")}</div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <span className="px-1 font-normal">No notifications</span>
+              )}
+            </div>
+          </div>
+        </div>
+        <Link
+          to="/"
+          onClick={handleLogout}
+          className="hover:border-b-2 hover:border-b-white h-full p-2"
+        >
+          Log out
+        </Link>
       </div>
     </div>
   );

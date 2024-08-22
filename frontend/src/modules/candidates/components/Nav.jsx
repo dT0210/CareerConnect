@@ -11,16 +11,18 @@ import { getNotifications, readNotification } from "../../../services/notificati
 
 export const Nav = () => {
   const { setIsAuthenticated, user } = useAuth();
-  const [notifications, setNotifications] = useState([]);
   const [openJobMenu, setOpenJobMenu] = useState(false);
+  const [notifications, setNotifications] = useState([]);
   const [openNotif, setOpenNotif] = useState(false);
-  const { setIsLoading } = useLoading();
   const [unreadCount, setUnreadCount] = useState(0);
+  const { setIsLoading } = useLoading();
+  
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     setIsAuthenticated(false);
     toast.success("You have been signed out");
+    signalrConnection.stop();
   };
 
   const jobMenuRef = useRef();
@@ -43,6 +45,10 @@ export const Nav = () => {
         console.log(error);
       });
   };
+
+  signalrConnection.on("ReceiveNotification", () => {
+    fetchNotification();
+  })
 
   const signalrStart = async () => {
     try {
@@ -205,15 +211,15 @@ export const Nav = () => {
             )}
           </div>
           <div
-            className={`absolute p-2 right-0 z-20 shadow-md rounded-lg text-black bg-white min-w-[200px] ${
+            className={`absolute p-1 right-0 z-20 shadow-md rounded-lg text-black bg-white min-w-[200px] ${
               !openNotif && "hidden"
             }`}
           >
             <div>
               {notifications.length !== 0 ? (
-                <div className="text-sm font-normal flex flex-col gap-1">
+                <div className="text-sm font-normal flex flex-col gap-1 max-h-[300px] overflow-auto">
                   {notifications.map((notif, index) => (
-                    <div key={index} className="bg-slate-200 p-2 rounded-lg hover:cursor-pointer" onClick={()=>{
+                    <div key={index} className={`${notif.isRead ? "" : "bg-slate-200"} shadow-sm p-2 rounded-lg hover:cursor-pointer`} onClick={()=>{
                       if (notif.isRead) return;
                       handleNotificationClick(notif.id);
                     }}>

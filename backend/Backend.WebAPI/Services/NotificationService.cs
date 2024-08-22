@@ -29,7 +29,9 @@ public class NotificationService : INotificationService
     public async Task<IEnumerable<NotificationResponseModel>> GetNotificationsAsync(Guid userId, int? limit)
     {
         var query = _notificationRepository.GetAllQueryable()
-                            .Where(n => n.UserId == userId);
+                            .Where(n => n.UserId == userId)
+                            .OrderByDescending(n => n.CreatedAt);
+                            
         if (limit != null) {
             query.Take((int)limit);
         };
@@ -37,15 +39,18 @@ public class NotificationService : INotificationService
         return notifications.Select(_mapper.Map<NotificationResponseModel>).ToList();
     }
 
-    public async Task<NotificationResponseModel> InsertNotificationAsync(NotificationRequestModel notification)
+    public async Task<NotificationResponseModel> InsertNotificationAsync(Guid userId, string message)
     {
-        var newNotification = _mapper.Map<Notification>(notification);
-        await _notificationRepository.InsertAsync(newNotification);
+        var notification = new Notification {
+            UserId = userId,
+            Message = message
+        };
+        await _notificationRepository.InsertAsync(notification);
         await _notificationRepository.SaveAsync();
 
         await _notificationHubContext.Clients.Users(notification.UserId.ToString()).SendAsync("ReceiveNotification", "You have a new notification");
 
-        return _mapper.Map<NotificationResponseModel>(newNotification);
+        return _mapper.Map<NotificationResponseModel>(notification);
     }
 
     public async Task NotificationReadAsync(Guid id) {

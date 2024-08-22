@@ -13,11 +13,13 @@ public class CompanyService : ICompanyService
 {
     private readonly ICompanyRepository _companyRepository;
     private readonly IRecruiterRepository _recruiterRepository;
+    private readonly INotificationService _notificationService;
     private readonly IMapper _mapper;
-    public CompanyService(ICompanyRepository companyRepository, IRecruiterRepository recruiterRepository, ITokenService tokenService, IMapper mapper)
+    public CompanyService(ICompanyRepository companyRepository, IRecruiterRepository recruiterRepository, INotificationService notificationService, IMapper mapper)
     {
         _companyRepository = companyRepository;
         _recruiterRepository = recruiterRepository;
+        _notificationService = notificationService;
         _mapper = mapper;
     }
 
@@ -119,18 +121,28 @@ public class CompanyService : ICompanyService
         await _companyRepository.SaveAsync();
     }
 
-    public async Task ApproveCompanyAsync(Guid companyId, Guid adminId)
+    public async Task ModerateCompanyAsync(Guid companyId, Guid adminId, bool isApproved)
     {
         var company = await _companyRepository.GetByIdAsync(companyId);
         if (company == null)
         {
             throw new KeyNotFoundException("Company not found");
         }
-        company.Status = CompanyStatusType.Approved;
+        string msg;
+        if (isApproved) {
+            company.Status = CompanyStatusType.Approved;
+            msg = "An admin has approved your company profile.";
+        } else {
+            company.Status = CompanyStatusType.Rejected;
+            msg = "An admin has rejected your company profile";
+        }
+        
         company.ApproverId = adminId;
         company.ModifiedAt = DateTime.Now;
         _companyRepository.Update(company);
         await _companyRepository.SaveAsync();
+
+        await _notificationService.InsertNotificationAsync(company.RecruiterId, msg);
     }
 
     public async Task RejectCompanyAsync(Guid companyId, Guid adminId)

@@ -82,7 +82,7 @@ public class CompanyController : ControllerBase
     {
         try
         {
-            await _companyService.ApproveCompanyAsync(id, adminId);
+            await _companyService.ModerateCompanyAsync(id, adminId, true);
             return Ok();
         }
         catch (Exception e)
@@ -97,7 +97,7 @@ public class CompanyController : ControllerBase
     {
         try
         {
-            await _companyService.RejectCompanyAsync(id, adminId);
+            await _companyService.ModerateCompanyAsync(id, adminId, false);
             return Ok();
         }
         catch (Exception e)

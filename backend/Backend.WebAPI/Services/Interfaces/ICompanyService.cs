@@ -11,6 +11,5 @@ public interface ICompanyService
     Task<CompanyResponseModel> InsertCompanyAsync(CompanyRequestModel company);
     Task UpdateCompanyAsync(Guid id, CompanyRequestModel company);
     Task DeleteCompanyAsync(Guid id);
-    Task ApproveCompanyAsync(Guid companyId, Guid adminId);
-    Task RejectCompanyAsync(Guid companyId, Guid adminId);
+    Task ModerateCompanyAsync(Guid companyId, Guid adminId, bool isApproved);
 }

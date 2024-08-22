@@ -1,3 +1,4 @@
+using Backend.Infrastructure.Models;
 using Backend.WebAPI.Models.Requests;
 using Backend.WebAPI.Models.Responses;
 
@@ -7,7 +8,7 @@ public interface INotificationService
 {
     Task<IEnumerable<NotificationResponseModel>> GetNotificationsAsync(Guid userId, int? limit);
     Task<NotificationResponseModel?> GetNotificationByIdAsync(Guid id);
-    Task<NotificationResponseModel> InsertNotificationAsync(NotificationRequestModel notification);
+    Task<NotificationResponseModel> InsertNotificationAsync(Guid userId, string message);
     Task NotificationReadAsync(Guid id);
     Task DeleteNotificationAsync(Guid id);
 }

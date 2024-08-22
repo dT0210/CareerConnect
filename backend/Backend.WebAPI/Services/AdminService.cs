@@ -84,9 +84,4 @@ public class AdminService : IAdminService
         await _adminRepository.DeleteAsync(id);
         await _adminRepository.SaveAsync();
     }
-
-    public Task ApproveCompanyAsync(Guid approverId, Guid companyId)
-    {
-        throw new NotImplementedException();
-    }
 }

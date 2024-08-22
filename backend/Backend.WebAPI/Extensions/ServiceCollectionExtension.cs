@@ -55,6 +55,22 @@ public static class ServiceCollectionExtension
                 ValidAudience = configuration["JwtSettings:Audience"],
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSettings:SecretKey"]))
             };
+            options.Events = new JwtBearerEvents
+            {
+                OnMessageReceived = context =>
+                {
+                    var accessToken = context.Request.Query["access_token"];
+
+                    // If the request is for our SignalR hub
+                    var path = context.HttpContext.Request.Path;
+                    if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/notificationsHub"))
+                    {
+                        // Read the token out of the query string
+                        context.Token = accessToken;
+                    }
+                    return Task.CompletedTask;
+                }
+            };
         });
 
         services.AddCors(options =>
@@ -63,13 +79,16 @@ public static class ServiceCollectionExtension
                 name: "MyAllowOrigins",
                 policy =>
                 {
-                    policy.WithOrigins("http://localhost:3000");
+                    policy.WithOrigins("http://localhost:3000")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials();
                 }
             );
-            options.AddDefaultPolicy(options =>
-            {
-                options.WithOrigins("*").AllowAnyHeader().AllowAnyMethod();
-            });
+            // options.AddDefaultPolicy(options =>
+            // {
+            //     options.WithOrigins("*").AllowAnyHeader().AllowAnyMethod();
+            // });
         });
 
         services.AddDbContext<CareerConnectContext>(options => options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));

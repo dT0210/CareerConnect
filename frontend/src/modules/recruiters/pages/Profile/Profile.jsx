@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { COMPANY_STATUS } from "../../../../common/constant";
 import { Button } from "../../../../components/Button";
 import { LoadingSpinner } from "../../../../components/LoadingSpinner";
@@ -60,12 +60,12 @@ export const Profile = () => {
           <div className="text-2xl font-bold">Company Profile</div>
           {recruiter?.company && (
             <div className="ml-2">
-              <a
-                href={`profile/company/edit/${recruiter.company.id}`}
+              <Link
+                to={`company/edit/${recruiter.company.id}`}
                 className="text-blue-600 underline"
               >
                 Edit
-              </a>
+              </Link>
             </div>
           )}
         </div>

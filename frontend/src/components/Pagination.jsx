@@ -38,6 +38,7 @@ export const Pagination = ({
 
     return pageNumbers;
   };
+
   return (
     <div className="flex items-center justify-between space-x-2 py-4">
         <div className="flex items-center justify-end space-x-2 flex-grow">

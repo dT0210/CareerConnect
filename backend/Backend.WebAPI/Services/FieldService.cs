@@ -1,8 +1,10 @@
+using System.Linq.Expressions;
 using AutoMapper;
 using Backend.Infrastructure.Models;
 using Backend.Infrastructure.Repositories.Interfaces;
 using Backend.WebAPI.Models.Requests;
 using Backend.WebAPI.Models.Responses;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend.WebAPI.Services;
 
@@ -17,10 +19,53 @@ public class FieldService : IFieldService
     }
 
 
-    public async Task<IEnumerable<FieldResponseModel>> GetAllFieldsAsync()
+    public async Task<PagedResponse<FieldResponseModel>> GetAllFieldsAsync(int? pageIndex, int? pageSize, string? orderBy, bool? isDescending, string? search)
     {
-        var fields = await _fieldRepository.GetAllAsync();
-        return fields.Select(_mapper.Map<FieldResponseModel>);
+        string searchPhraseLower = search?.ToLower() ?? string.Empty;
+        var query = _fieldRepository.GetAllQueryable().AsNoTracking();
+
+        query = query.Where(x => string.IsNullOrWhiteSpace(searchPhraseLower) || x.Name.Contains(searchPhraseLower));
+
+        var totalRecords = query.Count();
+        if (!string.IsNullOrEmpty(orderBy))
+        {
+            var columnsSelector = new Dictionary<string, Expression<Func<Field, object>>>
+                {
+                    { "name", x => x.Name},
+                    { "createdAt", x => x.CreatedAt},
+                    { "modifiedAt", x => x.ModifiedAt}
+                };
+            var selectedColumn = columnsSelector[orderBy];
+            query = isDescending.HasValue && isDescending.Value
+                ? query.OrderByDescending(selectedColumn)
+                : query.OrderBy(selectedColumn);
+        }
+        //else default sort by the created date
+        else
+        {
+            query = query.OrderByDescending(x => x.CreatedAt);
+        }
+        List<Field> fields;
+        if (pageSize == null || pageIndex == null)
+        {
+            fields = await query.ToListAsync();
+        }
+        else
+        {
+            fields = await query
+                .Skip((int)((pageIndex - 1) * pageSize))
+                .Take((int)pageSize)
+                .ToListAsync();
+        }
+        var response = new PagedResponse<FieldResponseModel>
+        {
+            PageIndex = 1,
+            PageSize = pageSize ?? totalRecords,
+            TotalPages = (int)Math.Ceiling(totalRecords / (double)(pageSize ?? 1)),
+            TotalRecords = totalRecords,
+            Data = fields.Select(_mapper.Map<FieldResponseModel>).ToList()
+        };
+        return response;
     }
 
     public async Task<FieldResponseModel?> GetFieldByIdAsync(Guid id)

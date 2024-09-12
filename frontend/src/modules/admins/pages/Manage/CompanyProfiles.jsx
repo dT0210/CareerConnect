@@ -1,20 +1,20 @@
 import { useEffect, useState } from "react";
-import { FaSearch } from "react-icons/fa";
 import { toast } from "react-toastify";
-import { COMPANY_STATUS } from "../../../common/constant";
-import { FormatDateTime } from "../../../common/helpers";
-import { Button } from "../../../components/Button";
-import { Dialog } from "../../../components/Dialog";
-import { LoadingSpinner } from "../../../components/LoadingSpinner";
-import { Pagination } from "../../../components/Pagination";
-import { useAuth } from "../../../hooks/useAuth";
-import { useLoading } from "../../../hooks/useLoading";
+import { COMPANY_STATUS } from "../../../../common/constant";
+import { FormatDateTime } from "../../../../common/helpers";
+import { Button } from "../../../../components/Button";
+import { Dialog } from "../../../../components/Dialog";
+import { LoadingSpinner } from "../../../../components/LoadingSpinner";
+import { Pagination } from "../../../../components/Pagination";
+import { SearchForm } from "../../../../components/SearchForm";
+import { useAuth } from "../../../../hooks/useAuth";
+import { useLoading } from "../../../../hooks/useLoading";
 import {
   approveCompanyProfile,
   getPagedCompanyProfiles,
   rejectCompanyProfile,
-} from "../../../services/admin";
-import { getRecruiter } from "../../../services/recruiter";
+} from "../../../../services/admin";
+import { getRecruiter } from "../../../../services/recruiter";
 
 export const CompanyProfiles = () => {
   const [companyProfiles, setCompanyProfiles] = useState([]);
@@ -95,11 +95,6 @@ export const CompanyProfiles = () => {
     setSortConfig({ key, direction });
   };
 
-  const handleSearch = (e) => {
-    setSearchQuery(e.target.value);
-    setPagination({ ...pagination, pageIndex: 1 });
-  };
-
   const handleApprove = async () => {
     setIsLoading(true);
     await approveCompanyProfile({
@@ -143,16 +138,13 @@ export const CompanyProfiles = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-4 flex justify-between items-center">
-        <div className="relative">
-          <input
-            type="text"
-            placeholder="Search company"
-            value={searchQuery}
-            onChange={handleSearch}
-            className="pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-        </div>
+        <SearchForm
+          setSearch={(query) => {
+            setSearchQuery(query);
+            setPagination({ ...pagination, pageIndex: 1 });
+          }}
+          onSubmit={fetchCompanyProfiles}
+        />
       </div>
       <div className="bg-white shadow-lg rounded-lg overflow-auto border border-gray-200">
         <table className="min-w-full divide-y divide-gray-200">
@@ -342,7 +334,11 @@ export const CompanyProfiles = () => {
               <tr>
                 <td className="font-medium">Image</td>
                 <td>
-                  <img src={profileDetails?.imageUrl} alt="No image" className="h-20 object-fill"/>
+                  <img
+                    src={profileDetails?.imageUrl}
+                    alt="No image"
+                    className="h-20 object-fill"
+                  />
                 </td>
               </tr>
             </tbody>

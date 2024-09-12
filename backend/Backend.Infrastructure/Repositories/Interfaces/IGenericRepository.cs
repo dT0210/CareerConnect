@@ -8,4 +8,5 @@ public interface IGenericRepository<T> where T : class {
     void Update(T obj);
     Task DeleteAsync(Guid id);
     Task SaveAsync();
+    Task ExecuteInTransactionAsync(Func<Task> action);
 }

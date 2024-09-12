@@ -1,14 +1,19 @@
 import { Navigate } from "react-router-dom";
-import { CompanyProfiles } from "../pages/CompanyProfiles";
 import { DashBoard } from "../pages/DashBoard";
+import { JobDetails } from "../pages/JobDetails";
 import Layout from "../pages/Layout";
+import { CompanyProfiles } from "../pages/Manage/CompanyProfiles";
+import { Fields } from "../pages/Manage/Fields";
+import { Reports } from "../pages/Manage/Reports";
+import { Skills } from "../pages/Manage/Skills";
 import Signin from "../pages/Signin";
 
 export const AdminsRoute = [
   {
     path: "/",
     element: <Navigate to="/signin/admin" />,
-  },{
+  },
+  {
     path: "/signin/admin",
     element: <Signin />,
   },
@@ -30,8 +35,34 @@ export const AdminsRoute = [
   },
   {
     path: "/admin/skills",
-    element: {
-      
-    }
-  }
+    element: (
+      <Layout>
+        <Skills />
+      </Layout>
+    ),
+  },
+  {
+    path: "/admin/fields",
+    element: (
+      <Layout>
+        <Fields />
+      </Layout>
+    ),
+  },
+  {
+    path: "/admin/reports",
+    element: (
+      <Layout>
+        <Reports />
+      </Layout>
+    ),
+  },
+  {
+    path: "/admin/jobs/:jobId",
+    element: (
+      <Layout>
+        <JobDetails />
+      </Layout>
+    ),
+  },
 ];

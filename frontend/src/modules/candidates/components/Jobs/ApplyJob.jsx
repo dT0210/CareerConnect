@@ -8,6 +8,7 @@ import { uploadPdf } from "../../../../services/file";
 import { applyJob } from "../../../../services/job";
 
 export const ApplyJob = ({ jobId, candidateId, onSubmit }) => {
+  
   const [candidate, setCandidate] = useState();
   const [coverLetter, setCoverLetter] = useState("");
   const [file, setFile] = useState();

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { JOB_TYPES } from "../../../common/constant";
 import { filterUndefinedAndNull } from "../../../common/helpers";
@@ -25,7 +26,7 @@ const DashBoard = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortConfig, setSortConfig] = useState({ key: "", direction: "" });
   const { isLoading, setIsLoading } = useLoading();
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const [jobId, setJobId] = useState();
   const [openApplyJob, setOpenApplyJob] = useState(false);
   const { appliedJobs, fetchAppliedJobs } = useAppliedJobs(user.id, 1000000);
@@ -34,6 +35,10 @@ const DashBoard = () => {
     field: null,
     type: null,
   });
+  const navigate = useNavigate();
+
+  console.log(appliedJobs);
+  
 
   const fetchJobs = async () => {
     setIsLoading(true);
@@ -117,6 +122,11 @@ const DashBoard = () => {
                   job={job}
                   key={index}
                   onApplyClick={() => {
+                    if (!isAuthenticated || user.type !== "candidate") {
+                      toast.info("Please signin to continue");
+                      navigate("/signin/candidates");
+                      return;
+                    }
                     setJobId(job.id);
                     setOpenApplyJob(true);
                   }}

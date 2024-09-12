@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import background from "../../../assets/images/Group 13.png";
-import { candidatesSignUpRules } from "../../../common/validation";
+import { candidatesSignUpRules } from "../../../common/validations/candidates";
 import InputField from "../../../components/InputField";
 import { LoadingSpinner } from "../../../components/LoadingSpinner";
 import { useLoading } from "../../../hooks/useLoading";

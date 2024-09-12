@@ -21,6 +21,7 @@ public class CareerConnectContext : DbContext
     public DbSet<Image> Images { get; set; }
     public DbSet<CandidateCV> CandidateCVs { get; set;}
     public DbSet<Notification> Notifications { get; set; }
+    public DbSet<Report> Reports {get; set;}
 
     public CareerConnectContext(DbContextOptions<CareerConnectContext> options) : base(options) { }
 

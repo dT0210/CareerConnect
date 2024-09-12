@@ -113,7 +113,7 @@ public class CandidateController : ControllerBase
     public async Task<IActionResult> GetAppliedJobs(Guid id, int? pageIndex, int? pageSize, JobType? type, Guid? field, string? search, string? orderBy, bool? isDescending) {
         try 
         {
-            var jobs = await _applicationService.GetApplicationsAsync(null, id, pageIndex, pageSize, type, field, search, orderBy, isDescending);
+            var jobs = await _applicationService.GetApplicationsAsync(null, id, null, pageIndex, pageSize, type, field, search, orderBy, isDescending);
             return Ok(jobs);
         }
         catch (KeyNotFoundException e)

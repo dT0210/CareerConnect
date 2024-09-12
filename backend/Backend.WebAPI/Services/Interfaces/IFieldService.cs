@@ -5,7 +5,7 @@ namespace Backend.WebAPI.Services;
 
 public interface IFieldService
 {
-    Task<IEnumerable<FieldResponseModel>> GetAllFieldsAsync();
+    Task<PagedResponse<FieldResponseModel>> GetAllFieldsAsync(int? pageIndex, int? pageSize, string? orderBy, bool? isDescending, string? search);
     Task<FieldResponseModel?> GetFieldByIdAsync(Guid id);
     Task<FieldResponseModel> InsertFieldAsync(FieldRequestModel field);
     Task UpdateFieldAsync(Guid id, FieldRequestModel field);

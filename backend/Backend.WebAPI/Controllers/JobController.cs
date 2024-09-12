@@ -14,7 +14,7 @@ public class JobController : ControllerBase
     private readonly ILogger<JobController> _logger;
     private readonly IJobService _jobService;
     private Guid UserId => Guid.Parse(User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value);
-
+    private string Role => User.Claims.First(c => c.Type == ClaimTypes.Role).Value;
     public JobController(ILogger<JobController> logger, IJobService jobService)
     {
         _logger = logger;
@@ -95,8 +95,12 @@ public class JobController : ControllerBase
     {
         try
         {
-            await _jobService.DeleteJobAsync(id);
+            await _jobService.DeleteJobAsync(id, UserId, Role);
             return Ok();
+        }
+        catch (KeyNotFoundException e)
+        {
+            return NotFound("Job has already been deleted or doesn't exist");
         }
         catch (Exception e)
         {

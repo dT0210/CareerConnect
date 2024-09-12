@@ -2,6 +2,7 @@ import { Navigate } from "react-router-dom";
 import DashBoard from "../pages/DashBoard";
 import { Jobs } from "../pages/Jobs";
 import { CreateJob } from "../pages/Jobs/CreateJob";
+import { EditJob } from "../pages/Jobs/EditJob";
 import { JobsApplications } from "../pages/Jobs/JobsApplications";
 import Layout from "../pages/Layout";
 import { Profile } from "../pages/Profile";
@@ -13,7 +14,7 @@ import Signup from "../pages/Signup";
 export const RecruitersRoute = [
   {
     path: "/recruiters",
-    element: <Navigate to="/signin/recruiters" />,
+    element: <Navigate to="/recruiters/dashboard" />,
   },
   {
     path: "/recruiters/dashboard",
@@ -71,6 +72,13 @@ export const RecruitersRoute = [
     element: 
     <Layout>
       <JobsApplications/>
+    </Layout>
+  },
+  {
+    path: "/recruiters/jobs/edit/:jobId",
+    element: 
+    <Layout>
+      <EditJob/>
     </Layout>
   }
 ];

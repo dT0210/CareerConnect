@@ -54,4 +54,26 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
         return _dbContext.Set<T>();
     }
+
+    public async Task ExecuteInTransactionAsync(Func<Task> action)
+    {
+        if (_dbContext.Database.CurrentTransaction != null)
+        {
+            // If a transaction is already in progress, just execute the action
+            await action();
+            return;
+        }
+
+        using var transaction = await _dbContext.Database.BeginTransactionAsync();
+        try
+        {
+            await action();
+            await transaction.CommitAsync();
+        }
+        catch
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
+    }
 }

@@ -22,11 +22,11 @@ public class ApplicationController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetApplicationsAsync(Guid? jobId, Guid? candidateId, int? pageIndex, int? pageSize, JobType? type, Guid? field, string? search, string? orderBy, bool? isDescending)
+    public async Task<IActionResult> GetApplicationsAsync(Guid? jobId, Guid? candidateId, Guid? recruiterId, int? pageIndex, int? pageSize, JobType? type, Guid? field, string? search, string? orderBy, bool? isDescending)
     {
         try
         {
-            var applications = await _applicationService.GetApplicationsAsync(jobId, candidateId, pageIndex, pageSize, type, field, search, orderBy, isDescending);
+            var applications = await _applicationService.GetApplicationsAsync(jobId, candidateId, recruiterId, pageIndex, pageSize, type, field, search, orderBy, isDescending);
             return Ok(applications);
         }
         catch (Exception e)

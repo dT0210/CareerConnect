@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import background from "../../../assets/images/Group 13.png";
-import { emailRegex } from "../../../common/validation";
+import { emailRegex } from "../../../common/validations/index";
 import InputField from "../../../components/InputField";
 import { LoadingSpinner } from "../../../components/LoadingSpinner";
 import { useAuth } from "../../../hooks/useAuth";
@@ -60,8 +60,8 @@ const Signin = () => {
         }
       })
       .catch((err) => {
-        console.log(err.response);
-        setError(err.response.data.message);
+        console.log(err);
+        setError(err.message);
       }).finally(() => {
         setIsLoading(false);
       });

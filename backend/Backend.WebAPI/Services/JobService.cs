@@ -15,22 +15,21 @@ public class JobService : IJobService
     private readonly IJobRepository _jobRepository;
     private readonly IRecruiterRepository _recruiterRepository;
     private readonly ISkillRepository _skillRepository;
-    private readonly IApplicationRepository _applicationRepository;
+    private readonly INotificationService _notificationService;
     private readonly IMapper _mapper;
     public JobService(
         IJobRepository jobRepository,
         IRecruiterRepository recruiterRepository,
         ISkillRepository skillRepository,
-        IApplicationRepository applicationRepository,
+        INotificationService notificationService,
         IMapper mapper)
     {
         _jobRepository = jobRepository;
         _recruiterRepository = recruiterRepository;
         _skillRepository = skillRepository;
-        _applicationRepository = applicationRepository;
         _mapper = mapper;
+        _notificationService = notificationService;
     }
-
 
     public async Task<PagedResponse<JobResponseModel>> GetAllJobsAsync(
         int? pageIndex, int? pageSize, Guid? recruiterId, JobType? type, Guid? fieldId,
@@ -45,7 +44,7 @@ public class JobService : IJobService
                     .ThenInclude(r => r.Company)
                     .Include(j => j.Applications).AsNoTracking();
 
-        query = query.Where(x => (recruiterId == null || x.RecruiterId == recruiterId)
+        query = query.Where(x => ((recruiterId == null && x.DeletedBy == null) || x.RecruiterId == recruiterId)
                                 && (type == null || x.Type == type)
                                 && (fieldId == null || x.FieldId == fieldId)
                                 && (string.IsNullOrWhiteSpace(searchPhraseLower)
@@ -63,7 +62,7 @@ public class JobService : IJobService
                     { "field", x => x.Field },
                     { "createdAt", x => x.CreatedAt},
                     { "modifiedAt", x => x.ModifiedAt},
-                    { "application", x => x.Applications.Count}
+                    { "applications", x => x.Applications.Count}
                 };
             var selectedColumn = columnsSelector[orderBy];
             query = isDescending.HasValue && isDescending.Value
@@ -73,7 +72,7 @@ public class JobService : IJobService
         //else default sort by the created date
         else
         {
-            query = query.OrderBy(x => x.CreatedAt);
+            query = query.OrderByDescending(x => x.CreatedAt);
         }
         pageIndex ??= 1;
         pageSize ??= 10;
@@ -86,7 +85,7 @@ public class JobService : IJobService
         {
             PageIndex = (int)pageIndex,
             PageSize = (int)pageSize,
-            TotalPages = (int)(totalRecords / (double)pageSize),
+            TotalPages = (int)Math.Ceiling(totalRecords / (double)pageSize),
             TotalRecords = totalRecords,
             Data = jobs.Select(_mapper.Map<JobResponseModel>).ToList()
         };
@@ -145,38 +144,59 @@ public class JobService : IJobService
 
     public async Task UpdateJobAsync(Guid id, JobRequestModel job)
     {
-        var existingJob = await _jobRepository.GetByIdAsync(id);
+        var existingJob = await _jobRepository.GetAllQueryable().Where(j => j.Id == id).Include(j => j.JobSkills).FirstOrDefaultAsync();
         if (existingJob == null)
         {
             throw new KeyNotFoundException("Job not found");
         }
         _mapper.Map(job, existingJob);
-        existingJob.JobSkills = new List<JobSkill>();
-        if (job.Skills != null)
+
+        var existingSkillIds = existingJob.JobSkills.Select(js => js.SkillId).ToList();
+        var newSkillIds = job.Skills ?? [];
+        var skillsToAdd = newSkillIds.Except(existingSkillIds).ToList();
+        var skillsToRemove = existingSkillIds.Except(newSkillIds).ToList();
+
+        foreach (var skillId in skillsToRemove)
         {
-            foreach (var skillId in job.Skills)
+            var jobSkill = existingJob.JobSkills.FirstOrDefault(js => js.SkillId == skillId);
+            if (jobSkill != null)
             {
-                var skill = await _skillRepository.GetByIdAsync(skillId)
-                            ?? throw new KeyNotFoundException($"Skill with ID {skillId} not found");
-
-                var jobSkill = new JobSkill
-                {
-                    JobId = existingJob.Id,
-                    SkillId = skillId,
-                    Job = existingJob,
-                    Skill = skill
-                };
-
-                existingJob.JobSkills.Add(jobSkill);
+                existingJob.JobSkills.Remove(jobSkill);
             }
+        }
+
+        foreach (var skillId in skillsToAdd)
+        {
+            var skill = await _skillRepository.GetByIdAsync(skillId)
+                        ?? throw new KeyNotFoundException($"Skill with ID {skillId} not found");
+
+            var jobSkill = new JobSkill
+            {
+                JobId = existingJob.Id,
+                SkillId = skillId,
+                Job = existingJob,
+                Skill = skill
+            };
+
+            existingJob.JobSkills.Add(jobSkill);
         }
         _jobRepository.Update(existingJob);
         await _jobRepository.SaveAsync();
     }
 
-    public async Task DeleteJobAsync(Guid id)
+    public async Task DeleteJobAsync(Guid id, Guid userId, string role)
     {
-        await _jobRepository.DeleteAsync(id);
+        var existingJob = await _jobRepository.GetAllQueryable().Where(j => j.Id == id).Where(j => j.DeletedBy == null).FirstOrDefaultAsync();
+        if (existingJob == null)
+        {
+            throw new KeyNotFoundException("Job not found");
+        }
+        if (role == "admin") {
+            await _notificationService.InsertNotificationAsync(existingJob.RecruiterId, $"{existingJob.Title} has been deleted by an admin");
+        }
+        existingJob.DeletedBy = userId;
+        existingJob.DeletedAt = DateTime.Now;
+        _jobRepository.Update(existingJob);
         await _jobRepository.SaveAsync();
     }
 }

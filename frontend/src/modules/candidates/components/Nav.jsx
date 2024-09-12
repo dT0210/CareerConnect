@@ -7,16 +7,18 @@ import { useAuth } from "../../../hooks/useAuth";
 import useClickOutside from "../../../hooks/useClickOutside";
 import { useLoading } from "../../../hooks/useLoading";
 import { signalrConnection } from "../../../httpClient/signalRConnection";
-import { getNotifications, readNotification } from "../../../services/notification";
+import {
+  getNotifications,
+  readNotification,
+} from "../../../services/notification";
 
 export const Nav = () => {
-  const { setIsAuthenticated, user } = useAuth();
+  const { setIsAuthenticated, user, isAuthenticated } = useAuth();
   const [openJobMenu, setOpenJobMenu] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [openNotif, setOpenNotif] = useState(false);
-  const [unreadCount, setUnreadCount] = useState(0);
+  const unreadCount = notifications.filter((notif) => !notif.isRead).length;
   const { setIsLoading } = useLoading();
-  
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -36,10 +38,10 @@ export const Nav = () => {
   });
 
   const fetchNotification = async () => {
+    if (user.type !== "candidate") return;
     await getNotifications(user.id)
       .then((response) => {
         setNotifications(response);
-        setUnreadCount(response.filter((notif) => !notif.isRead).length);
       })
       .catch((error) => {
         console.log(error);
@@ -48,7 +50,7 @@ export const Nav = () => {
 
   signalrConnection.on("ReceiveNotification", () => {
     fetchNotification();
-  })
+  });
 
   const signalrStart = async () => {
     try {
@@ -67,12 +69,16 @@ export const Nav = () => {
   }, [user]);
 
   const handleNotificationClick = async (notificationId) => {
-      readNotification(notificationId).catch((error)=>{
+    readNotification(notificationId)
+      .catch((error) => {
         console.log(error);
-      }).finally(()=>{
+      })
+      .finally(() => {
         fetchNotification();
       });
-  }
+  };
+
+  
 
   return (
     <div className="h-[80px] w-full bg-red-500 flex justify-between items-center px-4 text-white font-semibold text-lg">
@@ -219,12 +225,20 @@ export const Nav = () => {
               {notifications.length !== 0 ? (
                 <div className="text-sm font-normal flex flex-col gap-1 max-h-[300px] overflow-auto">
                   {notifications.map((notif, index) => (
-                    <div key={index} className={`${notif.isRead ? "" : "bg-slate-200"} shadow-sm p-2 rounded-lg hover:cursor-pointer`} onClick={()=>{
-                      if (notif.isRead) return;
-                      handleNotificationClick(notif.id);
-                    }}>
+                    <div
+                      key={index}
+                      className={`${
+                        notif.isRead ? "" : "bg-slate-200"
+                      } shadow-sm p-2 rounded-lg hover:cursor-pointer`}
+                      onClick={() => {
+                        if (notif.isRead) return;
+                        handleNotificationClick(notif.id);
+                      }}
+                    >
                       <div>{notif.message}</div>
-                      <div className="opacity-50 text-xs">{FormatDateTime(notif.createdAt, "dd/mm/yyyy")}</div>
+                      <div className="opacity-50 text-xs">
+                        {FormatDateTime(notif.createdAt, "dd/mm/yyyy")}
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -234,13 +248,22 @@ export const Nav = () => {
             </div>
           </div>
         </div>
-        <Link
-          to="/"
-          onClick={handleLogout}
-          className="hover:border-b-2 hover:border-b-white h-full p-2"
-        >
-          Log out
-        </Link>
+        {isAuthenticated && user.type === "candidate" ? (
+          <Link
+            to="/"
+            onClick={handleLogout}
+            className="hover:border-b-2 hover:border-b-white h-full p-2"
+          >
+            Log out
+          </Link>
+        ) : (
+          <Link
+            to="/signin/candidates"
+            className="hover:border-b-2 hover:border-b-white h-full p-2"
+          >
+            Log in
+          </Link>
+        )}
       </div>
     </div>
   );

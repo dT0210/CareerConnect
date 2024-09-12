@@ -1,8 +1,10 @@
+using System.Linq.Expressions;
 using AutoMapper;
 using Backend.Infrastructure.Models;
 using Backend.Infrastructure.Repositories.Interfaces;
 using Backend.WebAPI.Models.Requests;
 using Backend.WebAPI.Models.Responses;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend.WebAPI.Services;
 
@@ -19,10 +21,53 @@ public class SkillService : ISkillService
     }
 
 
-    public async Task<IEnumerable<SkillResponseModel>> GetAllSkillsAsync()
+    public async Task<PagedResponse<SkillResponseModel>> GetAllSkillsAsync(int? pageIndex, int? pageSize, string? orderBy, bool? isDescending, string? search)
     {
-        var skills = await _skillRepository.GetAllAsync();
-        return skills.Select(_mapper.Map<SkillResponseModel>);
+        string searchPhraseLower = search?.ToLower() ?? string.Empty;
+        var query = _skillRepository.GetAllQueryable().AsNoTracking();
+
+        query = query.Where(x => string.IsNullOrWhiteSpace(searchPhraseLower) || x.Name.Contains(searchPhraseLower));
+
+        var totalRecords = query.Count();
+        if (!string.IsNullOrEmpty(orderBy))
+        {
+            var columnsSelector = new Dictionary<string, Expression<Func<Skill, object>>>
+                {
+                    { "name", x => x.Name},
+                    { "createdAt", x => x.CreatedAt},
+                    { "modifiedAt", x => x.ModifiedAt}
+                };
+            var selectedColumn = columnsSelector[orderBy];
+            query = isDescending.HasValue && isDescending.Value
+                ? query.OrderByDescending(selectedColumn)
+                : query.OrderBy(selectedColumn);
+        }
+        //else default sort by the created date
+        else
+        {
+            query = query.OrderByDescending(x => x.CreatedAt);
+        }
+        List<Skill> skills;
+        if (pageSize == null || pageIndex == null)
+        {
+            skills = await query.ToListAsync();
+        }
+        else
+        {
+            skills = await query
+                .Skip((int)((pageIndex - 1) * pageSize))
+                .Take((int)pageSize)
+                .ToListAsync();
+        }
+        var response = new PagedResponse<SkillResponseModel>
+        {
+            PageIndex = 1,
+            PageSize = pageSize ?? totalRecords,
+            TotalPages = (int)Math.Ceiling(totalRecords / (double)(pageSize ?? 1)),
+            TotalRecords = totalRecords,
+            Data = skills.Select(_mapper.Map<SkillResponseModel>).ToList()
+        };
+        return response;
     }
 
     public async Task<SkillResponseModel?> GetSkillByIdAsync(Guid id)

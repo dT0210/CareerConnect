@@ -1,14 +1,24 @@
+import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useAuth } from "../../../hooks/useAuth";
+import useClickOutside from "../../../hooks/useClickOutside";
 
 export const Nav = () => {
-  const {setIsAuthenticated} = useAuth();
+  const { setIsAuthenticated } = useAuth();
+  const [openManageMenu, setOpenManageMenu] = useState(false);
+  const manageMenuRef = useRef();
+
+  useClickOutside(manageMenuRef, () => {
+    setOpenManageMenu(false);
+  });
+
   const handleLogout = () => {
     localStorage.removeItem("token");
     setIsAuthenticated(false);
-    toast.success("You have been signed out")
+    toast.success("You have been signed out");
   };
+
   return (
     <div className="h-[80px] w-full bg-red-500 flex justify-between items-center px-4 text-white font-semibold text-lg">
       <div className=" flex items-center justify-start gap-4">
@@ -95,24 +105,62 @@ export const Nav = () => {
             </defs>
           </svg>
         </Link>
-        <Link to="/admin/dashboard" className="hover:border-b-2 hover:border-b-white h-full p-2">
-            Home
+        <Link
+          to="/admin/dashboard"
+          className="hover:border-b-2 hover:border-b-white h-full p-2"
+        >
+          Home
         </Link>
-        <Link to="/admin/jobs" className="hover:border-b-2 hover:border-b-white h-full p-2">
-            Jobs
-        </Link>
-        <Link to="/admin/skills" className="hover:border-b-2 hover:border-b-white h-full p-2">
-            Skills
-        </Link>
-        <Link to="/admin/companies" className="hover:border-b-2 hover:border-b-white h-full p-2">
-            Companies
-        </Link>
-        <Link to="/admin/profile" className="hover:border-b-2 hover:border-b-white h-full p-2">
-            Profile
-        </Link>
+        <div className=" h-full relative" ref={manageMenuRef}>
+          <div
+            className="hover:border-b-2 hover:border-b-white p-2 hover:cursor-pointer"
+            onClick={() => {
+              setOpenManageMenu(!openManageMenu);
+            }}
+          >
+            Manage
+          </div>
+          <div
+            className={`flex flex-col gap-1 rounded-md p-2 shadow-md w-[160px] absolute top-[120%] text-black bg-white z-20 ${
+              !openManageMenu && "hidden"
+            }`}
+          >
+            <Link
+              to="/admin/reports"
+              className="rounded-md block p-2 bg-slate-200 hover:bg-slate-300 hover:text-red-500 transition-all"
+            >
+              Reports
+            </Link>
+            <Link
+              to="/admin/companies"
+              className="rounded-md block p-2 bg-slate-200 hover:bg-slate-300 hover:text-red-500 transition-all"
+            >
+              Companies
+            </Link>
+            <Link
+              to="/admin/skills"
+              className="rounded-md block p-2 bg-slate-200 hover:bg-slate-300 hover:text-red-500 transition-all"
+            >
+              Skills
+            </Link>
+            
+            <Link
+              to="/admin/fields"
+              className="rounded-md block p-2 bg-slate-200 hover:bg-slate-300 hover:text-red-500 transition-all"
+            >
+              Fields
+            </Link>
+          </div>
+        </div>
       </div>
-      <div className="flex justify-end items-center" >
-        <Link to="/" onClick={handleLogout} className="hover:border-b-2 hover:border-b-white h-full p-2">Log out</Link>
+      <div className="flex justify-end items-center">
+        <Link
+          to="/signin/admin"
+          onClick={handleLogout}
+          className="hover:border-b-2 hover:border-b-white h-full p-2"
+        >
+          Log out
+        </Link>
       </div>
     </div>
   );

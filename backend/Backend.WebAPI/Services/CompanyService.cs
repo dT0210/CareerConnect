@@ -55,7 +55,7 @@ public class CompanyService : ICompanyService
         //else default sort by the requested date
         else
         {
-            query = query.OrderBy(x => x.RequestedAt);
+            query = query.OrderByDescending(x => x.RequestedAt);
         }
         pageIndex ??= 1;
         pageSize ??= 10;
@@ -67,7 +67,7 @@ public class CompanyService : ICompanyService
         var response = new PagedResponse<CompanyResponseModel> {
             PageIndex = (int)pageIndex,
             PageSize = (int)pageSize,
-            TotalPages = (int)(totalRecords / (double)pageSize),
+            TotalPages = (int)Math.Ceiling(totalRecords / (double)pageSize),
             TotalRecords = totalRecords,
             Data = companies.Select(_mapper.Map<CompanyResponseModel>).ToList()
         };

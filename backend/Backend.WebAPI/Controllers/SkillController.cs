@@ -20,11 +20,11 @@ public class SkillController : ControllerBase
 
 
     [HttpGet]
-    public async Task<IActionResult> GetAllSkillsAsync()
+    public async Task<IActionResult> GetAllSkillsAsync(int? pageIndex, int? pageSize, string? orderBy, bool? isDescending, string? search)
     {
         try
         {
-            var skills = await _skillService.GetAllSkillsAsync();
+            var skills = await _skillService.GetAllSkillsAsync(pageIndex, pageSize, orderBy, isDescending, search);
             return Ok(skills);
         }
         catch (Exception e)

@@ -19,4 +19,5 @@ public class JobResponseModel
     public string Experience { get; set; }
     public ICollection<SkillResponseModel> Skills { get; set; }
     public int Applications {get; set;}
+    public bool IsDeleted { get; set; }
 }

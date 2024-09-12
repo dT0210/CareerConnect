@@ -20,11 +20,11 @@ public class FieldController : ControllerBase
 
 
     [HttpGet]
-    public async Task<IActionResult> GetAllFieldsAsync()
+    public async Task<IActionResult> GetAllFieldsAsync(int? pageIndex, int? pageSize, string? orderBy, bool? isDescending, string? search)
     {
         try
         {
-            var fields = await _fieldService.GetAllFieldsAsync();
+            var fields = await _fieldService.GetAllFieldsAsync(pageIndex, pageSize, orderBy, isDescending, search);
             return Ok(fields);
         }
         catch (Exception e)

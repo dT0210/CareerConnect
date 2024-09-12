@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { createCompanyRules } from "../../../../common/validations/recruiters";
 import { Button } from "../../../../components/Button";
 import InputField from "../../../../components/InputField";
 import { LoadingSpinner } from "../../../../components/LoadingSpinner";
 import { useAuth } from "../../../../hooks/useAuth";
 import { useLoading } from "../../../../hooks/useLoading";
+import { createCompany } from "../../../../services/company";
 import { uploadImage } from "../../../../services/file";
-import { createCompany } from "../../../../services/recruiter";
 
 export const CreateCompanyProfile = () => {
   const { user } = useAuth();
@@ -20,14 +21,32 @@ export const CreateCompanyProfile = () => {
   });
   const [file, setFile] = useState();
   const { isLoading, setIsLoading } = useLoading();
+  const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
   };
 
+  const validateForm = () => {
+    const newErrors = {};
+    createCompanyRules.forEach(({ field, validations }) => {
+      const value = formData[field];
+      for (const validation of validations) {
+        if (!validation.validate(value)) {
+          newErrors[field] = validation.message;
+          break;
+        }
+      }
+    });
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleFormSubmit = async (event) => {
     event.preventDefault();
+    if (!validateForm()) return;
     setIsLoading(true);
     if (file) {
       await uploadImage(file)
@@ -39,14 +58,17 @@ export const CreateCompanyProfile = () => {
               navigate("/recruiters/profile");
             })
             .catch((error) => {
-              toast.error(error.response || "Trouble creating company profile.");
+              toast.error(
+                error.response || "Trouble creating company profile."
+              );
               console.log(error);
             });
         })
         .catch((error) => {
           toast.error(error.response || "Trouble uploading image file.");
           console.log(error);
-        }).finally(()=>{
+        })
+        .finally(() => {
           setIsLoading(false);
         });
     }
@@ -71,42 +93,78 @@ export const CreateCompanyProfile = () => {
         <div className="text-2xl font-bold text-red-500 mb-4">
           Create company profile
         </div>
-        <InputField
-          label="Company name"
-          placeholder="Enter company name"
-          id="company-name"
-          name="name"
-          onChange={handleValueChange}
-        />
-        <InputField
-          label="Size"
-          placeholder="Enter company size"
-          id="company-size"
-          name="size"
-          onChange={handleValueChange}
-        />
-        <InputField
-          label="Website"
-          placeholder="Enter company website"
-          id="company-website"
-          name="website"
-          onChange={handleValueChange}
-        />
-        <InputField
-          label="Address"
-          placeholder="Enter company address"
-          id="company-address"
-          name="address"
-          onChange={handleValueChange}
-        />
-        <InputField
-          label="Description"
-          placeholder="Enter company description"
-          id="company-description"
-          name="description"
-          type={"textarea"}
-          onChange={handleValueChange}
-        />
+        <div>
+          <InputField
+            label="Company name"
+            placeholder="Enter company name"
+            id="company-name"
+            name="name"
+            onChange={handleValueChange}
+          />
+          {errors?.name && (
+            <div className="italic text-red-600 text-sm text-right">
+              {errors.name}
+            </div>
+          )}
+        </div>
+        <div>
+          <InputField
+            label="Size"
+            placeholder="Enter company size"
+            id="company-size"
+            name="size"
+            onChange={handleValueChange}
+          />
+          {errors?.size && (
+            <div className="italic text-red-600 text-sm text-right">
+              {errors.size}
+            </div>
+          )}
+        </div>
+        <div>
+          <InputField
+            label="Website"
+            placeholder="Enter company website"
+            id="company-website"
+            name="website"
+            onChange={handleValueChange}
+          />
+          {errors?.website && (
+            <div className="italic text-red-600 text-sm text-right">
+              {errors.website}
+            </div>
+          )}
+        </div>
+        <div>
+          <InputField
+            label="Address"
+            placeholder="Enter company address"
+            id="company-address"
+            name="address"
+            onChange={handleValueChange}
+          />
+          {errors?.address && (
+            <div className="italic text-red-600 text-sm text-right">
+              {errors.address}
+            </div>
+          )}
+        </div>
+        <div>
+          <InputField
+            label="Description"
+            placeholder="Enter company description"
+            id="company-description"
+            name="description"
+            type={"textarea"}
+            onChange={handleValueChange}
+          />
+          {errors?.description && (
+            <div className="italic text-red-600 text-sm text-right">
+              {errors.description}
+            </div>
+          )}
+        </div>
+
         <InputField
           label="Image"
           id="company-image"

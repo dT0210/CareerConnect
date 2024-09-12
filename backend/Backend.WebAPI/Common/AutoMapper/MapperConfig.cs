@@ -33,6 +33,10 @@ public class MapperProfile : Profile
             .ForMember(
                 dest => dest.Applications,
                 opt => opt.MapFrom(src => src.Applications.Count())
+            )
+            .ForMember(
+                dest => dest.IsDeleted,
+                opt => opt.MapFrom(src => src.DeletedBy != null)
             );
 
         CreateMap<JobRequestModel, Job>();
@@ -52,8 +56,10 @@ public class MapperProfile : Profile
 
         CreateMap<Field, FieldResponseModel>();
 
-        CreateMap<NotificationRequestModel, Notification>();
-
         CreateMap<Notification, NotificationResponseModel>();
+
+        CreateMap<ReportRequestModel, Report>();
+
+        CreateMap<Report, ReportResponseModel>();
     }
 }

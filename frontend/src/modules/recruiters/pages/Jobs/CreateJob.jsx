@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { JOB_TYPES } from "../../../../common/constant";
+import { createJobRules } from "../../../../common/validations/recruiters";
 import { Button } from "../../../../components/Button";
 import InputField from "../../../../components/InputField";
 import { LoadingSpinner } from "../../../../components/LoadingSpinner";
@@ -28,6 +29,7 @@ export const CreateJob = () => {
   const [fields, setFields] = useState([]);
   const navigate = useNavigate();
   const { isLoading, setIsLoading } = useLoading();
+  const [errors, setErrors] = useState({});
 
   const inputFields = [
     { label: "Job Title", placeholder: "Enter job title", name: "title" },
@@ -52,7 +54,7 @@ export const CreateJob = () => {
     await getSkills()
       .then((response) => {
         setSkills(
-          response.map((skill) => ({
+          response.data.map((skill) => ({
             value: skill.id,
             label: skill.name,
           }))
@@ -72,7 +74,7 @@ export const CreateJob = () => {
     await getFields()
       .then((response) => {
         setFields(
-          response.map((skill) => ({
+          response.data.map((skill) => ({
             value: skill.id,
             label: skill.name,
           }))
@@ -92,8 +94,28 @@ export const CreateJob = () => {
     fetchSkills();
   }, []);
 
+  const validateForm = () => {
+    const newErrors = {};
+    createJobRules.forEach(({ field, validations }) => {
+      const value = formData[field];
+      for (const validation of validations) {
+        if (!validation.validate(value)) {
+          newErrors[field] = validation.message;
+          break;
+        }
+      }
+    });
+    setErrors(newErrors);
+    console.log(formData);
+    
+    console.log(newErrors);
+    
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleFormSubmit = async (event) => {
     event.preventDefault();
+    if (!validateForm()) return;
     setIsLoading(true);
     await createJob({ ...formData, recruiterId: user.id })
       .then(() => {
@@ -129,55 +151,81 @@ export const CreateJob = () => {
           Create new job
         </div>
         <div className="flex w-full flex-wrap gap-2 justify-between">
-          <Select
-            options={fields}
-            search={true}
-            label={"Field"}
-            onChange={(option) => {
-              setFormData((prevState) => ({
-                ...prevState,
-                fieldId: option.value,
-              }));
-            }}
-            className={"w-full md:w-[48%]"}
-          />
-          <Select
-            options={JOB_TYPES}
-            label={"Type"}
-            onChange={(option) => {
-              setFormData((prevState) => ({
-                ...prevState,
-                type: option.value,
-              }));
-            }}
-            className={"w-full md:w-[48%]"}
-          />
-          {inputFields.map((field, index) => (
-            <InputField
-              required={true}
-              key={index}
-              label={field.label}
-              placeholder={field.placeholder}
-              id={field.name}
-              name={field.name}
-              value={formData[field.name]}
-              onChange={handleValueChange}
-              type={field.type}
-              className="w-full md:w-[48%]"
+          <div className="w-full md:w-[48%]">
+            <Select
+              options={fields}
+              search={true}
+              label={"Field"}
+              onChange={(option) => {
+                setFormData((prevState) => ({
+                  ...prevState,
+                  fieldId: option?.value,
+                }));
+              }}
             />
+            {errors?.fieldId && (
+              <div className="italic text-red-600 text-sm text-right">
+                {errors.fieldId}
+              </div>
+            )}
+          </div>
+          <div className={"w-full md:w-[48%]"}>
+            <Select
+              options={JOB_TYPES}
+              label={"Type"}
+              onChange={(option) => {
+                setFormData((prevState) => ({
+                  ...prevState,
+                  type: option?.value,
+                }));
+              }}
+            />
+            {errors?.type && (
+              <div className="italic text-red-600 text-sm text-right">
+                {errors.type}
+              </div>
+            )}
+          </div>
+
+          {inputFields.map((field, index) => (
+            <div className="w-full md:w-[48%]">
+              <InputField
+                required={true}
+                key={index}
+                label={field.label}
+                placeholder={field.placeholder}
+                id={field.name}
+                name={field.name}
+                value={formData[field.name]}
+                onChange={handleValueChange}
+                type={field.type}
+              />
+              {errors[field.name] && (
+                <div className="italic text-red-600 text-sm text-right">
+                  {errors[field.name]}
+                </div>
+              )}
+            </div>
           ))}
-          <MultipleChoiceDropDown
-            label="Skills"
-            options={skills}
-            onChange={(selectedSkills) => {
-              setFormData((prev) => ({
-                ...prev,
-                skills: selectedSkills.map((skill) => skill.value),
-              }));
-            }}
-            className={"w-full md:w-[48%]"}
-          />
-          <InputField
+          <div className="w-full md:w-[48%]">
+            <MultipleChoiceDropDown
+              label="Skills"
+              options={skills}
+              onChange={(selectedSkills) => {
+                setFormData((prev) => ({
+                  ...prev,
+                  skills: selectedSkills.map((skill) => skill.value),
+                }));
+              }}
+            />
+            {errors?.skills && (
+              <div className="italic text-red-600 text-sm text-right">
+                {errors.skills}
+              </div>
+            )}
+          </div>
+          <div className="w-full">
+            <InputField
               required={true}
               label={"Description"}
               placeholder={"Enter job description"}
@@ -186,8 +234,13 @@ export const CreateJob = () => {
               value={formData["description"]}
               onChange={handleValueChange}
               type={"textarea"}
-              className="w-full"
             />
+            {errors?.description && (
+              <div className="italic text-red-600 text-sm text-right">
+                {errors.description}
+              </div>
+            )}
+          </div>
         </div>
         <div className="flex justify-center">
           <Button onClick={handleFormSubmit} variant={"red"}>

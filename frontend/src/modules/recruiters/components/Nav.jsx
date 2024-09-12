@@ -12,7 +12,7 @@ export const Nav = () => {
   const {user, setIsAuthenticated} = useAuth();
   const [notifications, setNotifications] = useState([]);
   const [openNotif, setOpenNotif] = useState(false);
-  const [unreadCount, setUnreadCount] = useState(0);
+  const unreadCount = notifications.filter((notif) => !notif.isRead).length;
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -27,10 +27,10 @@ export const Nav = () => {
   });
 
   const fetchNotification = async () => {
+    if (user.type !== "recruiter") return;
     await getNotifications(user.id)
       .then((response) => {
         setNotifications(response);
-        setUnreadCount(response.filter((notif) => !notif.isRead).length);
       })
       .catch((error) => {
         console.log(error);
@@ -201,7 +201,7 @@ export const Nav = () => {
           </div>
         </div>
         <Link
-          to="/"
+          to="/signin/recruiters"
           onClick={handleLogout}
           className="hover:border-b-2 hover:border-b-white h-full p-2"
         >

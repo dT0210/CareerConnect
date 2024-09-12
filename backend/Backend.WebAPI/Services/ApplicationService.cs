@@ -26,7 +26,7 @@ public class ApplicationService : IApplicationService
         _mapper = mapper;
     }
 
-    public async Task<PagedResponse<ApplicationResponseModel>> GetApplicationsAsync(Guid? jobId, Guid? candidateId, int? pageIndex, int? pageSize, JobType? type, Guid? fieldId, string? search, string? orderBy, bool? isDescending)
+    public async Task<PagedResponse<ApplicationResponseModel>> GetApplicationsAsync(Guid? jobId, Guid? candidateId, Guid? recruiterId, int? pageIndex, int? pageSize, JobType? type, Guid? fieldId, string? search, string? orderBy, bool? isDescending)
     {
         string searchPhraseLower = search?.ToLower() ?? string.Empty;
 
@@ -45,7 +45,9 @@ public class ApplicationService : IApplicationService
                                 && (type == null || x.Job.Type == type)
                                 && (string.IsNullOrWhiteSpace(searchPhraseLower)
                                     || x.Job.Title.Contains(searchPhraseLower)
-                                    || x.Job.Description.Contains(searchPhraseLower)));
+                                    || x.Job.Description.Contains(searchPhraseLower)
+                                    || x.Candidate.Name.Contains(searchPhraseLower)
+                                    || x.Candidate.Email.Contains(searchPhraseLower)));
 
         var totalRecords = query.Count();
         if (!string.IsNullOrEmpty(orderBy))
@@ -70,7 +72,7 @@ public class ApplicationService : IApplicationService
         //else default sort by the applied date
         else
         {
-            query = query.OrderBy(x => x.CreatedAt);
+            query = query.OrderByDescending(x => x.CreatedAt);
         }
         pageIndex ??= 1;
         pageSize ??= 10;
@@ -83,7 +85,7 @@ public class ApplicationService : IApplicationService
         {
             PageIndex = (int)pageIndex,
             PageSize = (int)pageSize,
-            TotalPages = (int)(totalRecords / (double)pageSize),
+            TotalPages = (int)Math.Ceiling(totalRecords / (double)pageSize),
             TotalRecords = totalRecords,
             Data = apps.Select(_mapper.Map<ApplicationResponseModel>).ToList()
         };

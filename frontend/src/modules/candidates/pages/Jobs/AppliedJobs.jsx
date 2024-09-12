@@ -24,16 +24,17 @@ export const AppliedJobs = () => {
   });
   const [searchQuery, setSearchQuery] = useState("");
   const [sortConfig, setSortConfig] = useState({ key: "", direction: "" });
-  const { appliedJobs, fetchAppliedJobs, pageCount, totalRecords, loading } = useAppliedJobs(
-    user.id,
-    pagination.pageSize,
-    pagination.pageIndex,
-    searchQuery,
-    sortConfig.key,
-    sortConfig === "descending",
-    filter
-  );
-  const {isLoading, setIsLoading} = useLoading();
+  const { appliedJobs, fetchAppliedJobs, pageCount, totalRecords, loading } =
+    useAppliedJobs(
+      user.id,
+      pagination.pageSize,
+      pagination.pageIndex,
+      searchQuery,
+      sortConfig.key,
+      sortConfig === "descending",
+      filter
+    );
+  const { isLoading, setIsLoading } = useLoading();
   const { fields } = useFields();
 
   useEffect(() => {
@@ -47,10 +48,7 @@ export const AppliedJobs = () => {
   return (
     <div className="p-8">
       <div className="flex items-center gap-4 flex-wrap">
-      <SearchForm
-          setSearch={setSearchQuery}
-          onSubmit={fetchAppliedJobs}
-        />
+        <SearchForm setSearch={setSearchQuery} onSubmit={fetchAppliedJobs} />
         <Select
           options={fields}
           search={true}

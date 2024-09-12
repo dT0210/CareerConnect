@@ -6,8 +6,8 @@ import InputField from "../../../../components/InputField";
 import { LoadingSpinner } from "../../../../components/LoadingSpinner";
 import { useAuth } from "../../../../hooks/useAuth";
 import { useLoading } from "../../../../hooks/useLoading";
+import { editCompany, getCompanyProfile } from "../../../../services/company";
 import { uploadImage } from "../../../../services/file";
-import { editCompany, getCompanyProfile } from "../../../../services/recruiter";
 
 export const EditCompanyProfile = () => {
   const { companyId } = useParams();
@@ -23,13 +23,31 @@ export const EditCompanyProfile = () => {
   const { isLoading, setIsLoading } = useLoading();
   const navigate = useNavigate();
   const [file, setFile] = useState();
+  const [errors, setErrors] = useState({});
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
   };
 
+  const validateForm = () => {
+    const newErrors = {};
+    createCompanyRules.forEach(({ field, validations }) => {
+      const value = formData[field];
+      for (const validation of validations) {
+        if (!validation.validate(value)) {
+          newErrors[field] = validation.message;
+          break;
+        }
+      }
+    });
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleFormSubmit = async (event) => {
     event.preventDefault();
+    if (!validateForm()) return;
     setIsLoading(true);
     let imageUrl = formData.imageUrl;
     if (file) {
@@ -79,7 +97,7 @@ export const EditCompanyProfile = () => {
           size: response.size,
           website: response.website,
           imageUrl: response.imageUrl,
-          address: response.address
+          address: response.address,
         });
       })
       .catch((error) => {
@@ -106,46 +124,81 @@ export const EditCompanyProfile = () => {
         <div className="text-2xl font-bold text-red-500 mb-4">
           Create company profile
         </div>
-        <InputField
-          label="Company name"
-          placeholder="Enter company name"
-          id="company-name"
-          name="name"
-          onChange={handleValueChange}
-          value={formData.name}
-        />
-        <InputField
-          label="Size"
-          placeholder="Enter company size"
-          id="company-size"
-          name="size"
-          onChange={handleValueChange}
-          value={formData.size}
-        />
-        <InputField
-          label="Website"
-          placeholder="Enter company website"
-          id="company-website"
-          name="website"
-          onChange={handleValueChange}
-          value={formData.website}
-        />
-        <InputField
-          label="Address"
-          placeholder="Enter company address"
-          id="company-address"
-          name="address"
-          onChange={handleValueChange}
-          value={formData.address}
-        />
-        <InputField
-          label="Description"
-          placeholder="Enter company description"
-          id="company-description"
-          name="description"
-          onChange={handleValueChange}
-          value={formData.description}
-        />
+        <div>
+          <InputField
+            label="Company name"
+            placeholder="Enter company name"
+            id="company-name"
+            name="name"
+            onChange={handleValueChange}
+            value={formData.name}
+          />
+          {errors?.name && (
+            <div className="italic text-red-600 text-sm text-right">
+              {errors.name}
+            </div>
+          )}
+        </div>
+        <div>
+          <InputField
+            label="Size"
+            placeholder="Enter company size"
+            id="company-size"
+            name="size"
+            onChange={handleValueChange}
+            value={formData.size}
+          />
+          {errors?.size && (
+            <div className="italic text-red-600 text-sm text-right">
+              {errors.size}
+            </div>
+          )}
+        </div>
+        <div>
+          <InputField
+            label="Website"
+            placeholder="Enter company website"
+            id="company-website"
+            name="website"
+            onChange={handleValueChange}
+            value={formData.website}
+          />
+          {errors?.website && (
+            <div className="italic text-red-600 text-sm text-right">
+              {errors.website}
+            </div>
+          )}
+        </div>
+        <div>
+          <InputField
+            label="Address"
+            placeholder="Enter company address"
+            id="company-address"
+            name="address"
+            onChange={handleValueChange}
+            value={formData.address}
+          />
+          {errors?.address && (
+            <div className="italic text-red-600 text-sm text-right">
+              {errors.address}
+            </div>
+          )}
+        </div>
+        <div>
+          <InputField
+            label="Description"
+            placeholder="Enter company description"
+            id="company-description"
+            name="description"
+            onChange={handleValueChange}
+            value={formData.description}
+          />
+          {errors?.description && (
+            <div className="italic text-red-600 text-sm text-right">
+              {errors.description}
+            </div>
+          )}
+        </div>
         <InputField
           label="Image"
           id="company-image"

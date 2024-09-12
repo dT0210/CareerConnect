@@ -14,9 +14,10 @@ export const Select = ({
   let selectWrapperStyle = `${className} relative rounded-md bg-slate-200 focus:outline-none h-fit ${
     className?.includes("w-[") ? "" : "w-full"
   }`;
+  
   const [filteredOptions, setFilteredOptions] = useState(options);
   const [selectedOption, setSelectedOption] = useState(
-    options.filter((option) => option.value === defaultValue)
+    options.find((option) => option.value === defaultValue)
   );
   const [openOptions, setOpenOptions] = useState(false);
   const selectRef = useRef();
@@ -29,8 +30,12 @@ export const Select = ({
   }, [options]);
 
   useEffect(() => {
-    onChange(selectedOption);
+      onChange(selectedOption);
   }, [selectedOption]);
+
+  useEffect(()=>{
+    setSelectedOption(options.find((option) => option.value === defaultValue));
+  }, [defaultValue])
 
   return (
     <div className={selectWrapperStyle} ref={selectRef}>

@@ -31,6 +31,7 @@ public static class ServiceCollectionExtension
         services.AddScoped<ILocalPdfRepository, LocalPdfRepository>();
         services.AddScoped<IFieldRepository, FieldRepository>();
         services.AddScoped<INotificationRepository, NotificationRepository>();
+        services.AddScoped<IReportRepository, ReportRepository>();
 
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<ICandidateService, CandidateService>();
@@ -42,6 +43,7 @@ public static class ServiceCollectionExtension
         services.AddScoped<IApplicationService, ApplicationService>();
         services.AddScoped<IFieldService, FieldService>();
         services.AddScoped<INotificationService, NotificationService>();
+        services.AddScoped<IReportService, ReportService>();
 
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
         {

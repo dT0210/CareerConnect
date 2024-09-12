@@ -86,8 +86,8 @@ export const Profile = () => {
                   <tr>
                     <td>Website</td>
                     <td>
-                      <a
-                        href={
+                      <Link
+                        to={
                           recruiter?.company.website.startsWith("http://") ||
                           recruiter?.company.website.startsWith("https://")
                             ? recruiter?.company.website
@@ -97,7 +97,7 @@ export const Profile = () => {
                         className="text-blue-600 underline"
                       >
                         {recruiter?.company.website}
-                      </a>
+                      </Link>
                     </td>
                   </tr>
                   <tr>

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import background from "../../../assets/images/Group 13.png";
-import { emailRegex } from "../../../common/validation";
+import { emailRegex } from "../../../common/validations/index";
 import InputField from "../../../components/InputField";
 import { LoadingSpinner } from "../../../components/LoadingSpinner";
 import { useAuth } from "../../../hooks/useAuth";
@@ -60,8 +60,8 @@ const Signin = () => {
         }
       })
       .catch((err) => {
-        console.log(err.response);
-        setError(err.response.data.message);
+        console.log(err);
+        setError(err.message);
       }).finally(() => {
         setIsLoading(false);
       });
@@ -86,8 +86,6 @@ const Signin = () => {
             <div className="flex gap-10 flex-wrap sm:flex-nowrap justify-center">
               <div className="flex flex-col gap-4 w-[50%]">
                 <InputField
-                  required={true}
-                  type="email"
                   name="email"
                   id="email"
                   value={formData.email}
@@ -96,7 +94,6 @@ const Signin = () => {
                   onChange={handleValueChange}
                 />
                 <InputField
-                  required={true}
                   type="password"
                   name="password"
                   id="password"

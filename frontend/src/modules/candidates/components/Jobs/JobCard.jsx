@@ -36,9 +36,6 @@ export const JobCard = ({ job, onApplyClick, applyDisabled }) => {
         <div className="mt-1 flex justify-between flex-wrap gap-2">
           <div className="flex overflow-hidden gap-2 h-fit">
             <a className="px-2 py-1 bg-slate-200 flex items-center h-fit">
-              {job.location}
-            </a>
-            <a className="px-2 py-1 bg-slate-200 flex items-center h-fit">
               {job.field?.name}
             </a>
             {job.skills?.map((skill) => (

@@ -6,9 +6,12 @@ export const MultipleChoiceDropDown = ({
   onChange,
   options,
   className,
+  defaultValues,
 }) => {
   const [showOptions, setShowOptions] = useState(false);
+
   const [selectedOptions, setSelectedOptions] = useState([]);
+
   const [filteredOptions, setFilteredOptions] = useState(options);
   const optionsListRef = useRef();
 
@@ -17,12 +20,16 @@ export const MultipleChoiceDropDown = ({
   });
 
   useEffect(() => {
-    setFilteredOptions(options);
-  }, [options]);
-
-  useEffect(() => {
     onChange(selectedOptions);
   }, [selectedOptions]);
+
+  useEffect(() => {
+    setFilteredOptions(options);
+    if (defaultValues)
+      setSelectedOptions(
+        options.filter((option) => defaultValues.includes(option.value))
+      );
+  }, [options]);
 
   const handleOptionClick = (option) => {
     setSelectedOptions((prevSelected) => {
@@ -39,7 +46,7 @@ export const MultipleChoiceDropDown = ({
   let wrapperStyle = `${className} bg-slate-200 p-2 relative rounded-md ${
     className?.includes("w-[") ? "" : "w-full"
   }`;
-
+  
   return (
     <div className={wrapperStyle}>
       <div>{label}</div>
@@ -59,8 +66,8 @@ export const MultipleChoiceDropDown = ({
           placeholder="Search"
         />
         <div className="flex mt-2 gap-2 flex-wrap">
-          {selectedOptions.map((option) => (
-            <div className="px-2 py-1 bg-white">
+          {selectedOptions.map((option, index) => (
+            <div className="px-2 py-1 bg-white" key={index}>
               {option.label}{" "}
               <span
                 className="hover:cursor-pointer text-sm"
@@ -96,7 +103,7 @@ export const MultipleChoiceDropDown = ({
                 value={option.value}
                 checked={selectedOptions.includes(option)}
                 onClick={() => handleOptionClick(option)}
-                onChange={()=>{}}
+                onChange={() => {}}
               />
               <label
                 htmlFor={`option-${index}`}

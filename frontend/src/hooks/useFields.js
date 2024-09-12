@@ -29,13 +29,13 @@ export const useFields = (
       const response = await getFields();
 
       setFields(
-        response.map((skill) => ({
+        response.data.map((skill) => ({
           value: skill.id,
           label: skill.name,
         })) || []
       );
-      //   setPageCount(response.totalPages);
-      //   setTotalRecords(response.totalRecords);
+      setPageCount(response.totalPages);
+      setTotalRecords(response.totalRecords);
     } catch (error) {
       console.error("Error in fetchUsers:", error);
       setError(true);

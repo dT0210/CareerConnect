@@ -10,5 +10,5 @@ public interface IJobService
     Task<JobResponseModel?> GetJobByIdAsync(Guid id);
     Task<JobResponseModel> InsertJobAsync(JobRequestModel job);
     Task UpdateJobAsync(Guid id, JobRequestModel job);
-    Task DeleteJobAsync(Guid id);
+    Task DeleteJobAsync(Guid id, Guid userId, string role);
 }

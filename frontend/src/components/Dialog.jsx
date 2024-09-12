@@ -19,11 +19,11 @@ export const Dialog = ({ open, setOpen, onConfirm, description, children }) => {
     <div
       className={`${
         open ? "flex" : "hidden"
-      } w-full h-full fixed inset-0 bg-black/80 z-50 justify-center items-center`}
+      } w-full h-full fixed inset-0 bg-black/80 z-40 justify-center items-center`}
     >
       <div
         ref={dialogRef}
-        className="bg-white rounded-lg w-fit h-fit flex flex-col gap-6 items-center justify-center p-8 relative"
+        className="bg-white rounded-lg w-full sm:w-fit h-fit flex flex-col gap-6 items-center justify-center p-8 relative"
       >
         <button className="absolute top-4 right-4" onClick={closeDialog}>
           &#10005;

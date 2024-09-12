@@ -33,11 +33,15 @@ instance.interceptors.response.use(
     // return {data: res?.data, status: res.status};
   },
   async (error) => {
-    // if (error.response.status === 401) {
-    //     if (window.location.pathname !== "/login")
-    //         window.location.href = "/login";
-    //     return Promise.reject(error.response.data);
-    // }
+    if (error.response.status === 401) {
+      if (
+        window.location.pathname !== "/signin/candidates" &&
+        window.location.pathname !== "/signin/recruiters" &&
+        window.location.pathname !== "/signin/admin"
+      )
+        window.location.href = "/signin/candidates";
+      return Promise.reject(error.response.data);
+    }
     return Promise.reject(error);
   }
 );

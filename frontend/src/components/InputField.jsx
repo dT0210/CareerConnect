@@ -11,9 +11,11 @@ const InputField = ({
   type,
   name,
   id,
+  disabled=false,
 }) => {
-  const props = { value, placeholder, onChange, required, type, name, id };
-  const inputFieldClass = twMerge(`focus:outline-none rounded-md bg-transparent w-full focus:bg-white focus:p-2 transition-all`, inputClassName);
+  const props = { value, placeholder, onChange, required, type, name, id, disabled };
+  let inputFieldClass = twMerge(`focus:outline-none rounded-md bg-transparent w-full focus:bg-white focus:p-2 transition-all`, inputClassName);
+  if (disabled) inputFieldClass = twMerge("opacity-50 hover:cursor-not-allowed", inputFieldClass)
   const inputWrapperClass = twMerge(
     'bg-slate-200 p-2 h-fit rounded-md w-full',
     className
@@ -22,7 +24,7 @@ const InputField = ({
   return (
     <div className={inputWrapperClass}>
       {label && (
-        <label htmlFor={id || ""} className="block text-sm">
+        <label htmlFor={id || ""} className="block text-sm ">
           {label}
         </label>
       )}

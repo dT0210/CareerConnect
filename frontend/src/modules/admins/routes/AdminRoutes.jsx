@@ -7,6 +7,7 @@ import { Fields } from "../pages/Manage/Fields";
 import { Reports } from "../pages/Manage/Reports";
 import { Skills } from "../pages/Manage/Skills";
 import Signin from "../pages/Signin";
+import Statistic from "../pages/Statistic";
 
 export const AdminsRoute = [
   {
@@ -62,6 +63,14 @@ export const AdminsRoute = [
     element: (
       <Layout>
         <JobDetails />
+      </Layout>
+    ),
+  },
+  {
+    path: "/admin/statistic",
+    element: (
+      <Layout>
+        <Statistic />
       </Layout>
     ),
   },

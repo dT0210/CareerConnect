@@ -11,4 +11,5 @@ public interface IAdminService
     Task<AdminResponseModel> InsertAdminAsync(AdminRequestModel admin);
     Task UpdateAdminAsync(Guid id, AdminRequestModel admin);
     Task DeleteAdminAsync(Guid id);
+    Task<PagedResponse<FieldStatisticResponseModel>> GetFieldsStatisticsAsync(int? pageIndex, int? pageSize, string? orderBy, bool? isDescending, string? search);
 }

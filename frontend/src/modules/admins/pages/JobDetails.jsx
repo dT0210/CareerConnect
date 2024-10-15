@@ -133,7 +133,7 @@ export const JobDetails = () => {
           </div>
           <div>
             <div>Skills</div>
-            <div>
+            <div className="flex gap-1">
               {job?.skills.map((skill) => (
                 <a className="px-2 py-1 bg-slate-200 flex items-center h-fit w-fit">
                   {skill.name}

@@ -48,21 +48,11 @@ export const CreateCompanyProfile = () => {
     event.preventDefault();
     if (!validateForm()) return;
     setIsLoading(true);
+    let imageUrl = "";
     if (file) {
       await uploadImage(file)
         .then(async (response) => {
-          const imageUrl = response.filePath;
-          await createCompany({ ...formData, recruiterId: user.id, imageUrl })
-            .then(() => {
-              toast.success("Company profile created.");
-              navigate("/recruiters/profile");
-            })
-            .catch((error) => {
-              toast.error(
-                error.response || "Trouble creating company profile."
-              );
-              console.log(error);
-            });
+          imageUrl = response.filePath;
         })
         .catch((error) => {
           toast.error(error.response || "Trouble uploading image file.");
@@ -72,6 +62,15 @@ export const CreateCompanyProfile = () => {
           setIsLoading(false);
         });
     }
+    await createCompany({ ...formData, recruiterId: user.id, imageUrl })
+      .then(() => {
+        toast.success("Company profile created.");
+        navigate("/recruiters/profile");
+      })
+      .catch((error) => {
+        toast.error(error.response || "Trouble creating company profile.");
+        console.log(error);
+      });
   };
 
   const handleValueChange = (e) => {
@@ -85,9 +84,9 @@ export const CreateCompanyProfile = () => {
   if (isLoading) return <LoadingSpinner />;
 
   return (
-    <div className="flex items-center justify-center">
+    <div className="flex items-center justify-center flex-grow">
       <form
-        className="w-full sm:w-2/3 lg:w-1/3 mt-16 p-4 shadow-lg flex flex-col gap-2"
+        className="w-full sm:w-2/3 lg:w-1/3 my-4 p-4 shadow-lg flex flex-col gap-2"
         onSubmit={handleFormSubmit}
       >
         <div className="text-2xl font-bold text-red-500 mb-4">

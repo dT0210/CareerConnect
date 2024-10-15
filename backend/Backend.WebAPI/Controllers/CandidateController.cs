@@ -76,7 +76,7 @@ public class CandidateController : ControllerBase
 
     [HttpPut]
     [Route("{id}")]
-    public async Task<IActionResult> UpdateCandidateAsync(Guid id, CandidateRequestModel model)
+    public async Task<IActionResult> UpdateCandidateAsync(Guid id, CandidateUpdateRequestModel model)
     {
         try
         {

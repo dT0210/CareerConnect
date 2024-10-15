@@ -12,6 +12,6 @@ public class Report : BaseModel
     public string AdminComment { get; set;} = "";
     public ReportStatusType Status {get; set;} = ReportStatusType.Waiting;
 
-    public Candidate Candidate { get; set;}
+    public User Candidate { get; set;}
     public Job Job { get; set;}
 }

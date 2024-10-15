@@ -32,10 +32,10 @@ public class CompanyService : ICompanyService
         string searchPhraseLower = search?.ToLower() ?? string.Empty;
 
         query = query.Where(x => (status == null || x.Status == status)
-                                    && (string.IsNullOrWhiteSpace(searchPhraseLower) || x.Name.Contains(searchPhraseLower))
+                              && (string.IsNullOrWhiteSpace(searchPhraseLower) || x.Name.Contains(searchPhraseLower))
         );
 
-        var totalRecords = query.Count();
+        var totalRecords = await query.CountAsync();
 
         if (!string.IsNullOrEmpty(orderBy))
         {
@@ -94,7 +94,6 @@ public class CompanyService : ICompanyService
         var newCompany = _mapper.Map<Company>(company);
         await _companyRepository.InsertAsync(newCompany);
         await _companyRepository.SaveAsync();
-        recruiter.CompanyId = newCompany.Id;
         _recruiterRepository.Update(recruiter);
         await _recruiterRepository.SaveAsync();
         return _mapper.Map<CompanyResponseModel>(newCompany);

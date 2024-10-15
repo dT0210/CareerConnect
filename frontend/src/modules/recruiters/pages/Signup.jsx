@@ -75,7 +75,7 @@ const Signup = () => {
       <div className="w-full h-full z-10 flex justify-center md:items-center">
         <form
           onSubmit={handleFormSubmit}
-          className="bg-white  md:mt-0 w-full md:w-[80%] lg:w-[50%] min-h-[80%] h-fit rounded-2xl relative"
+          className="bg-white  md:mt-0 w-full md:w-[80%] lg:w-[50%] h-fit rounded-2xl relative"
         >
           <div className="absolute rounded-t-2xl bg-red-500 w-full h-[74px] flex justify-center items-center text-white font-extrabold text-3xl">
             SIGN UP

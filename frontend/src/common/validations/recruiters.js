@@ -70,6 +70,24 @@ export const createCompanyRules = [
             },
         ]
     },
+    {
+      field: "size",
+      validations: [
+          {
+              message: "Size is required",
+              validate: (value) => value !== ""
+          },
+      ]
+  },
+  {
+    field: "website",
+    validations: [
+        {
+            message: "Website is required",
+            validate: (value) => value !== ""
+        },
+    ]
+},
 ];
 
 export const createJobRules = [

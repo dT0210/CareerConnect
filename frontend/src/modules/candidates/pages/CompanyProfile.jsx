@@ -84,7 +84,7 @@ function CompanyProfile() {
         <div className="rounded-full overflow-hidden h-32 w-32 shadow-md flex items-center justify-center">
           <img src={company?.imageUrl} alt="" className="" />
         </div>
-        <div className="flex flex-col justify-end gap-4">
+        <div className="flex flex-col justify-end gap-4 ml-6">
           <div className="text-4xl font-bold">{company?.name}</div>
           <div className="flex items-center gap-8">
             <div className="flex items-center gap-2">
@@ -110,13 +110,13 @@ function CompanyProfile() {
         </div>
       </div>
       <div className=" bg-white rounded-lg w-full overflow-hidden">
-        <div className="bg-[#ff4545] px-6 py-4 text-white font-semibold text-xl">
+        <div className="bg-[#ef4545] px-6 py-4 text-white font-semibold text-xl">
           Company Description
         </div>
         <div className="px-6 py-4">{company?.description}</div>
       </div>
       <div className=" bg-white rounded-lg w-full overflow-hidden">
-        <div className="bg-[#ff4545] px-6 py-4 text-white font-semibold text-xl">
+        <div className="bg-[#ef4545] px-6 py-4 text-white font-semibold text-xl">
           Recruitments
         </div>
         <div className="px-6 py-4">

@@ -49,7 +49,7 @@ public class ApplicationService : IApplicationService
                                     || x.Candidate.Name.Contains(searchPhraseLower)
                                     || x.Candidate.Email.Contains(searchPhraseLower)));
 
-        var totalRecords = query.Count();
+        var totalRecords = await query.CountAsync();
         if (!string.IsNullOrEmpty(orderBy))
         {
             var columnsSelector = new Dictionary<string, Expression<Func<Application, object>>>

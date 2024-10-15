@@ -9,9 +9,7 @@ export const MultipleChoiceDropDown = ({
   defaultValues,
 }) => {
   const [showOptions, setShowOptions] = useState(false);
-
   const [selectedOptions, setSelectedOptions] = useState([]);
-
   const [filteredOptions, setFilteredOptions] = useState(options);
   const optionsListRef = useRef();
 
@@ -29,7 +27,7 @@ export const MultipleChoiceDropDown = ({
       setSelectedOptions(
         options.filter((option) => defaultValues.includes(option.value))
       );
-  }, [options]);
+  }, [options, defaultValues]);
 
   const handleOptionClick = (option) => {
     setSelectedOptions((prevSelected) => {
@@ -56,7 +54,7 @@ export const MultipleChoiceDropDown = ({
           onChange={(e) => {
             setFilteredOptions(
               options.filter((option) =>
-                option.label.toLowerCase().includes(e.target.value)
+                option.label.toLowerCase().includes(e.target.value.toLowerCase())
               )
             );
             if (e.target.value !== "") setShowOptions(true);

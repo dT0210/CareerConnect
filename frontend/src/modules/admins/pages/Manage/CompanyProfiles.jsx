@@ -7,6 +7,7 @@ import { Dialog } from "../../../../components/Dialog";
 import { LoadingSpinner } from "../../../../components/LoadingSpinner";
 import { Pagination } from "../../../../components/Pagination";
 import { SearchForm } from "../../../../components/SearchForm";
+import { Select } from "../../../../components/Select";
 import { useAuth } from "../../../../hooks/useAuth";
 import { useLoading } from "../../../../hooks/useLoading";
 import {
@@ -34,6 +35,7 @@ export const CompanyProfiles = () => {
   const [profileDetails, setProfileDetails] = useState();
   const [openDetails, setOpenDetails] = useState(false);
   const { isLoading, setIsLoading } = useLoading();
+  const [status, setStatus] = useState(null);
 
   const fetchCompanyProfiles = async () => {
     setIsLoading(true);
@@ -43,6 +45,7 @@ export const CompanyProfiles = () => {
       search: searchQuery,
       orderBy: sortConfig.key,
       isDescending: sortConfig.direction === "descending",
+      status
     })
       .then((response) => {
         setCompanyProfiles(response.data || []);
@@ -81,7 +84,7 @@ export const CompanyProfiles = () => {
 
   useEffect(() => {
     fetchCompanyProfiles();
-  }, [pagination.pageIndex, pagination.pageSize, searchQuery, sortConfig]);
+  }, [pagination.pageIndex, pagination.pageSize, searchQuery, sortConfig, status]);
 
   useEffect(() => {
     fetchRecruiter();
@@ -144,6 +147,15 @@ export const CompanyProfiles = () => {
             setPagination({ ...pagination, pageIndex: 1 });
           }}
           onSubmit={fetchCompanyProfiles}
+        />
+        <Select
+          options={COMPANY_STATUS}
+          label={"Status"}
+          onChange={(option) => {
+            setStatus(option?.value);
+          }}
+          defaultValue={status}
+          className={"w-[30%]"}
         />
       </div>
       <div className="bg-white shadow-lg rounded-lg overflow-auto border border-gray-200">

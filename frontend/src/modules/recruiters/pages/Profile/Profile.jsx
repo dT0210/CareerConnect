@@ -33,7 +33,7 @@ export const Profile = () => {
   if (isLoading) return (<LoadingSpinner/>)
 
   return (
-    <div className="p-8">
+    <div className="p-8  flex flex-col flex-grow">
       <div>
         <div className="text-2xl font-bold mb-2">Personal Information</div>
         <div>

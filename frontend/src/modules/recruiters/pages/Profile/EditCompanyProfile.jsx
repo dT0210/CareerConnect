@@ -116,13 +116,13 @@ export const EditCompanyProfile = () => {
   if (isLoading) return <LoadingSpinner />;
 
   return (
-    <div className="flex items-center justify-center">
+    <div className="flex items-center justify-center flex-grow">
       <form
-        className="w-1/3 mt-16 p-4 shadow-lg flex flex-col gap-2"
+        className="w-1/3 my-4 p-4 shadow-lg flex flex-col gap-2"
         onSubmit={handleFormSubmit}
       >
         <div className="text-2xl font-bold text-red-500 mb-4">
-          Create company profile
+          Update company profile
         </div>
         <div>
           <InputField

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import header from "../../../assets/images/1699539921842.jfif";
 import { JOB_TYPES } from "../../../common/constant";
 import { filterUndefinedAndNull } from "../../../common/helpers";
 import { Dialog } from "../../../components/Dialog";
@@ -37,9 +38,6 @@ const DashBoard = () => {
   });
   const navigate = useNavigate();
 
-  console.log(appliedJobs);
-  
-
   const fetchJobs = async () => {
     setIsLoading(true);
     await getPagedJobs({
@@ -49,6 +47,7 @@ const DashBoard = () => {
       orderBy: sortConfig.key,
       isDescending: sortConfig.direction === "descending",
       ...filterUndefinedAndNull(filter),
+      expired: false
     })
       .then((response) => {
         setJobs(response.data || []);
@@ -78,8 +77,19 @@ const DashBoard = () => {
   ]);
 
   return (
-    <div className="p-8">
-      <div className="flex items-center gap-4">
+    <div className=" p-8 flex flex-col flex-grow">
+      <div className="relative h-[300px] flex items-center justify-center flex-col">
+        <div className="absolute w-full h-full opacity-70 top-0  flex justify-center items-center overflow-hidden -z-10 ">
+          <img src={header} alt="" className="w-full" />
+        </div>
+        <div className="font-bold text-4xl sm:text-5xl md:text-7xl  font-serif text-center">
+          DISCOVER NEW CAREER OPPOTUNITIES
+        </div>
+        <div className="bg-black w-[300px] md:w-[600px] h-2 mt-1">
+          .
+        </div>
+      </div>
+      <div className="flex items-center gap-1 md:gap-4 mt-4">
         <SearchForm
           setSearch={(query) => {
             setSearchQuery(query);

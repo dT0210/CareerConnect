@@ -119,7 +119,7 @@ export const CreateJob = () => {
     setIsLoading(true);
     await createJob({ ...formData, recruiterId: user.id })
       .then(() => {
-        toast.success("Company profile created.");
+        toast.success("Job recruitment created.");
         navigate("/recruiters/jobs");
       })
       .catch((error) => {
@@ -144,7 +144,7 @@ export const CreateJob = () => {
   return (
     <div className="flex items-center justify-center">
       <form
-        className="w-2/3 mt-16 p-4 shadow-lg flex flex-col gap-2"
+        className="w-2/3 my-4 p-4 shadow-lg flex flex-col gap-2"
         onSubmit={handleFormSubmit}
       >
         <div className="text-2xl font-bold text-red-500 mb-4">

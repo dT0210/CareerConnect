@@ -102,7 +102,7 @@ public class RecruiterService : IRecruiterService
     {
         var company = _mapper.Map<Company>(companyProfile);
         var recruiter = await _recruiterRepository.GetByIdAsync(id) ?? throw new KeyNotFoundException("Recruiter not found");
-        recruiter.CompanyId = company.Id;
+
         await _companyRepository.InsertAsync(company);
         await _companyRepository.SaveAsync();
         _recruiterRepository.Update(recruiter);

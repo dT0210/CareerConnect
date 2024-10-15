@@ -10,7 +10,6 @@ public class Recruiter : BaseModel
     [Required]
     public string Email { get; set; }
     public string PhoneNumber { get; set; }
-    public Guid? CompanyId { get; set; }
     public string PasswordHash { get; set; }
 
     public ICollection<Job> JobsPosted { get; set; }

@@ -74,13 +74,9 @@ public class CandidateService : ICandidateService
         return _mapper.Map<CandidateResponseModel>(newCandidate);
     }
 
-    public async Task UpdateCandidateAsync(Guid id, CandidateRequestModel candidate)
+    public async Task UpdateCandidateAsync(Guid id, CandidateUpdateRequestModel candidate)
     {
-        var existingCandidate = await _candidateRepository.GetByIdAsync(id);
-        if (existingCandidate == null)
-        {
-            throw new KeyNotFoundException("Candidate not found");
-        }
+        var existingCandidate = await _candidateRepository.GetByIdAsync(id) ?? throw new KeyNotFoundException("Candidate not found");
         _mapper.Map(candidate, existingCandidate);
         _candidateRepository.Update(existingCandidate);
         await _candidateRepository.SaveAsync();

@@ -152,6 +152,12 @@ export const Nav = () => {
             </Link>
           </div>
         </div>
+        <Link
+          to="/admin/statistic"
+          className="hover:border-b-2 hover:border-b-white h-full p-2"
+        >
+          Statistic
+        </Link>
       </div>
       <div className="flex justify-end items-center">
         <Link

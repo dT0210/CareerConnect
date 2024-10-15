@@ -77,14 +77,14 @@ export const EditJob = () => {
     await getFields()
       .then((response) => {
         setFields(
-          response.map((skill) => ({
+          response.data.map((skill) => ({
             value: skill.id,
             label: skill.name,
           }))
         );
       })
       .catch((err) => {
-        toast.error("Error fetching skills. Check console for more details");
+        toast.error("Error fetching fields. Check console for more details");
         console.log(err);
       })
       .finally(() => {
@@ -176,7 +176,7 @@ export const EditJob = () => {
   return (
     <div className="flex items-center justify-center">
       <form
-        className="w-2/3 mt-16 p-4 shadow-lg flex flex-col gap-2"
+        className="w-2/3 my-4 p-4 shadow-lg flex flex-col gap-2"
         onSubmit={handleFormSubmit}
       >
         <div className="text-2xl font-bold text-red-500 mb-4">

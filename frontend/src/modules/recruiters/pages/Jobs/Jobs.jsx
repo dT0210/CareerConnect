@@ -91,7 +91,7 @@ export const Jobs = () => {
   };
 
   return (
-    <div className="p-8 w-full overflow-auto">
+    <div className="p-8 w-full flex flex-col flex-grow">
       <div className="flex justify-between items-center mb-2">
         <SearchForm
           setSearch={(query) => {
@@ -107,7 +107,7 @@ export const Jobs = () => {
           Create a new Job
         </Button>
       </div>
-      <div className="w-full overflow-auto">
+      <div className="w-full overflow-x-auto">
         {isLoading ? (
           <LoadingSpinner />
         ) : (

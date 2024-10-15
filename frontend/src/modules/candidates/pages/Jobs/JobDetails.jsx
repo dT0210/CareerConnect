@@ -7,6 +7,7 @@ import { MdOutlineReport } from "react-icons/md";
 import { Link, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { JOB_TYPES } from "../../../../common/constant";
+import { FormatDateTime } from "../../../../common/helpers";
 import { Button } from "../../../../components/Button";
 import { Dialog } from "../../../../components/Dialog";
 import { LoadingSpinner } from "../../../../components/LoadingSpinner";
@@ -26,6 +27,7 @@ export const JobDetails = () => {
   const applyDisabled = appliedJobs.find(
     (appliedJob) => appliedJob.id === job?.id
   );
+
   const [openApplyJob, setOpenApplyJob] = useState(false);
   const [openReport, setOpenReport] = useState(false);
 
@@ -106,6 +108,12 @@ export const JobDetails = () => {
               {applyDisabled ? "Applied" : "Apply"}
             </Button>
           </div>
+          {applyDisabled && (
+            <div className="flex justify-end italic text-sm">
+              Applied at{" "}
+              {FormatDateTime(applyDisabled.appliedAt, "dd/mm/yyyy hh:mm")}
+            </div>
+          )}
         </div>
         <div className="p-4 bg-white rounded-lg w-full">
           <div className="text-2xl font-bold">Job Description</div>
@@ -116,16 +124,18 @@ export const JobDetails = () => {
         <div className="bg-white rounded-lg p-4">
           <div className="flex gap-4">
             <div className="h-24 w-24">
-              <Link to={`/companies/${job?.recruiter.company.id}`}><img
-                src={job?.recruiter.company.imageUrl}
-                alt=""
-                className="w-full h-full object-cover border-[1px] border-slate-200 p-2 rounded-md"
-              />
+              <Link to={`/companies/${job?.recruiter.company.id}`}>
+                <img
+                  src={job?.recruiter.company.imageUrl}
+                  alt=""
+                  className="w-full h-full object-cover border-[1px] border-slate-200 p-2 rounded-md"
+                />
               </Link>
-              
             </div>
             <div className="flex-shrink-0 font-semibold text-xl">
-              <Link to={`/companies/${job?.recruiter.company.id}`}>{job?.recruiter.company.name}</Link>
+              <Link to={`/companies/${job?.recruiter.company.id}`}>
+                {job?.recruiter.company.name}
+              </Link>
             </div>
           </div>
           <div className="mt-4">
@@ -158,7 +168,7 @@ export const JobDetails = () => {
           </div>
           <div>
             <div>Skills</div>
-            <div>
+            <div className="flex gap-1">
               {job?.skills.map((skill) => (
                 <a className="px-2 py-1 bg-slate-200 flex items-center h-fit w-fit">
                   {skill.name}
@@ -168,7 +178,9 @@ export const JobDetails = () => {
           </div>
           <div>
             <div>Location</div>
-            <div className="px-2 py-1 bg-slate-200 flex items-center h-fit w-fit">{job?.location}</div>
+            <div className="px-2 py-1 bg-slate-200 flex items-center h-fit w-fit">
+              {job?.location}
+            </div>
           </div>
         </div>
       </div>
@@ -194,6 +206,7 @@ export const JobDetails = () => {
           candidateId={user.id}
           onSubmit={() => {
             setOpenApplyJob(false);
+            fetchAppliedJobs();
           }}
         />
       </Dialog>

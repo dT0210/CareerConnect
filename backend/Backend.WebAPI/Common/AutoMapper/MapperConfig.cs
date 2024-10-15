@@ -13,6 +13,14 @@ public class MapperProfile : Profile
 
         CreateMap<CandidateRequestModel, Candidate>();
 
+        CreateMap<CandidateUpdateRequestModel, Candidate>();
+
+        CreateMap<User, UserResponseModel>();
+
+        CreateMap<UserRequestModel, User>();
+
+        CreateMap<UserUpdateRequestModel, User>();
+
         CreateMap<Recruiter, RecruiterResponseModel>();
 
         CreateMap<RecruiterRequestModel, Recruiter>();

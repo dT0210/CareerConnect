@@ -1,3 +1,4 @@
+import Footer from "../components/Footer";
 import { Nav } from "../components/Nav";
 
 const Layout = ({ children }) => {
@@ -5,6 +6,7 @@ const Layout = ({ children }) => {
     <div className="h-full flex flex-col">
       <Nav />
       {children}
+      <Footer/>
     </div>
   );
 };

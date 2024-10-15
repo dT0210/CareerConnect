@@ -44,19 +44,19 @@ export const JobCard = ({ job, onApplyClick, applyDisabled }) => {
               </a>
             ))}
           </div>
-            <div className="flex-shrink-0 flex items-center gap-2 justify-end">
-              <button>{/*heart shaped react icon*/}</button>
-              <Button onClick={handleApply} disabled={applyDisabled}>
-                {applyDisabled ? "Applied" : "Apply"}
-              </Button>
-            </div>
+          <div className="flex-shrink-0 flex items-center gap-2 justify-end">
+            <button>{/*heart shaped react icon*/}</button>
+            <Button onClick={handleApply} disabled={applyDisabled}>
+              {applyDisabled ? "Applied" : "Apply"}
+            </Button>
+          </div>
         </div>
         {job.appliedAt && (
-              <div className="italic text-sm text-end">{`Applied at ${FormatDateTime(
-                job.appliedAt,
-                "dd/mm/yyyy hh:mm"
-              )}`}</div>
-            )}
+          <div className="italic text-sm text-end">{`Applied at ${FormatDateTime(
+            job.appliedAt,
+            "dd/mm/yyyy hh:mm"
+          )}`}</div>
+        )}
       </div>
     </div>
   );

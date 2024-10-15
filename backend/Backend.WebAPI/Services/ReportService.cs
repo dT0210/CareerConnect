@@ -55,7 +55,7 @@ public class ReportService : IReportService
                                     || x.Candidate.Email.Contains(searchPhraseLower))
                                 && (status == null || x.Status == status));
 
-        var totalRecords = query.Count();
+        var totalRecords = await query.CountAsync();
         if (!string.IsNullOrEmpty(orderBy))
         {
             var columnsSelector = new Dictionary<string, Expression<Func<Report, object>>>

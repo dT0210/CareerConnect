@@ -1,4 +1,5 @@
 import { AuthRequired } from "../components/AuthRequired";
+import Footer from "../components/Footer";
 import { Nav } from "../components/Nav";
 
 const Layout = ({ children }) => {
@@ -7,6 +8,7 @@ const Layout = ({ children }) => {
       <AuthRequired>
         <Nav />
         {children}
+        <Footer/>
       </AuthRequired>
     </div>
   );

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { ImNewTab } from "react-icons/im";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import header from "../../../assets/images/1699539921842.jfif";
 import { FormatDateTime } from "../../../common/helpers";
 import { useAuth } from "../../../hooks/useAuth";
 import { useLoading } from "../../../hooks/useLoading";
@@ -37,8 +38,19 @@ const DashBoard = () => {
   }, [user]);
 
   return (
-    <div className="p-4">
-      <div className="flex justify-between items-center">
+    <div className="p-4  flex flex-col flex-grow">
+      <div className="relative h-[300px] flex items-center justify-center flex-col">
+        <div className="absolute w-full h-full opacity-70 top-0  flex justify-center items-center overflow-hidden -z-10 ">
+          <img src={header} alt="" className="w-full" />
+        </div>
+        <div className="font-bold text-4xl sm:text-5xl md:text-7xl  font-serif text-center">
+          FIND THE BEST CANDIDATES EFFECTIVELY
+        </div>
+        <div className="bg-black w-[300px] md:w-[500px] h-2 mt-1">
+          .
+        </div>
+      </div>
+      <div className="flex justify-between items-center mt-4">
         <div className="mb-2 font-semibold text-xl">Recent Applications</div>
         <Link to={"/recruiters/jobs"} className=" text-blue-600 underline">See all</Link>
       </div>

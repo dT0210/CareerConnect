@@ -12,7 +12,7 @@ public class FieldService : IFieldService
 {
     private readonly IFieldRepository _fieldRepository;
     private readonly IMapper _mapper;
-    public FieldService(IFieldRepository fieldRepository, ITokenService tokenService, IMapper mapper)
+    public FieldService(IFieldRepository fieldRepository, IMapper mapper)
     {
         _fieldRepository = fieldRepository;
         _mapper = mapper;
@@ -26,7 +26,7 @@ public class FieldService : IFieldService
 
         query = query.Where(x => string.IsNullOrWhiteSpace(searchPhraseLower) || x.Name.Contains(searchPhraseLower));
 
-        var totalRecords = query.Count();
+        var totalRecords = await query.CountAsync();
         if (!string.IsNullOrEmpty(orderBy))
         {
             var columnsSelector = new Dictionary<string, Expression<Func<Field, object>>>

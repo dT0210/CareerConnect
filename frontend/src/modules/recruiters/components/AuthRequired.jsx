@@ -10,11 +10,8 @@ export const AuthRequired = ({children}) => {
     if (!isAuthenticated) {
         toast.info("Please Sign in to continue");
     }
-    console.log(isAuthenticated);
-    console.log(user);
-    
 
     return (
-        isAuthenticated && user.type === "recruiter" ? children : <Navigate to="/signin/recruiters"/>
+        isAuthenticated && user.type === "recruiter" ? children : <Navigate to="/signin/recruiters" replace={true}/>
     );
 };

@@ -9,7 +9,9 @@ namespace Backend.Infrastructure;
 public class CareerConnectContext : DbContext
 {
     private readonly PasswordHasher<Admin> _passwordHasher = new PasswordHasher<Admin>();
+    
     public DbSet<Candidate> Candidates { get; set; }
+    public DbSet<User> Users { get; set;}
     public DbSet<Company> Companies { get; set; }
     public DbSet<Recruiter> Recruiters { get; set; }
     public DbSet<Job> Jobs { get; set; }
@@ -32,21 +34,21 @@ public class CareerConnectContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Company>()
-            .HasOne(c => c.Recruiter)
-            .WithOne(r => r.Company)
-            .HasForeignKey<Recruiter>(r => r.CompanyId);
+        modelBuilder.Entity<Recruiter>()
+            .HasOne(r => r.Company)
+            .WithOne(c => c.Recruiter)
+            .HasForeignKey<Company>(c => c.RecruiterId);
 
         modelBuilder.Entity<Company>()
             .HasOne(c => c.Approver)
             .WithMany(a => a.ApprovedCompanies)
             .HasForeignKey(c => c.ApproverId);
 
-        modelBuilder.Entity<Candidate>()
+        modelBuilder.Entity<User>()
             .HasIndex(c => c.Email)
             .IsUnique();
 
-        modelBuilder.Entity<Candidate>()
+        modelBuilder.Entity<User>()
             .HasMany(c => c.AppliedApplications)
             .WithOne(a => a.Candidate)
             .HasForeignKey(a => a.CandidateId);

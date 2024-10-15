@@ -12,6 +12,6 @@ export const AuthRequired = ({children}) => {
     };
 
     return (
-        isAuthenticated && user.type === "candidate" ? children : <Navigate to="/signin/candidates"/>
+        isAuthenticated && user.type === "candidate" ? children : <Navigate to="/signin/candidates" replace={true}/>
     );
 };

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { Button } from "../../../../components/Button";
 import InputField from "../../../../components/InputField";
-import { useLoading } from "../../../../hooks/useLoading";
+import { LoadingSpinner } from "../../../../components/LoadingSpinner";
 import { getCandidateDetails } from "../../../../services/candidate";
 import { uploadPdf } from "../../../../services/file";
 import { applyJob } from "../../../../services/job";
@@ -12,7 +12,8 @@ export const ApplyJob = ({ jobId, candidateId, onSubmit }) => {
   const [candidate, setCandidate] = useState();
   const [coverLetter, setCoverLetter] = useState("");
   const [file, setFile] = useState();
-  const { isLoading, setIsLoading } = useLoading();
+  const [loading, setLoading ] = useState(false);
+  const [error, setError] = useState(null);
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
@@ -35,8 +36,9 @@ export const ApplyJob = ({ jobId, candidateId, onSubmit }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
     if (file) {
+      setError(null);
+      setLoading(true);
       await uploadPdf(candidateId, file)
         .then(async (response) => {
           await applyJob({
@@ -55,11 +57,13 @@ export const ApplyJob = ({ jobId, candidateId, onSubmit }) => {
         })
         .finally(() => {
           if (onSubmit) onSubmit();
-          setIsLoading(false);
+          setLoading(false);
         });
+    } else {
+setError("Please upload your CV")
     }
   };
-
+  if (loading) return <LoadingSpinner/>
   return (
     <form>
       <div>
@@ -93,6 +97,7 @@ export const ApplyJob = ({ jobId, candidateId, onSubmit }) => {
       <div className="font-medium">Your CV</div>
         <InputField type="file" onChange={handleFileChange} inputClassName={"rounded-none"}/>
       </div>
+      {error && <div className="text-red-600 italic text-sm text-right">{error}</div>}
       <div className="flex justify-center mt-4">
         <Button variant={"red"} onClick={handleSubmit}>
           Apply

@@ -6,7 +6,7 @@ export const adminLogin = (request) => {
 }
 
 export const getPagedCompanyProfiles = (request) => {
-    const queryParams = new URLSearchParams(request);
+    const queryParams = new URLSearchParams(filterUndefinedAndNull(request));
     return httpClient.get(`/companies?${queryParams}`);
 }
 
@@ -46,3 +46,8 @@ export const getReportById = (id) => {
 export const updateReportStatus = (id, status) => {
     return httpClient.put(`/reports/${id}/status?status=${status}`);
 }
+
+export const getFieldsStatistic = (request) => {
+    const queryParams = new URLSearchParams(request);
+    return httpClient.get(`/admins/statistic?${queryParams}`);
+} 

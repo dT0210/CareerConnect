@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { FaAngleDown } from "react-icons/fa";
+import { FaAngleDown, FaFilter } from "react-icons/fa";
 import { MdDone } from "react-icons/md";
 import useClickOutside from "../hooks/useClickOutside";
 
@@ -14,7 +14,7 @@ export const Select = ({
   let selectWrapperStyle = `${className} relative rounded-md bg-slate-200 focus:outline-none h-fit ${
     className?.includes("w-[") ? "" : "w-full"
   }`;
-  
+
   const [filteredOptions, setFilteredOptions] = useState(options);
   const [selectedOption, setSelectedOption] = useState(
     options.find((option) => option.value === defaultValue)
@@ -30,12 +30,12 @@ export const Select = ({
   }, [options]);
 
   useEffect(() => {
-      onChange(selectedOption);
+    onChange(selectedOption);
   }, [selectedOption]);
 
-  useEffect(()=>{
+  useEffect(() => {
     setSelectedOption(options.find((option) => option.value === defaultValue));
-  }, [defaultValue])
+  }, [defaultValue]);
 
   return (
     <div className={selectWrapperStyle} ref={selectRef}>
@@ -43,7 +43,11 @@ export const Select = ({
         className="full flex justify-between p-2 hover:cursor-pointer items-center"
         onClick={() => setOpenOptions(!openOptions)}
       >
-        {selectedOption?.label || label}
+        <div className="flex items-center justify-center gap-2">
+          <FaFilter className="opacity-70"/>
+          {selectedOption?.label || label}
+        </div>
+
         <FaAngleDown />
       </div>
       <div

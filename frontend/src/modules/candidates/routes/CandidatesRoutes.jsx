@@ -5,6 +5,7 @@ import DashBoard from "../pages/DashBoard";
 import { AppliedJobs } from "../pages/Jobs/AppliedJobs";
 import { JobDetails } from "../pages/Jobs/JobDetails";
 import Layout from "../pages/Layout";
+import Profile from "../pages/Profile";
 import Signin from "../pages/Signin";
 import Signup from "../pages/Signup";
 
@@ -52,6 +53,14 @@ export const CandidatesRoute = [
     element: (
       <Layout>
         <CompanyProfile/>
+      </Layout>
+    )
+  },
+  {
+    path: "/profile",
+    element: (
+      <Layout>
+        <AuthRequired><Profile/></AuthRequired>
       </Layout>
     )
   }

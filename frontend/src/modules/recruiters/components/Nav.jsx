@@ -177,7 +177,7 @@ export const Nav = () => {
             )}
           </div>
           <div
-            className={`absolute p-1 right-0 z-20 shadow-md rounded-lg text-black bg-white w-[200px]  ${
+            className={`absolute p-1 right-0 z-20 shadow-md rounded-sm text-black bg-white w-[200px]  ${
               !openNotif && "hidden"
             }`}
           >

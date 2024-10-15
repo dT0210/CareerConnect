@@ -16,5 +16,5 @@ public class Application : BaseModel
     public ApplicationStatusType Status {get; set;} = ApplicationStatusType.Sent;
 
     public Job Job { get; set; }
-    public Candidate Candidate { get; set; }
+    public User Candidate { get; set; }
 }

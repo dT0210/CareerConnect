@@ -13,7 +13,7 @@ public class SkillService : ISkillService
     private readonly ISkillRepository _skillRepository;
     private readonly IRecruiterRepository _recruiterRepository;
     private readonly IMapper _mapper;
-    public SkillService(ISkillRepository skillRepository, IRecruiterRepository recruiterRepository, ITokenService tokenService, IMapper mapper)
+    public SkillService(ISkillRepository skillRepository, IRecruiterRepository recruiterRepository, IMapper mapper)
     {
         _skillRepository = skillRepository;
         _recruiterRepository = recruiterRepository;
@@ -28,7 +28,7 @@ public class SkillService : ISkillService
 
         query = query.Where(x => string.IsNullOrWhiteSpace(searchPhraseLower) || x.Name.Contains(searchPhraseLower));
 
-        var totalRecords = query.Count();
+        var totalRecords = await query.CountAsync();
         if (!string.IsNullOrEmpty(orderBy))
         {
             var columnsSelector = new Dictionary<string, Expression<Func<Skill, object>>>

@@ -33,7 +33,7 @@ public class JobService : IJobService
 
     public async Task<PagedResponse<JobResponseModel>> GetAllJobsAsync(
         int? pageIndex, int? pageSize, Guid? recruiterId, JobType? type, Guid? fieldId,
-        string? search, string? orderBy, bool? isDescending)
+        string? search, string? orderBy, bool? isDescending, bool? expired)
     {
         string searchPhraseLower = search?.ToLower() ?? string.Empty;
         var query = _jobRepository.GetAllQueryable()
@@ -49,9 +49,10 @@ public class JobService : IJobService
                                 && (fieldId == null || x.FieldId == fieldId)
                                 && (string.IsNullOrWhiteSpace(searchPhraseLower)
                                     || x.Title.Contains(searchPhraseLower)
-                                    || x.Description.Contains(searchPhraseLower)));
+                                    || x.Description.Contains(searchPhraseLower))
+                                && (expired == null || expired == true || (expired == false && (x.Deadline > DateTime.Now))));
 
-        var totalRecords = query.Count();
+        var totalRecords = await query.CountAsync();
         if (!string.IsNullOrEmpty(orderBy))
         {
             var columnsSelector = new Dictionary<string, Expression<Func<Job, object>>>
@@ -191,7 +192,8 @@ public class JobService : IJobService
         {
             throw new KeyNotFoundException("Job not found");
         }
-        if (role == "admin") {
+        if (role == "admin")
+        {
             await _notificationService.InsertNotificationAsync(existingJob.RecruiterId, $"{existingJob.Title} has been deleted by an admin");
         }
         existingJob.DeletedBy = userId;

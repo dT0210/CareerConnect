@@ -47,6 +47,9 @@ export const AppliedJobs = () => {
 
   return (
     <div className="p-8">
+      <div className="bg-[#ef4545] px-6 py-4 text-white font-semibold text-xl mb-4 rounded-t-lg">
+          Applied Jobs
+        </div>
       <div className="flex items-center gap-4 flex-wrap">
         <SearchForm setSearch={setSearchQuery} onSubmit={fetchAppliedJobs} />
         <Select

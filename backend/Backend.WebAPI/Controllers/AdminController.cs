@@ -100,4 +100,19 @@ public class AdminController : ControllerBase
             return StatusCode(500, e.Message);
         }
     }
+
+    [HttpGet]
+    [Route("statistic")]
+    public async Task<IActionResult> GetFieldsStatistic(int? pageIndex, int? pageSize, string? orderBy, bool? isDescending, string? search)
+    {
+        try
+        {
+            var response = await _adminService.GetFieldsStatisticsAsync(pageIndex, pageSize, orderBy, isDescending, search);
+            return Ok(response);
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, e.Message);
+        }
+    }
 }
